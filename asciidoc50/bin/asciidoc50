@@ -1,0 +1,57 @@
+#!/bin/bash
+
+# http://unix.stackexchange.com/a/17500
+SCRIPTPATH="$(dirname "$(readlink -f "$0")")"
+
+# defaults
+TEMPLATE=default
+
+# parse command-line arguments
+# http://stackoverflow.com/questions/192249/how-do-i-parse-command-line-arguments-in-bash
+while [[ $# -gt 1 ]]
+do
+    key="$1"
+    case $key in
+        -t)
+            TEMPLATE="$2"
+            shift
+            ;;
+        *)
+            echo "render50: invalid argument: $key"
+            exit
+    esac
+    shift
+done
+
+# ensure template exists
+if [ ! -d "$SCRIPTPATH"/../templates/"$TEMPLATE" ]; then
+    echo "render50: invalid template: $TEMPLATE"
+    exit
+fi
+
+# usage
+if [[ "$#" -ne 1 ]]; then
+    echo "Usage: render50 [-t template] /path/to/file"
+    exit
+fi
+
+# asciidoctor
+asciidoctor \
+    -a coderay-css=class \
+    -a coderay-linenums-mode=inline \
+    -a data-uri \
+    -a idprefix= \
+    -a imagesdir=. \
+    -a sectlinks \
+    -a showtitle \
+    -a source-highlighter=coderay \
+    -a toc=left \
+    -a toclevels=4 \
+    --backend html5 \
+    --doctype article \
+    --template-dir="$SCRIPTPATH"/../templates/"$TEMPLATE" \
+    --trace \
+    `basename "$1"`
+
+    # TODO: decide whether to support embeds:
+    # --no-header-footer

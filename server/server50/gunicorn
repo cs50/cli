@@ -1,4 +1,0 @@
-#!/bin/bash
-
-cd /root/server50/django
-/usr/bin/gunicorn --bind unix:/var/run/gunicorn.sock myproject.wsgi

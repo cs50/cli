@@ -1,0 +1,149 @@
+<%# https://github.com/asciidoctor/asciidoctor-backends/blob/master/erb/html5/document.html.erb %>
+
+<!DOCTYPE html>
+
+<html lang="en">
+    <head>
+
+        <meta content="4851b15326f6b290-09e175a0bcd24dcd-gab2f4fb87b61a9c2-c" name="google-translate-customization"/>
+        <meta content="text/html; charset=UTF-8" http-equiv="Content-Type"/>
+        <meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+        <% [:description, :keywords, :author, :copyright].each do |key| %>
+            <% if attr? key %>
+                <meta name="<%= key %>" content="<%= attr key %>">
+            <% end %>
+        <% end %>
+
+        <!-- asciidoctor -a coderay-css=class,linkcss,source-highlighter=coderay -b html5 -D . /dev/null -->
+        <style>
+            <%= IO.read(File.dirname(__FILE__) + "/asciidoctor.css") %>
+        </style>
+        <style>
+            <%= IO.read(File.dirname(__FILE__) + "/asciidoctor-coderay.css") %>
+        </style>
+        <style>
+
+            <%# add HACKER watermark if :hacker: attribute is set on Asciidoc document %>
+            <% if attr? 'hacker' %>
+            body {
+                background-attachment: fixed;
+                background-image: url(data:image/png;base64,<%= Base64.strict_encode64(File.open(File.join(File.dirname(__FILE__), "./hacker.png"), "rb").read) %>);
+                background-position: center;
+                background-repeat: no-repeat;
+                background-size: contain;
+            }
+            <% end %>
+
+            #footer {
+                background-color: inherit;
+                text-align: right;
+            }
+
+            #google_translate_element {
+                padding-top: 32px;
+            }
+
+            <%# http://www.rapidtables.com/web/color/green-color.htm %>
+            .green {
+                color: #006400;
+            }
+
+            <%# allow code to scroll horizontally %>
+            .listingblock > .content pre {
+                overflow: auto;
+                white-space: pre;
+                word-wrap: inherit;
+            }
+
+            pre {
+                margin-bottom: 0.625em;
+            }
+
+            .red {
+                color: #ff0000;
+            }
+
+            select {
+                width: inherit;
+            }
+
+            <%# http://www.rapidtables.com/web/color/Yellow_Color.htm %>
+            .yellow {
+                color: #cc0;
+            }
+
+        </style>
+
+        <title><%= doctitle(:sanitize => true) %></title>
+
+    </head>
+
+    <body class="<%= [(attr :doctype),((attr? 'toc-class') && (attr? :toc) && (attr? 'toc-placement', 'auto') ? %(#{attr 'toc-class'} toc-#{attr 'toc-position', 'left'}) : nil)].compact * ' ' %>">
+
+        <% unless noheader %>
+
+            <div id="header">
+
+                <% if has_header? %>
+                    <% unless notitle %>
+                        <h1><%= @header.title %></h1>
+                    <% end %>
+                    <span id="author" class="author">
+                        This is CS50 AP 1516. Harvard University.
+                    </span>
+                <% end %>
+
+                <div id="google_translate_element"></div>
+                <script>
+                    function googleTranslateElementInit() {
+                        new google.translate.TranslateElement({pageLanguage: 'en', layout: google.translate.TranslateElement.InlineLayout.HORIZONTAL}, 'google_translate_element');
+                    }
+                </script>
+                <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
+                <% if (attr? :toc) && (attr? 'toc-placement', 'auto') %>
+                    <div id="toc" class="<%= attr 'toc-class', 'toc' %>">
+                        <div id="toctitle"><%= attr 'toc-title' %></div>
+                        <%= converter.convert self, 'outline' %>
+                    </div>
+                <% end %>
+
+            </div>
+
+        <% end %>
+
+        <div id="content">
+            <%= content %>
+        </div>
+        
+        <% unless !footnotes? || attr?(:nofootnotes) %>
+            <div id="footnotes">
+                <hr/>
+                <% footnotes.each do |fn| %>
+                    <div class="footnote" id="_footnote_<%= fn.index %>">
+                        <a href="#_footnoteref_<%= fn.index %>"><%= fn.index %></a>. <%= fn.text %>
+                    </div>
+                <% end %>
+            </div>
+        <% end %>
+
+        <div id="footer">
+            Copyright &#169; David J. Malan
+        </div>
+
+        <script>
+
+            var _gaq = _gaq || [];
+            _gaq.push(['_setAccount', 'UA-8162502-43']);
+            _gaq.push(['_trackPageview']);
+
+            (function() {
+              var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+              ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+              var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+            })();
+
+        </script>
+
+    </body>
+</html>

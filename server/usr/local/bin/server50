@@ -1,5 +1,0 @@
-#!/bin/bash
-
-supervisord --configuration /etc/supervisor/conf.d/php.conf --nodaemon
-
-#cd /home/ubuntu/workspace ; bash -l
