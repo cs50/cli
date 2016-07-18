@@ -1,5 +1,1 @@
-# cs50/cli:ubuntu
-
-## Usage
-
-
+# CS50 CLI
