@@ -1,0 +1,2 @@
+gettext-base
+envsubst
