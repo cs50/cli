@@ -39,6 +39,7 @@ RUN apt-get update && \
         ruby \
         ruby-dev \
         telnet \
+        valgrind \
         vim \
         wget
 
