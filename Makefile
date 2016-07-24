@@ -1,7 +1,7 @@
 default: build run
 
 build:
-	docker build --pull -t cs50/cli .
+	docker build -t cs50/cli .
 
 rebuild:
 	docker build --no-cache -t cs50/cli .
