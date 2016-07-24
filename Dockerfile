@@ -16,6 +16,7 @@ RUN apt-get update && \
         clang \
         curl \
         gdb \
+        gettext-base \
         git \
         man \
         nano \
