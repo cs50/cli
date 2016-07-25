@@ -22,6 +22,7 @@ RUN apt-get update && \
         gdb \
         gettext-base \
         git \
+        info \
         man \
         nano \
         openjdk-7-jdk \
