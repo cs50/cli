@@ -34,9 +34,11 @@ RUN apt-get update && \
         php5-intl \
         php5-mcrypt \
         python \
-        python3 \
         python-dev \
         python-pip \
+        python3 \
+        python3-dev \
+        python3-pip \
         ruby \
         ruby-dev \
         telnet \
