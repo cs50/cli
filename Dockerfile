@@ -2,12 +2,11 @@ FROM ubuntu:14.04
 
 # ENV
 ENV DEBIAN_FRONTEND noninteractive
-RUN locale-gen "en_US.UTF-8" && \
-    dpkg-reconfigure locales
+RUN locale-gen "en_US.UTF-8" && dpkg-reconfigure locales
 ENV LANG "en_US.UTF-8"
 ENV LC_ALL "en_US.UTF-8"
 ENV LC_CTYPE "en_US.UTF-8"
-ENV PATH "$PATH":/opt/bin
+ENV PATH /opt/cs50/bin:"$PATH"
 
 #
 RUN mkdir -p /opt/bin
@@ -52,8 +51,7 @@ RUN apt-get update && \
 RUN gem install fpm
 
 # composer
-RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-ONBUILD RUN composer self-update
+RUN curl -L -o /usr/local/bin/composer https://getcomposer.org/composer.phar && chmod a+x /usr/local/bin/composer
 
 # environment
 COPY ./etc/motd /etc/
