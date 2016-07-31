@@ -27,6 +27,8 @@ RUN apt-get update && \
         nano \
         openjdk-7-jdk \
         openjdk-7-jre-headless \
+        nodejs \
+        npm \
         perl \
         php5-cli \
         php5-curl \
