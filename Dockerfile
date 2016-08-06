@@ -15,6 +15,7 @@ RUN mkdir -p /opt/bin
 RUN apt-get update && \
     apt-get install -y \
         bash-completion \
+        bsdtar \
         build-essential \
         clang \
         curl \
@@ -40,6 +41,7 @@ RUN apt-get update && \
         python3 \
         python3-dev \
         python3-pip \
+        rpm \
         ruby \
         ruby-dev \
         telnet \
