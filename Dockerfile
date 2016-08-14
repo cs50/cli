@@ -44,6 +44,7 @@ RUN apt-get update && \
         rpm \
         ruby \
         ruby-dev \
+        software-properties-common \
         telnet \
         valgrind \
         vim \
