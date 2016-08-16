@@ -20,6 +20,7 @@ RUN apt-get update && \
         build-essential \
         clang \
         curl \
+        dnsutils \
         gdb \
         gettext-base \
         git \
