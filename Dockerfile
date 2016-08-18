@@ -1,8 +1,7 @@
 FROM ubuntu:14.04
 
 # ENV
-ENV DEBIAN_FRONTEND noninteractive
-RUN locale-gen "en_US.UTF-8" && dpkg-reconfigure locales
+RUN locale-gen "en_US.UTF-8" && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
 ENV LANG "en_US.UTF-8"
 ENV LC_ALL "en_US.UTF-8"
 ENV LC_CTYPE "en_US.UTF-8"
@@ -14,7 +13,7 @@ RUN mkdir -p /opt/bin
 
 # packages
 RUN apt-get update && \
-    apt-get install -y \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
         bash-completion \
         bsdtar \
         build-essential \
