@@ -6,7 +6,7 @@ ENV LANG "en_US.UTF-8"
 ENV LC_ALL "en_US.UTF-8"
 ENV LC_CTYPE "en_US.UTF-8"
 ENV PATH /opt/cs50/bin:"$PATH"
-ENV TERM ansi
+ENV TERM xterm
 
 #
 RUN mkdir -p /opt/bin
