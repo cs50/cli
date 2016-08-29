@@ -1,4 +1,4 @@
-default: build run
+default: run
 
 build:
 	docker build -t cs50/cli .
