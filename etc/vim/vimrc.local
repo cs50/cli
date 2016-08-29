@@ -429,3 +429,6 @@ function! <SID>BufcloseCloseIt()
      execute("bdelete! ".l:currentBufNum)
    endif
 endfunction
+
+" http://unix.stackexchange.com/a/5285
+set formatoptions-=tc
