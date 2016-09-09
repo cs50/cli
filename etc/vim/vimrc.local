@@ -430,5 +430,10 @@ function! <SID>BufcloseCloseIt()
    endif
 endfunction
 
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" => CS50
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+
 " http://unix.stackexchange.com/a/5285
 set formatoptions-=tc
