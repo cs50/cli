@@ -27,6 +27,7 @@ RUN apt-get update && \
         ImageMagick \
         info \
         man \
+        mysql-client \
         nano \
         openjdk-7-jdk \
         openjdk-7-jre-headless \
