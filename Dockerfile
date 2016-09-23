@@ -20,9 +20,11 @@ RUN apt-get update && \
         clang \
         curl \
         dnsutils \
+        exiftool \
         gdb \
         gettext-base \
         git \
+        ImageMagick \
         info \
         man \
         nano \
