@@ -53,7 +53,8 @@ RUN apt-get update && \
         telnet \
         valgrind \
         vim \
-        wget
+        wget && \
+    apt-file update
 
 # fpm
 RUN gem install fpm
