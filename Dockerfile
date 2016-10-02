@@ -18,7 +18,7 @@ RUN apt-get update && \
         bash-completion \
         bsdtar \
         build-essential \
-        clang \
+        clang-3.6 \
         curl \
         dnsutils \
         exiftool \
