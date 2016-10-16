@@ -51,9 +51,11 @@ RUN apt-get update && \
         ruby-dev \
         software-properties-common \
         telnet \
+        unzip \
         valgrind \
         vim \
-        wget && \
+        wget \
+        zip && \
     apt-file update
 
 # fpm
