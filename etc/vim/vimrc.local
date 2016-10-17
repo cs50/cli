@@ -430,10 +430,13 @@ function! <SID>BufcloseCloseIt()
    endif
 endfunction
 
-
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " => CS50
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 " http://unix.stackexchange.com/a/5285
 set formatoptions-=tc
+
+" http://stackoverflow.com/a/2280128/5156190
+" this turns off physical line wrapping (ie: automatic insertion of newlines)
+set textwidth=0 wrapmargin=0
