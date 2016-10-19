@@ -32,7 +32,6 @@ RUN apt-get update && \
         nano \
         openjdk-7-jdk \
         openjdk-7-jre-headless \
-        nodejs \
         npm \
         perl \
         php5-cli \
@@ -63,6 +62,9 @@ RUN gem install fpm
 
 # composer
 RUN curl -L -o /usr/local/bin/composer https://getcomposer.org/composer.phar && chmod a+x /usr/local/bin/composer
+
+# upgrade node
+RUN npm install -g coffee-script n && n stable
 
 # environment
 COPY ./etc/motd /etc/
