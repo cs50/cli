@@ -16,6 +16,7 @@ RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         apt-file \
         bash-completion \
+        bc \
         bsdtar \
         build-essential \
         clang-3.6 \
