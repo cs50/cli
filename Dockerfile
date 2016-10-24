@@ -5,7 +5,7 @@ RUN locale-gen "en_US.UTF-8" && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure 
 ENV LANG "en_US.UTF-8"
 ENV LC_ALL "en_US.UTF-8"
 ENV LC_CTYPE "en_US.UTF-8"
-ENV PATH /opt/cs50/bin:"$PATH"
+ENV PATH /root/.local/bin:/opt/cs50/bin:"$PATH"
 ENV TERM xterm
 
 #
