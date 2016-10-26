@@ -22,6 +22,7 @@ RUN apt-get update && \
         clang-3.6 \
         curl \
         dnsutils \
+        dos2unix \
         exiftool \
         gdb \
         gettext-base \
