@@ -51,6 +51,7 @@ RUN apt-get update && \
         ruby \
         ruby-dev \
         software-properties-common \
+        sqlite3 \
         telnet \
         unzip \
         valgrind \
