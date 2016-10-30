@@ -440,3 +440,7 @@ set formatoptions-=tc
 " http://stackoverflow.com/a/2280128/5156190
 " this turns off physical line wrapping (ie: automatic insertion of newlines)
 set textwidth=0 wrapmargin=0
+
+" don't put comments at the beginning of lines while editing python files
+" http://stackoverflow.com/a/354422
+set cindent
