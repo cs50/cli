@@ -26,11 +26,13 @@ GEM
       pathutil (~> 0.9)
       rouge (~> 1.7)
       safe_yaml (~> 1.0)
+    jekyll-redirect-from (0.11.0)
+      jekyll (>= 2.0)
     jekyll-sass-converter (1.5.0)
       sass (~> 3.4)
     jekyll-watch (1.5.0)
       listen (~> 3.0, < 3.1)
-    kramdown (1.13.0)
+    kramdown (1.13.1)
     liquid (3.0.6)
     listen (3.0.8)
       rb-fsevent (~> 0.9, >= 0.9.4)
@@ -55,8 +57,9 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  asciidoctor (>= 1.5.5)
-  jekyll-asciidoc (>= 2.1.0.dev)!
+  asciidoctor
+  jekyll-asciidoc!
+  jekyll-redirect-from
   pygments.rb
 
 BUNDLED WITH
