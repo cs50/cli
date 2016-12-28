@@ -60,8 +60,13 @@ RUN apt-get update && \
         zip && \
     apt-file update
 
-# fpm
-RUN gem install fpm
+# gems
+RUN gem install \
+    asciidoctor \
+    bundler \
+    fpm \
+    jekyll-redirect-from \
+    pygments.rb
 
 # install composer
 RUN curl -L -o /usr/local/bin/composer https://getcomposer.org/composer.phar && chmod a+x /usr/local/bin/composer
@@ -72,15 +77,15 @@ RUN npm install -g coffee-script n && n stable
 # install jekyll-asciidoc
 # https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
 # https://github.com/asciidoctor/jekyll-asciidoc#development
-COPY Gemfile /tmp
-COPY Gemfile.lock /tmp
+#COPY Gemfile /tmp
+#COPY Gemfile.lock /tmp
 RUN apt-get update && \
     apt-add-repository -y ppa:brightbox/ruby-ng && \
     apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y ruby2.3 ruby2.3-dev && \
-    gem install bundler && \
-    bundle install --gemfile=/tmp/Gemfile --system && \
-    rm -f /tmp/Gemfile /tmp/Gemfile.lock
+    DEBIAN_FRONTEND=noninteractive apt-get install -y ruby2.3 ruby2.3-dev
+#gem install bundler && \
+#bundle install --gemfile=/tmp/Gemfile --system && \
+#rm -f /tmp/Gemfile /tmp/Gemfile.lock
 
 # environment
 COPY ./etc/motd /etc/
