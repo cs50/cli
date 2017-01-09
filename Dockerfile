@@ -81,19 +81,18 @@ RUN gem install \
     jekyll-redirect-from \
     pygments.rb
 
-# environment
+# /etc
 COPY ./etc/motd /etc/
 COPY ./etc/profile.d/cli50.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
 
-# ubuntu
 # TODO: decide if this breaks child files
 #RUN useradd --create-home --groups sudo --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
 #    chown -R ubuntu:ubuntu /home/ubuntu && \
 #    sed -i 's/^%sudo\s.*/%sudo ALL=NOPASSWD:ALL/' /etc/sudoers
-
-# entrypoint
 #ENTRYPOINT ["sudo", "-i", "-u", "ubuntu", "sh", "-c"]
 #CMD ["cd workspace ; bash -l"]
+
+# /root
 WORKDIR /root
 CMD ["bash", "-l"]
