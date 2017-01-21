@@ -63,7 +63,7 @@ RUN apt-get update && \
 # install composer
 RUN curl -L -o /usr/local/bin/composer https://getcomposer.org/composer.phar && chmod a+x /usr/local/bin/composer
 
-# upgrade node
+# instal CoffeeScript, upgrade node
 RUN npm install -g coffee-script n && n stable
 
 # install jekyll-asciidoc
@@ -93,6 +93,6 @@ COPY ./etc/vim/vimrc.local /etc/vim/
 #ENTRYPOINT ["sudo", "-i", "-u", "ubuntu", "sh", "-c"]
 #CMD ["cd workspace ; bash -l"]
 
-# /root
+# run shell in /root
 WORKDIR /root
 CMD ["bash", "-l"]
