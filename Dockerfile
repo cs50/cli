@@ -60,6 +60,9 @@ RUN apt-get update && \
         zip && \
     apt-file update
 
+# install CS50 Library
+RUN pip3 install cs50
+
 # install composer
 RUN curl -L -o /usr/local/bin/composer https://getcomposer.org/composer.phar && chmod a+x /usr/local/bin/composer
 
