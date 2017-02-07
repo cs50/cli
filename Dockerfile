@@ -1,6 +1,6 @@
 FROM ubuntu:14.04
 
-# ENV
+# environment
 RUN locale-gen "en_US.UTF-8" && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
 ENV LANG "en_US.UTF-8"
 ENV LC_ALL "en_US.UTF-8"
