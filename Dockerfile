@@ -17,7 +17,7 @@ RUN apt-get update && \
         bc \
         bsdtar \
         build-essential \
-        clang-3.6 \
+        clang-3.8 \
         curl \
         dnsutils \
         dos2unix \
@@ -56,7 +56,12 @@ RUN apt-get update && \
         vim \
         wget \
         zip && \
-    apt-file update
+    apt-file update && \
+    update-alternatives --install /usr/bin/clang clang /usr/bin/clang-3.8 380 \
+        --slave /usr/bin/clang++ clang++ /usr/bin/clang++-3.8 \
+        --slave /usr/bin/clang-check clang-check /usr/bin/clang-check-3.8 \
+        --slave /usr/bin/clang-query clang-query /usr/bin/clang-query-3.8 \
+        --slave /usr/bin/clang-rename clang-rename /usr/bin/clang-rename-3.8
 
 # install CS50 Library
 RUN pip3 install cs50
