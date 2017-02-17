@@ -19,6 +19,7 @@ RUN apt-get update && \
         build-essential \
         clang-3.6 \
         curl \
+        dh-make \
         dnsutils \
         dos2unix \
         exiftool \
@@ -39,10 +40,10 @@ RUN apt-get update && \
         php5-gmp \
         php5-intl \
         php5-mcrypt \
-        python \
+        python-all \
         python-dev \
         python-pip \
-        python3 \
+        python3-all \
         python3-dev \
         python3-pip \
         rpm \
@@ -59,7 +60,7 @@ RUN apt-get update && \
     apt-file update
 
 # install CS50 Library
-RUN pip3 install cs50
+RUN pip3 install cs50 stdeb
 
 # install composer
 RUN curl -L -o /usr/local/bin/composer https://getcomposer.org/composer.phar && chmod a+x /usr/local/bin/composer
