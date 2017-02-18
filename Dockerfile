@@ -19,7 +19,7 @@ RUN apt-get update && \
         build-essential \
         clang-3.6 \
         curl \
-        dh-make \
+        debhelper \
         dnsutils \
         dos2unix \
         exiftool \
