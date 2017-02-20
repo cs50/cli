@@ -83,6 +83,7 @@ RUN gem install \
     pygments.rb
 
 # /etc
+RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 COPY ./etc/motd /etc/
 COPY ./etc/profile.d/cli50.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
