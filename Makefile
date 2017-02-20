@@ -7,4 +7,4 @@ rebuild:
 	docker build --no-cache -t cs50/cli .
 
 run:
-	docker run -i --name cli50 --rm -v "$(PWD)":/root -t cs50/cli
+	docker run --interactive --publish-all --rm --tty --volume "$(PWD)":/root cs50/cli
