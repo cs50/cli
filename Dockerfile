@@ -11,6 +11,9 @@ ENV TERM xterm
 
 # packages
 RUN apt-get update && \
+    apt-get install -y software-properties-common && \
+    DEBIAN_FRONTEND=noninteractive add-apt-repository ppa:ondrej/php && \
+    apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         apt-file \
         bash-completion \
@@ -34,11 +37,11 @@ RUN apt-get update && \
         openjdk-7-jre-headless \
         npm \
         perl \
-        php5-cli \
-        php5-curl \
-        php5-gmp \
-        php5-intl \
-        php5-mcrypt \
+        php-cli \
+        php-curl \
+        php-gmp \
+        php-intl \
+        php-mcrypt \
         python \
         python-dev \
         python-pip \
