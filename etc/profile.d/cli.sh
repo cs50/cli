@@ -13,6 +13,4 @@ export EDITOR=nano
 if [ "$PS1" ]; then
     cat /etc/motd
     export PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "'
-    eval "$(pyenv init -)"
-    eval "$(rbenv init -)"
 fi
