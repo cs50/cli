@@ -6,11 +6,13 @@ alias pip="pip3"
 alias python="python3"
 alias rm="rm -i"
 
-# EDITOR
+# environment
 export EDITOR=nano
 
-# PS1
+# interactive shells
 if [ "$PS1" ]; then
     cat /etc/motd
     export PROMPT_COMMAND='__git_ps1 "\u@\h:\w" "\\\$ "'
+    eval "$(pyenv init -)"
+    eval "$(rbenv init -)"
 fi

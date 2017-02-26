@@ -12,7 +12,7 @@ ENV TERM xterm
 # packages
 RUN apt-get update && \
     apt-get install -y software-properties-common && \
-    DEBIAN_FRONTEND=noninteractive add-apt-repository ppa:ondrej/php && \
+    add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         apt-file \
@@ -45,9 +45,6 @@ RUN apt-get update && \
         python \
         python-dev \
         python-pip \
-        python3 \
-        python3-dev \
-        python3-pip \
         rpm \
         ruby \
         ruby-dev \
@@ -66,21 +63,39 @@ RUN apt-get update && \
         --slave /usr/bin/clang-query clang-query /usr/bin/clang-query-3.8 \
         --slave /usr/bin/clang-rename clang-rename /usr/bin/clang-rename-3.8
 
-# install CS50 Library
-RUN pip3 install cs50
-
 # install composer
 RUN curl -L -o /usr/local/bin/composer https://getcomposer.org/composer.phar && chmod a+x /usr/local/bin/composer
 
 # instal CoffeeScript, upgrade node
 RUN npm install -g coffee-script n && n 7.6.0
 
+# install Ruby 2.4
+# https://github.com/rbenv/rbenv/blob/master/README.md#installation
+# https://github.com/rbenv/ruby-build/blob/master/README.md
+ENV RBENV_ROOT /opt/rbenv
+RUN apt-get update && \
+    apt-get install -y libreadline-dev && \
+    wget -P /tmp https://github.com/rbenv/rbenv/archive/master.zip && \
+    unzip -d /tmp /tmp/master.zip && \
+    rm -f /tmp/master.zip && \
+    mv /tmp/rbenv-master /opt/rbenv && \
+    chmod a+x /opt/rbenv/bin/rbenv && \ 
+    wget -P /tmp https://github.com/rbenv/ruby-build/archive/master.zip && \
+    unzip -d /tmp /tmp/master.zip && \
+    rm -f /tmp/master.zip && \
+    mkdir /opt/rbenv/plugins && \
+    mv /tmp/ruby-build-master /opt/rbenv/plugins/ruby-build && \
+    /opt/rbenv/bin/rbenv install 2.4.0 && \
+    /opt/rbenv/bin/rbenv rehash && \
+    /opt/rbenv/bin/rbenv global 2.4.0
+ENV PATH "$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH"
+
 # install fpm, asciidoctor
 # https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
 # https://github.com/asciidoctor/jekyll-asciidoc#development
-RUN apt-add-repository -y ppa:brightbox/ruby-ng && \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y ruby2.4 ruby2.4-dev
+#RUN apt-add-repository -y ppa:brightbox/ruby-ng && \
+#    apt-get update && \
+#    DEBIAN_FRONTEND=noninteractive apt-get install -y ruby2.4 ruby2.4-dev
 RUN gem install \
     asciidoctor \
     bundler \
@@ -88,6 +103,37 @@ RUN gem install \
     jekyll-asciidoc \
     jekyll-redirect-from \
     pygments.rb
+
+# install Python 3.6
+# https://github.com/yyuu/pyenv/blob/master/README.md#installation
+# https://github.com/yyuu/pyenv/wiki/Common-build-problems
+ENV PYENV_ROOT /opt/pyenv
+RUN apt-get update && \
+    apt-get install -y \
+        build-essential \
+        curl \
+        libbz2-dev \
+        libncurses5-dev \
+        libncursesw5-dev \
+        libreadline-dev \
+        libsqlite3-dev \
+        libssl-dev \
+        llvm \
+        wget \
+        xz-utils \
+        zlib1g-dev && \
+    wget -P /tmp https://github.com/yyuu/pyenv/archive/master.zip && \
+    unzip -d /tmp /tmp/master.zip && \
+    rm -f /tmp/master.zip && \
+    mv /tmp/pyenv-master /opt/pyenv && \
+    chmod a+x /opt/pyenv/bin/pyenv && \ 
+    /opt/pyenv/bin/pyenv install 3.6.0 && \
+    /opt/pyenv/bin/pyenv rehash && \
+    /opt/pyenv/bin/pyenv global 3.6.0
+ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
+
+# install CS50 Library
+RUN pip install cs50
 
 # /etc
 RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
