@@ -16,6 +16,7 @@ RUN apt-get update && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         apt-file \
+        apt-transport-https \
         bash-completion \
         bc \
         bsdtar \
@@ -64,13 +65,8 @@ RUN apt-get update && \
         --slave /usr/bin/clang-rename clang-rename /usr/bin/clang-rename-3.8
 
 # install Composer
-# https://getcomposer.org/download/
-RUN cd /tmp && \
-    php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php -r "if (hash_file('SHA384', 'composer-setup.php') === '55d6ead61b29c7bdee5cccfb50076874187bd9f21f65d8991d46ec5cc90518f447387fb9f76ebae1fbbacf329e583e30') { echo 'Installer verified'; } else { echo 'Installer corrupt'; unlink('composer-setup.php'); } echo PHP_EOL;" && \
-    php composer-setup.php && \
-    php -r "unlink('composer-setup.php');" && \
-    mv composer.phar /usr/local/bin/composer
+# https://www.digitalocean.com/community/tutorials/how-to-install-and-use-composer-on-ubuntu-14-04
+RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 
 # install Node.js 7.6.0
 RUN npm install -g n && PATH=/usr/local/bin:"$PATH" n 7.6.0
@@ -144,8 +140,17 @@ ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 # install CS50 Library
 RUN pip install cs50
 
+# git-lfs
+# https://packagecloud.io/github/git-lfs/install#manual
+RUN echo "deb https://packagecloud.io/github/git-lfs/ubuntu/ trusty main" > /etc/apt/sources.list.d/github_git-lfs.list && \
+    echo "deb-src https://packagecloud.io/github/git-lfs/ubuntu/ trusty main" >> /etc/apt/sources.list.d/github_git-lfs.list && \
+    curl -L https://packagecloud.io/github/git-lfs/gpgkey | sudo apt-key add - && \
+    apt-get update && \
+    apt-get install -y git-lfs && \
+    git lfs install
+
 # /etc
-RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
+#RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 COPY ./etc/motd /etc/
 COPY ./etc/profile.d/cli.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
