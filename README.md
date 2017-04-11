@@ -1,9 +1,5 @@
 # CS50 CLI
 
-## TODO
+## Documentation
 
-* Decide whether to keep:
-    * `FLASK_APP`
-    * `FLASK_DEBUG`
-    * `PYTHONDONTWRITEBYTECODE`
-* Add to Homebrew?
+https://manual.cs50.net/cli.html
