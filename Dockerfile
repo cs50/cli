@@ -105,9 +105,10 @@ RUN gem install \
     asciidoctor \
     bundler \
     fpm \
-    jekyll-asciidoc \
     jekyll-redirect-from \
-    pygments.rb
+    pygments.rb \
+    specific_install && \
+    gem specific_install https://github.com/asciidoctor/jekyll-asciidoc.git
 
 # install Python 3.6
 # https://github.com/yyuu/pyenv/blob/master/README.md#installation
