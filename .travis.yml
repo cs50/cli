@@ -2,10 +2,13 @@ sudo: required
 
 services: docker
 
-script: docker build . -t cs50/cli
+script: docker build . -t cli
 
-before_deploy: docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+before_deploy:
+- pip install docker-squash
+- docker-squash -t cs50/cli:latest cli
+- docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 
 deploy:
   provider: script
-  script: docker push cs50/cli
+  script: docker push cs50/cli:latest
