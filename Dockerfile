@@ -150,6 +150,19 @@ RUN echo "deb https://packagecloud.io/github/git-lfs/ubuntu/ trusty main" > /etc
     apt-get install -y git-lfs && \
     git lfs install
 
+# github/hub
+RUN mkdir /tmp/hub-linux-amd64 && \
+    curl -s -L https://github.com/github/hub/releases/latest | \
+        egrep -o '/github/hub/releases/download/.*/hub-linux-amd64-.*.tgz' | \
+        wget --base=http://github.com/ -i - -O - | \
+        tar xvz -C /tmp/hub-linux-amd64 && \
+        /tmp/hub-linux-amd64/install && \
+    rm -rf /tmp/hub-linux-amd64
+
+wget -qO- https://github.com/github/hub/releases/download/v2.2.9/hub-linux-amd64-2.2.9.tgz | tar xvz -C /tmp && \
+    /tmp/hub-linux-amd64-2.2.9/install && \
+    rm -rf /tmp/hub-linux-amd64-2.2.9
+
 # /etc
 #RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 COPY ./etc/motd /etc/
