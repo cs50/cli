@@ -152,6 +152,7 @@ RUN echo "deb https://packagecloud.io/github/git-lfs/ubuntu/ trusty main" > /etc
 
 # install hub hub
 # https://hub.github.com/
+# http://stackoverflow.com/a/27869453
 RUN mkdir /tmp/hub-linux-amd64 && \
     curl -s -L https://github.com/github/hub/releases/latest | \
         egrep -o '/github/hub/releases/download/.*/hub-linux-amd64-.*.tgz' | \
