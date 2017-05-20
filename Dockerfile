@@ -141,7 +141,7 @@ ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 # install CS50 Library
 RUN pip install cs50
 
-# git-lfs
+# install git-lfs
 # https://packagecloud.io/github/git-lfs/install#manual
 RUN echo "deb https://packagecloud.io/github/git-lfs/ubuntu/ trusty main" > /etc/apt/sources.list.d/github_git-lfs.list && \
     echo "deb-src https://packagecloud.io/github/git-lfs/ubuntu/ trusty main" >> /etc/apt/sources.list.d/github_git-lfs.list && \
@@ -150,13 +150,14 @@ RUN echo "deb https://packagecloud.io/github/git-lfs/ubuntu/ trusty main" > /etc
     apt-get install -y git-lfs && \
     git lfs install
 
-# github/hub
+# install hub hub
+# https://hub.github.com/
 RUN mkdir /tmp/hub-linux-amd64 && \
     curl -s -L https://github.com/github/hub/releases/latest | \
         egrep -o '/github/hub/releases/download/.*/hub-linux-amd64-.*.tgz' | \
         wget --base=http://github.com/ -i - -O - | \
-        tar xvz -C /tmp/hub-linux-amd64 && \
-        /tmp/hub-linux-amd64/install && \
+        tar xvz -C /tmp/hub-linux-amd64 --strip-components 1 && \
+    /tmp/hub-linux-amd64/install && \
     rm -rf /tmp/hub-linux-amd64
 
 # /etc
