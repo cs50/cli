@@ -2,6 +2,8 @@ FROM ubuntu:14.04
 
 # environment
 RUN locale-gen "en_US.UTF-8" && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
+ENV DEBEMAIL "sysadmins@cs50.harvard.edu"
+ENV DEBFULLNAME "CS50 Sysadmins"
 ENV LANG "en_US.UTF-8"
 ENV LC_ALL "en_US.UTF-8"
 ENV LC_CTYPE "en_US.UTF-8"
@@ -23,6 +25,8 @@ RUN apt-get update && \
         build-essential \
         clang-3.8 \
         curl \
+        devscripts \
+        dh-make \
         dnsutils \
         dos2unix \
         exiftool \
