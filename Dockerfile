@@ -151,7 +151,7 @@ RUN echo "deb https://packagecloud.io/github/git-lfs/ubuntu/ trusty main" > /etc
     apt-get install -y git-lfs && \
     git lfs install
 
-# install hub hub
+# install hub
 # https://hub.github.com/
 # http://stackoverflow.com/a/27869453
 RUN mkdir /tmp/hub-linux-amd64 && \
