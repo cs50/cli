@@ -1,5 +1,8 @@
 FROM ubuntu:14.04
 
+# ports
+EXPOSE 8080 8081 8082
+
 # environment
 RUN locale-gen "en_US.UTF-8" && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
 ENV LANG "en_US.UTF-8"
