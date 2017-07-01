@@ -9,7 +9,6 @@ ENV LANG "en_US.UTF-8"
 ENV LC_ALL "en_US.UTF-8"
 ENV LC_CTYPE "en_US.UTF-8"
 ENV PATH /opt/cs50/bin:/usr/sbin:/usr/bin:/sbin:/bin
-ENV PYTHONDONTWRITEBYTECODE 1
 ENV TERM xterm
 
 # packages
