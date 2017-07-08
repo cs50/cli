@@ -83,7 +83,7 @@ RUN npm install -g coffee-script
 # https://github.com/rbenv/ruby-build/blob/master/README.md
 ENV RBENV_ROOT /opt/rbenv
 RUN apt-get update && \
-    apt-get install -y libreadline-dev && \
+    apt-get install -y libreadline-dev zlib1g-dev && \
     wget -P /tmp https://github.com/rbenv/rbenv/archive/master.zip && \
     unzip -d /tmp /tmp/master.zip && \
     rm -f /tmp/master.zip && \
