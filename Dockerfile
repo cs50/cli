@@ -51,8 +51,6 @@ RUN apt-get update && \
         python-dev \
         python-pip \
         rpm \
-        ruby \
-        ruby-dev \
         software-properties-common \
         sqlite3 \
         telnet \
@@ -83,7 +81,7 @@ RUN npm install -g coffee-script
 # https://github.com/rbenv/ruby-build/blob/master/README.md
 ENV RBENV_ROOT /opt/rbenv
 RUN apt-get update && \
-    apt-get install -y libreadline-dev && \
+    apt-get install -y libreadline-dev zlib1g-dev && \
     wget -P /tmp https://github.com/rbenv/rbenv/archive/master.zip && \
     unzip -d /tmp /tmp/master.zip && \
     rm -f /tmp/master.zip && \
@@ -142,8 +140,8 @@ RUN apt-get update && \
     /opt/pyenv/bin/pyenv global 3.6.0
 ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 
-# install CS50 Library
-RUN pip install cs50
+# install CS50-specific packages
+RUN pip install cs50 render50 submit50
 
 # install git-lfs
 # https://packagecloud.io/github/git-lfs/install#manual
