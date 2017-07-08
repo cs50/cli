@@ -51,8 +51,6 @@ RUN apt-get update && \
         python-dev \
         python-pip \
         rpm \
-        ruby \
-        ruby-dev \
         software-properties-common \
         sqlite3 \
         telnet \
