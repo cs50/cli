@@ -26,6 +26,7 @@ RUN apt-get update && \
         bsdtar \
         build-essential \
         clang-3.8 \
+        cmake \
         curl \
         dnsutils \
         dos2unix \
