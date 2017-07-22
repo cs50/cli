@@ -32,7 +32,7 @@ RUN apt-get update && \
         dos2unix \
         exiftool \
         gdb \
-        gettext-base \
+        gettext \
         git \
         ImageMagick \
         info \
