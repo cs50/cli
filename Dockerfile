@@ -142,7 +142,24 @@ RUN apt-get update && \
 ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 
 # install CS50-specific packages
-RUN pip install cs50 render50 submit50
+RUN pip install cs50 render50
+
+# install submit50
+RUN git clone -b check50 https://github.com/cs50/submit50.git && \
+    pip3 install ./submit50/
+
+# install check50
+RUN git clone -b develop https://github.com/cs50/check50.git && \
+    pip3 install ./check50/
+
+# check50 wrapper
+COPY ./check50-wrapper /usr/local/bin/ 
+RUN chmod a+x /usr/local/bin/check50-wrapper
+
+# install libcs50
+RUN sudo add-apt-repository ppa:cs50/ppa && \
+    sudo apt-get update && \
+    sudo apt-get install -y libcs50
 
 # install git-lfs
 # https://packagecloud.io/github/git-lfs/install#manual

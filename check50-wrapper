@@ -1,0 +1,4 @@
+git clone -b $CHECK50_BRANCH https://$CHECK50_TOKEN:x-oauth-basic@github.com/$CHECK50_OWNER/$CHECK50_REPO.git
+cd $CHECK50_REPO
+git checkout $CHECK50_SHA
+curl -H "Content-Type: application/json" -d "{\"id\": \"$CHECK50_ID\", \"owner\": \"$CHECK50_OWNER\", \"repo\": \"$CHECK50_REPO\", \"branch\": \"$CHECK50_BRANCH\", \"sha\": \"$CHECK50_SHA\", \"checks\": $(check50 --local --debug $CHECK50_BRANCH)}" --trace-ascii /dev/stdout https://develop.cs50.me/hooks/ecs
