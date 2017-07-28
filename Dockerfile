@@ -141,7 +141,11 @@ RUN apt-get update && \
     /opt/pyenv/bin/pyenv global 3.6.0
 ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 
-# install CS50-specific packages
+# install CS50 PPA and CS50-specific packages
+RUN add-apt-repository -y ppa:cs50/ppa && \
+    apt-get update && \
+    apt-get install -y libcs50 libcs50-java php-cs50
+
 RUN pip install cs50 help50 render50 submit50
 
 # install git-lfs
