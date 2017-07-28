@@ -142,7 +142,7 @@ RUN apt-get update && \
 ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 
 # install CS50-specific packages
-RUN pip install cs50 render50 submit50
+RUN pip install cs50 help50 render50 submit50
 
 # install git-lfs
 # https://packagecloud.io/github/git-lfs/install#manual
