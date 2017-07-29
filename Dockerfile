@@ -197,6 +197,10 @@ COPY ./etc/vim/vimrc.local /etc/vim/
 # prepend /usr/local/{bin,sbin} to PATH
 ENV PATH /usr/local/sbin:/usr/local/bin:"$PATH"
 
+# configure git
+RUN git config --global user.name bot50 && \
+    git config --global user.email bot@cs50.harvard.edu
+
 # run shell in /root
 WORKDIR /root
 CMD ["bash", "-l"]
