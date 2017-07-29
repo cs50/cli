@@ -1,4 +1,18 @@
+# clone repo
 git clone -b $CHECK50_BRANCH https://$CHECK50_TOKEN:x-oauth-basic@github.com/$CHECK50_OWNER/$CHECK50_REPO.git
+
+# checkout commit to be tested
 cd $CHECK50_REPO
 git checkout $CHECK50_SHA
-curl -H "Content-Type: application/json" -d "{\"id\": \"$CHECK50_ID\", \"owner\": \"$CHECK50_OWNER\", \"repo\": \"$CHECK50_REPO\", \"branch\": \"$CHECK50_BRANCH\", \"sha\": \"$CHECK50_SHA\", \"checks\": $(check50 --local --debug $CHECK50_BRANCH)}" --trace-ascii /dev/stdout https://develop.cs50.me/hooks/ecs
+
+# form tag name
+tag="$CHECK50_BRANCH@$(date '+%Y%m%dT%H%M%SZ')"
+
+# squash commits
+hash=$(git commit-tree HEAD^{tree} -m "$tag")
+
+# push tag
+git push origin $hash:refs/tags/$tag
+
+# send notification
+curl -H "Content-Type: application/json" -d "{\"id\": \"$CHECK50_ID\", \"owner\": \"$CHECK50_OWNER\", \"repo\": \"$CHECK50_REPO\", \"branch\": \"$CHECK50_BRANCH\", \"sha\": \"$CHECK50_SHA\", \"checks\": $(check50 --local --debug $CHECK50_BRANCH), \"tag\": \"$hash\"}" --trace-ascii /dev/stdout https://develop.cs50.me/hooks/ecs
