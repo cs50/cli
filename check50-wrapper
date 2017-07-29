@@ -6,16 +6,13 @@ cd $CHECK50_REPO
 git checkout $CHECK50_SHA
 
 # form tag name
-tag="$CHECK50_BRANCH@$(date '+%Y%m%dT%H%M%SZ')"
+tag_name="$CHECK50_BRANCH@$(date '+%Y%m%dT%H%M%SZ')"
 
 # squash commits
-tag_sha=$(git commit-tree HEAD^{tree} -m "$tag")
+tag_sha=$(git commit-tree HEAD^{tree} -m "$tag_name")
 
 # push tag
-git push origin $tag_sha:refs/tags/$tag
-
-# get check50 results
-check50_results=$(check50 --local --debug $CHECK50_BRANCH || echo "[]")
+git push origin $tag_sha:refs/tags/$tag_name
 
 # send notification
-curl -H "Content-Type: application/json" -d "{\"id\": \"$CHECK50_ID\", \"owner\": \"$CHECK50_OWNER\", \"repo\": \"$CHECK50_REPO\", \"branch\": \"$CHECK50_BRANCH\", \"sha\": \"$CHECK50_SHA\", \"checks\": $check50_results, \"tag\": \"$tag_sha\"}" --trace-ascii /dev/stdout https://develop.cs50.me/hooks/ecs
+curl -H "Content-Type: application/json" -d "{\"id\": \"$CHECK50_ID\", \"owner\": \"$CHECK50_OWNER\", \"repo\": \"$CHECK50_REPO\", \"branch\": \"$CHECK50_BRANCH\", \"sha\": \"$CHECK50_SHA\", \"checks\": $(check50 --local --debug $CHECK50_BRANCH || echo []), \"tag_sha\": \"$tag_sha\", \"tag_name\": \"$tag_name\"}" --trace-ascii /dev/stdout https://develop.cs50.me/hooks/ecs
