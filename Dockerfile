@@ -55,6 +55,7 @@ RUN apt-get update && \
         software-properties-common \
         sqlite3 \
         telnet \
+        tree \
         unzip \
         valgrind \
         vim \
