@@ -16,7 +16,7 @@ git push origin $tag_sha:refs/tags/$tag_name
 
 # get check50 results
 check50_results=$(check50 --local --debug $CHECK50_BRANCH)
-if $? -ne 0; then
+if [ $? -ne 0 ]; then
     check50_results=[]
 fi
 
