@@ -145,12 +145,15 @@ ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 RUN pip install cs50 render50
 
 # install submit50
-RUN git clone -b check50 https://github.com/cs50/submit50.git && \
+RUN git clone -b develop https://github.com/cs50/submit50.git && \
     pip3 install ./submit50/
 
 # install check50
 RUN git clone -b develop https://github.com/cs50/check50.git && \
     pip3 install ./check50/
+
+# clone checks
+RUN git clone https://github.com/cs50/checks.git ~/.local/share/check50/cs50/checks
 
 # check50 wrapper
 COPY ./check50-wrapper /usr/local/bin/ 
