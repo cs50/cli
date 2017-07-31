@@ -1,0 +1,10 @@
+sudo: required
+services: docker
+script: docker build . -t cs50/cli
+before_deploy: docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
+deploy:
+  provider: script
+  script: docker push cs50/cli
+notifications:
+  slack:
+    secure: TdG2YcICS9VU6oUmWHNm69l1ZzXi3fcL+9iGlWBjtSZW0UKu3KB4lpV4coVJntegJvt/WgeNUS7iU6KtuEoWATGD3ts6kwI3tNkZaDlpn9Ad6tRWFem3aNz0fVl33It6ZcuDmcXKIvcSiywVUKEDEvIvoByih4kovSDWNAwUbn24DeodI/UyKmigguFv23wYFHRj5VbbRqiE4hR0OrPuRCKYm6Yl53mM7apB9ZuydYjI3ANPPNOr8YBX5JF8Cwp5e8Kq2yHNZ6G1PeB3R/umpgQB6GJ60Vx7tNBg8Ce8YFT5t6w4EFqgqObSw/UeO5Z9q+UhCV4PPuVuqme49ULMNFkLxUy6QBzvj87Xh5s7P4seVC6q29uGnAvhq1AF13CQdUHyWXjzH3PNH5gpmpj0JBFH6R4azHAvwNDj/5tDI4CyzS9iVMoBLHdVqHCev1CqNwfv0hc+IdCrw2iJdq55Yacb5cB/ONN3c9MtbhvRIVa0om7VZqf70mHXLyfhXuHzB+3OKS5CMTI466bv0XzEmrw61nxeCAd9o4iN9TW6+4okfJ657J/Lbil1xNB6up3E0UiUFQt/YLLXRp6Xlo7pUFOmb+3K6CGfKVA/iGZCdBLwkRQJ1dRIUjbZjNProRkjPfuZkl2bkVdy4y0dIHi0wJwxUI4KM/QOF3vFJcia0iY=
