@@ -153,7 +153,7 @@ RUN git clone -b develop https://github.com/cs50/check50.git && \
     pip3 install ./check50/
 
 # clone checks
-RUN git clone https://github.com/cs50/checks.git ~/.local/share/check50/cs50/checks
+RUN git clone -b master https://github.com/cs50/checks.git ~/.local/share/check50/cs50/checks
 
 # check50 wrapper
 COPY ./check50-wrapper /usr/local/bin/ 
