@@ -142,15 +142,7 @@ RUN apt-get update && \
 ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 
 # install CS50-specific packages
-RUN pip install cs50 render50
-
-# install submit50
-RUN git clone -b check50 https://github.com/cs50/submit50.git && \
-    pip3 install ./submit50/
-
-# install check50
-RUN git clone -b develop https://github.com/cs50/check50.git && \
-    pip3 install ./check50/
+RUN pip install cs50 check50 render50 submit50
 
 # check50 wrapper
 COPY ./check50-wrapper /usr/local/bin/ 

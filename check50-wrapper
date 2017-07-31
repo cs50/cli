@@ -21,4 +21,4 @@ if [ $? -ne 0 ]; then
 fi
 
 # send notification
-curl -H "Content-Type: application/json" -d "{\"id\": \"$CHECK50_ID\", \"owner\": \"$CHECK50_OWNER\", \"repo\": \"$CHECK50_REPO\", \"branch\": \"$CHECK50_BRANCH\", \"sha\": \"$CHECK50_SHA\", \"checks\": $check50_results, \"tag_sha\": \"$tag_sha\", \"tag_name\": \"$tag_name\"}" --trace-ascii /dev/stdout https://develop.cs50.me/hooks/ecs
+curl -H "Content-Type: application/json" -d "{\"id\": \"$CHECK50_ID\", \"owner\": \"$CHECK50_OWNER\", \"repo\": \"$CHECK50_REPO\", \"branch\": \"$CHECK50_BRANCH\", \"sha\": \"$CHECK50_SHA\", \"checks\": $check50_results, \"tag_sha\": \"$tag_sha\", \"tag_name\": \"$tag_name\"}" --trace-ascii /dev/stdout https://cs50.me/hooks/ecs
