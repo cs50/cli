@@ -144,6 +144,9 @@ ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 # install CS50-specific packages
 RUN pip install cs50 check50 render50 submit50
 
+# clone checks
+RUN git clone https://github.com/cs50/checks.git ~/.local/share/check50/cs50/checks
+
 # check50 wrapper
 COPY ./check50-wrapper /usr/local/bin/ 
 RUN chmod a+x /usr/local/bin/check50-wrapper
