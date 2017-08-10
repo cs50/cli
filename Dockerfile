@@ -142,7 +142,7 @@ RUN apt-get update && \
 ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 
 # install CS50-specific packages
-RUN pip install cs50 check50 render50 submit50
+RUN pip install cs50 style50 check50 render50 submit50
 
 # clone checks
 RUN git clone -b master https://github.com/cs50/checks.git ~/.local/share/check50/cs50/checks
@@ -155,6 +155,9 @@ RUN chmod a+x /usr/local/bin/check50-wrapper
 RUN sudo add-apt-repository ppa:cs50/ppa && \
     sudo apt-get update && \
     sudo apt-get install -y libcs50
+
+# install astyle (after adding cs50 ppa so we get latest version)
+RUN sudo apt-get install -y astyle
 
 # install git-lfs
 # https://packagecloud.io/github/git-lfs/install#manual
