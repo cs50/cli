@@ -14,6 +14,12 @@ tag_sha=$(git commit-tree HEAD^{tree} -m "$tag_name")
 # push tag
 git push origin $tag_sha:refs/tags/$tag_name
 
+# get style50 results
+style50_results=$(unset CHECK50_TOKEN CHECK50_ID; style50 --output=score .)
+if [ $? -ne 0 ]; then
+    style50_results=0.0
+fi
+
 # get check50 results
 check50_results=$(unset CHECK50_TOKEN CHECK50_ID; check50 --local --debug $CHECK50_BRANCH)
 if [ $? -ne 0 ]; then
@@ -21,4 +27,4 @@ if [ $? -ne 0 ]; then
 fi
 
 # send notification
-curl -H "Content-Type: application/json" -d "{\"id\": \"$CHECK50_ID\", \"owner\": \"$CHECK50_OWNER\", \"repo\": \"$CHECK50_REPO\", \"branch\": \"$CHECK50_BRANCH\", \"sha\": \"$CHECK50_SHA\", \"checks\": $check50_results, \"tag_sha\": \"$tag_sha\", \"tag_name\": \"$tag_name\"}" --trace-ascii /dev/stdout https://cs50.me/hooks/ecs
+curl -H "Content-Type: application/json" -d "{\"id\": \"$CHECK50_ID\", \"owner\": \"$CHECK50_OWNER\", \"repo\": \"$CHECK50_REPO\", \"branch\": \"$CHECK50_BRANCH\", \"sha\": \"$CHECK50_SHA\", \"style\": $style50_results, \"checks\": $check50_results, \"tag_sha\": \"$tag_sha\", \"tag_name\": \"$tag_name\"}" --trace-ascii /dev/stdout https://cs50.me/hooks/ecs
