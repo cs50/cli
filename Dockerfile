@@ -145,7 +145,7 @@ ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 # install CS50 PPA and CS50-specific packages
 RUN add-apt-repository -y ppa:cs50/ppa && \
     apt-get update && \
-    apt-get install -y libcs50 libcs50-java php-cs50
+    apt-get install -y astyle libcs50 libcs50-java php-cs50
 RUN pip install cs50 check50 help50 render50 style50 submit50
 
 # install AWS CLI
