@@ -187,6 +187,10 @@ COPY ./etc/vim/vimrc.local /etc/vim/
 # prepend /usr/local/{bin,sbin} to PATH
 ENV PATH /usr/local/sbin:/usr/local/bin:"$PATH"
 
+# use CS50's compilation preferences
+ENV CC clang
+ENV CFLAGS "-fsanitize=integer -fsanitize=undefined -ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wno-sign-compare -Wshadow"
+
 # run shell in /root
 WORKDIR /root
 CMD ["bash", "-l"]
