@@ -1,24 +1,19 @@
 FROM ubuntu:14.04
 
-# ports
+# expose ports
 EXPOSE 8080 8081 8082
 
-# environment
-RUN locale-gen "en_US.UTF-8" && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure locales
-ENV LANG "en_US.UTF-8"
-ENV LC_ALL "en_US.UTF-8"
-ENV LC_CTYPE "en_US.UTF-8"
-ENV PATH /opt/cs50/bin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/sbin:/bin
-ENV PYTHONDONTWRITEBYTECODE 1
-ENV TERM xterm
+# configure locale
+RUN export DEBIAN_FRONTEND=noninteractive && locale-gen "en_US.UTF-8" && dpkg-reconfigure locales
 
-# packages
-RUN apt-get update && \
+# install packages
+RUN export DEBIAN_FRONTEND=noninteractive LANG=en_US.UTF-8 && \
+    apt-get update && \
     apt-get install -y software-properties-common && \
     add-apt-repository -y ppa:ondrej/php && \
     add-apt-repository -y ppa:git-core/ppa && \
     apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+    apt-get install -y \
         apt-file \
         apt-transport-https \
         bash-completion \
@@ -81,8 +76,8 @@ RUN npm install -g coffee-script
 # install Ruby 2.4
 # https://github.com/rbenv/rbenv/blob/master/README.md#installation
 # https://github.com/rbenv/ruby-build/blob/master/README.md
-ENV RBENV_ROOT /opt/rbenv
-RUN apt-get update && \
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && \
     apt-get install -y libreadline-dev zlib1g-dev && \
     wget -P /tmp https://github.com/rbenv/rbenv/archive/master.zip && \
     unzip -d /tmp /tmp/master.zip && \
@@ -94,31 +89,24 @@ RUN apt-get update && \
     rm -f /tmp/master.zip && \
     mkdir /opt/rbenv/plugins && \
     mv /tmp/ruby-build-master /opt/rbenv/plugins/ruby-build && \
-    /opt/rbenv/bin/rbenv install 2.4.0 && \
-    /opt/rbenv/bin/rbenv rehash && \
-    /opt/rbenv/bin/rbenv global 2.4.0
-ENV PATH "$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH"
-
-# install fpm, asciidoctor
-# https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
-# https://github.com/asciidoctor/jekyll-asciidoc#development
-#RUN apt-add-repository -y ppa:brightbox/ruby-ng && \
-#    apt-get update && \
-#    DEBIAN_FRONTEND=noninteractive apt-get install -y ruby2.4 ruby2.4-dev
-RUN gem install \
-    asciidoctor \
-    bundler \
-    fpm \
-    jekyll-redirect-from \
-    pygments.rb \
-    specific_install && \
-    gem specific_install https://github.com/asciidoctor/jekyll-asciidoc.git
+    RBENV_ROOT=/opt/rbenv /opt/rbenv/bin/rbenv install 2.4.0 && \
+    RBENV_ROOT=/opt/rbenv /opt/rbenv/bin/rbenv rehash && \
+    RBENV_ROOT=/opt/rbenv /opt/rbenv/bin/rbenv global 2.4.0 && \
+    RBENV_ROOT=/opt/rbenv /opt/rbenv/shims/gem install \
+        asciidoctor \
+        bundler \
+        fpm \
+        jekyll-redirect-from \
+        pygments.rb \
+        specific_install && \
+    /opt/rbenv/shims/gem specific_install https://github.com/asciidoctor/jekyll-asciidoc.git
 
 # install Python 3.6
 # https://github.com/yyuu/pyenv/blob/master/README.md#installation
 # https://github.com/yyuu/pyenv/wiki/Common-build-problems
-RUN apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    apt-get update && \
+    apt-get install -y \
         build-essential \
         curl \
         libbz2-dev \
@@ -149,7 +137,8 @@ RUN pip install cs50 help50 render50 submit50
 
 # install git-lfs
 # https://packagecloud.io/github/git-lfs/install#manual
-RUN echo "deb https://packagecloud.io/github/git-lfs/ubuntu/ trusty main" > /etc/apt/sources.list.d/github_git-lfs.list && \
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    echo "deb https://packagecloud.io/github/git-lfs/ubuntu/ trusty main" > /etc/apt/sources.list.d/github_git-lfs.list && \
     echo "deb-src https://packagecloud.io/github/git-lfs/ubuntu/ trusty main" >> /etc/apt/sources.list.d/github_git-lfs.list && \
     curl -L https://packagecloud.io/github/git-lfs/gpgkey | sudo apt-key add - && \
     apt-get update && \
@@ -176,6 +165,7 @@ COPY ./etc/vim/vimrc.local /etc/vim/
 RUN useradd --create-home --groups sudo --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
     chown -R ubuntu:ubuntu /home/ubuntu && \
     sed -i 's/^%sudo\s.*/%sudo ALL=NOPASSWD:ALL/' /etc/sudoers
+RUN echo 'alias cd="HOME=~/workspace cd"' >> /home/ubuntu/.bash_aliases
 USER ubuntu
 WORKDIR /home/ubuntu/workspace
 CMD ["bash", "-l"]

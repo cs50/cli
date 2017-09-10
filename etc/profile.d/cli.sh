@@ -5,8 +5,8 @@ export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
 export NODE_ENV="dev"
-export PATH=/opt/cs50/bin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/sbin:/bin
-export PROMPT_COMMAND='__git_ps1 "\w/" " \\\$ "'
+export PATH=/opt/cs50/bin:"$PATH"
+#export PROMPT_COMMAND='__git_ps1 "\w/" " \\\$ "'
 export PYTHONDONTWRITEBYTECODE=1
 export TERM=xterm
 
@@ -18,7 +18,10 @@ export EDITOR="nano"
 
 # python3
 export PYENV_ROOT=/opt/pyenv
-export PATH="$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
+export PATH="$PYENV_ROOT"/bin:"$PATH"
+if command -v pyenv 1>/dev/null 2>&1; then
+    eval "$(pyenv init -)"
+fi
 alias pip="pip3"
 alias pylint="pylint3"
 alias python="python3"
