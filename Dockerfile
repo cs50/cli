@@ -137,7 +137,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     add-apt-repository -y ppa:cs50/ppa && \
     apt-get update && \
     apt-get install -y libcs50 libcs50-java php-cs50
-RUN pip install cs50 help50 render50 submit50
+RUN export PYENV_ROOT=/opt/pyenv && \
+    export PATH="$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH" && \
+    pip install check50 cs50 help50 render50 style50 submit50
 
 # install git-lfs
 # https://packagecloud.io/github/git-lfs/install#manual
