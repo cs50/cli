@@ -1,5 +1,8 @@
 FROM ubuntu:14.04
 
+# environment
+ENV PATH /usr/local/sbin:/usr/local/bin:"$PATH"
+
 # expose ports
 EXPOSE 8080 8081 8082
 
@@ -68,7 +71,7 @@ RUN export DEBIAN_FRONTEND=noninteractive LANG=en_US.UTF-8 && \
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 
 # install Node.js 7.6.0
-RUN npm install -g n && PATH=/usr/local/bin:"$PATH" n 7.6.0
+RUN npm install -g n && n 7.6.0
 
 # install CoffeeScript
 RUN npm install -g coffee-script
