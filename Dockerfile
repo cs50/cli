@@ -3,7 +3,7 @@ FROM ubuntu:14.04
 # expose ports
 EXPOSE 8080 8081 8082
 
-# configure locale
+# configure environment
 RUN export DEBIAN_FRONTEND=noninteractive && locale-gen "en_US.UTF-8" && dpkg-reconfigure locales
 
 # install packages
@@ -88,18 +88,20 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     unzip -d /tmp /tmp/master.zip && \
     rm -f /tmp/master.zip && \
     mkdir /opt/rbenv/plugins && \
-    mv /tmp/ruby-build-master /opt/rbenv/plugins/ruby-build && \
-    RBENV_ROOT=/opt/rbenv /opt/rbenv/bin/rbenv install 2.4.0 && \
-    RBENV_ROOT=/opt/rbenv /opt/rbenv/bin/rbenv rehash && \
-    RBENV_ROOT=/opt/rbenv /opt/rbenv/bin/rbenv global 2.4.0 && \
-    RBENV_ROOT=/opt/rbenv /opt/rbenv/shims/gem install \
+    mv /tmp/ruby-build-master /opt/rbenv/plugins/ruby-build
+RUN export RBENV_ROOT=/opt/rbenv && \
+    export PATH="$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH" && \
+    rbenv install 2.4.0 && \
+    rbenv rehash && \
+    rbenv global 2.4.0 && \
+    gem install \
         asciidoctor \
         bundler \
         fpm \
         jekyll-redirect-from \
         pygments.rb \
         specific_install && \
-    /opt/rbenv/shims/gem specific_install https://github.com/asciidoctor/jekyll-asciidoc.git
+    gem specific_install https://github.com/asciidoctor/jekyll-asciidoc.git
 
 # install Python 3.6
 # https://github.com/yyuu/pyenv/blob/master/README.md#installation
@@ -123,16 +125,18 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     unzip -d /tmp /tmp/master.zip && \
     rm -f /tmp/master.zip && \
     mv /tmp/pyenv-master /opt/pyenv && \
-    chmod a+x /opt/pyenv/bin/pyenv && \ 
-    PYENV_ROOT=/opt/pyenv /opt/pyenv/bin/pyenv install 3.6.0 && \
-    PYENV_ROOT=/opt/pyenv /opt/pyenv/bin/pyenv rehash && \
-    PYENV_ROOT=/opt/pyenv /opt/pyenv/bin/pyenv global 3.6.0
+    chmod a+x /opt/pyenv/bin/pyenv
+RUN export PYENV_ROOT=/opt/pyenv && \
+    export PATH="$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH" && \
+    pyenv install 3.6.0 && \
+    pyenv rehash && \
+    pyenv global 3.6.0
 
 # install CS50 PPA and CS50-specific packages
-RUN add-apt-repository -y ppa:cs50/ppa && \
+RUN export DEBIAN_FRONTEND=noninteractive && \
+    add-apt-repository -y ppa:cs50/ppa && \
     apt-get update && \
     apt-get install -y libcs50 libcs50-java php-cs50
-
 RUN pip install cs50 help50 render50 submit50
 
 # install git-lfs

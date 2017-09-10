@@ -1,39 +1,19 @@
-# environment
+# configure environment
 export APPLICATION_ENV="dev"
-export CLASSPATH=".:/usr/share/java/cs50.jar"
+export NODE_ENV="dev"
 export LANG="en_US.UTF-8"
 export LC_ALL="en_US.UTF-8"
 export LC_CTYPE="en_US.UTF-8"
-export NODE_ENV="dev"
-export PATH=/opt/cs50/bin:"$PATH"
-#export PROMPT_COMMAND='__git_ps1 "\w/" " \\\$ "'
-export PYTHONDONTWRITEBYTECODE=1
+export PATH=/opt/cs50/bin:/usr/sbin:/usr/bin:/sbin:/bin
 export TERM=xterm
 
-# apt-get
-export DEBIAN_FRONTEND=noninteractive
-
-# editor
+# default editor
 export EDITOR="nano"
 
-# python3
-export PYENV_ROOT=/opt/pyenv
-export PATH="$PYENV_ROOT"/bin:"$PATH"
-if command -v pyenv 1>/dev/null 2>&1; then
-    eval "$(pyenv init -)"
-fi
-alias pip="pip3"
-alias pylint="pylint3"
-alias python="python3"
-export PYTHONDONTWRITEBYTECODE="1"
-
-# ruby
+# configure ruby
 export RBENV_ROOT=/opt/rbenv
-export PATH="$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH"
-
-# short-circuit RVM's cd script
-# https://news.ycombinator.com/item?id=1637354
-export rvm_project_rvmrc="0"
+eval "$("$RBENV_ROOT"/bin/rbenv init -)"
+export rvm_project_rvmrc="0" # https://news.ycombinator.com/item?id=1637354
 
 # if not root
 if [ "$(id -u)" != "0" ]; then
@@ -42,6 +22,7 @@ if [ "$(id -u)" != "0" ]; then
     export CC="clang"
     export CFLAGS="-fsanitize=integer -fsanitize=undefined -ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wno-sign-compare -Wshadow"
     export LDLIBS="-lcrypt -lcs50 -lm"
+    export PYTHONDONTWRITEBYTECODE=1
     export VALGRIND_OPTS="--memcheck:leak-check=full --memcheck:track-origins=yes"
 
     # set umask
@@ -57,6 +38,10 @@ if [ "$(id -u)" != "0" ]; then
 
     # unconditionally make all targets
     alias make="make -B"
+
+    # configure python
+    export PYENV_ROOT=/opt/pyenv
+    eval "$("$PYENV_ROOT"/bin/pyenv init -)"
 
     # prettify sqlite3
     alias sqlite3="sqlite3 -column -header"
