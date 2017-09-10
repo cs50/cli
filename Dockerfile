@@ -139,8 +139,11 @@ RUN pyenv install 3.6.0 && \
 RUN export DEBIAN_FRONTEND=noninteractive && \
     add-apt-repository -y ppa:cs50/ppa && \
     apt-get update && \
-    apt-get install -y libcs50 libcs50-java php-cs50
-RUN pip install check50 cs50 help50 render50 style50 submit50
+    apt-get install -y astyle libcs50 libcs50-java php-cs50
+RUN pip install cs50 check50 help50 render50 style50 submit50
+
+# install AWS CLI
+RUN pip install awscli
 
 # install git-lfs
 # https://packagecloud.io/github/git-lfs/install#manual
