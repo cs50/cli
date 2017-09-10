@@ -45,6 +45,10 @@ alias pylint="pylint3"
 alias python="python3"
 export PYTHONDONTWRITEBYTECODE="1"
 
+# ruby
+export RBENV_ROOT=/opt/rbenv
+export PATH="$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH"
+
 # sqlite3
 alias sqlite3="sqlite3 -column -header"
 
