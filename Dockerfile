@@ -8,7 +8,7 @@ RUN locale-gen "en_US.UTF-8" && DEBIAN_FRONTEND=noninteractive dpkg-reconfigure 
 ENV LANG "en_US.UTF-8"
 ENV LC_ALL "en_US.UTF-8"
 ENV LC_CTYPE "en_US.UTF-8"
-ENV PATH /opt/cs50/bin:/usr/sbin:/usr/bin:/sbin:/bin
+ENV PATH /opt/cs50/bin:/usr/sbin:/usr/local/sbin:/usr/local/bin:/usr/bin:/sbin:/bin
 ENV PYTHONDONTWRITEBYTECODE 1
 ENV TERM xterm
 
@@ -170,21 +170,13 @@ RUN mkdir /tmp/hub-linux-amd64 && \
     rm -rf /tmp/hub-linux-amd64
 
 # /etc
-#RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 COPY ./etc/motd /etc/
 COPY ./etc/profile.d/cli.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
 
-# TODO: decide if this breaks child files
-#RUN useradd --create-home --groups sudo --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
-#    chown -R ubuntu:ubuntu /home/ubuntu && \
-#    sed -i 's/^%sudo\s.*/%sudo ALL=NOPASSWD:ALL/' /etc/sudoers
-#ENTRYPOINT ["sudo", "-i", "-u", "ubuntu", "sh", "-c"]
-#CMD ["cd workspace ; bash -l"]
-
-# prepend /usr/local/{bin,sbin} to PATH
-ENV PATH /usr/local/sbin:/usr/local/bin:"$PATH"
-
-# run shell in /root
-WORKDIR /root
+# ubuntu 
+RUN useradd --create-home --groups sudo --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
+    chown -R ubuntu:ubuntu /home/ubuntu && \
+    sed -i 's/^%sudo\s.*/%sudo ALL=NOPASSWD:ALL/' /etc/sudoers
+WORKDIR /home/ubuntu/workspace
 CMD ["bash", "-l"]
