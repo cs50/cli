@@ -164,6 +164,7 @@ RUN mkdir /tmp/hub-linux-amd64 && \
 COPY ./etc/motd /etc/
 COPY ./etc/profile.d/*.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
+RUN echo "\n. /etc/profile.d/prompt.sh" >> /etc/skel/.bashrc
 
 # ubuntu 
 RUN useradd --create-home --groups sudo --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
