@@ -4,4 +4,4 @@
 
 ## Documentation
 
-https://manual.cs50.net/cli.html
+https://manual.cs50.net/cli
