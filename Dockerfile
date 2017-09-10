@@ -158,7 +158,7 @@ RUN mkdir /tmp/hub-linux-amd64 && \
 
 # /etc
 COPY ./etc/motd /etc/
-COPY ./etc/profile.d/cli.sh /etc/profile.d/
+COPY ./etc/profile.d/*.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
 
 # ubuntu 
