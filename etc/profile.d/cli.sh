@@ -38,6 +38,8 @@ fi
 export CLASSPATH=".:/usr/share/java/cs50.jar"
 
 # python3
+export PYENV_ROOT=/opt/pyenv
+export PATH="$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 alias pip="pip3"
 alias pylint="pylint3"
 alias python="python3"

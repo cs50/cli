@@ -117,7 +117,6 @@ RUN gem install \
 # install Python 3.6
 # https://github.com/yyuu/pyenv/blob/master/README.md#installation
 # https://github.com/yyuu/pyenv/wiki/Common-build-problems
-ENV PYENV_ROOT /opt/pyenv
 RUN apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
         build-essential \
@@ -137,10 +136,9 @@ RUN apt-get update && \
     rm -f /tmp/master.zip && \
     mv /tmp/pyenv-master /opt/pyenv && \
     chmod a+x /opt/pyenv/bin/pyenv && \ 
-    /opt/pyenv/bin/pyenv install 3.6.0 && \
-    /opt/pyenv/bin/pyenv rehash && \
-    /opt/pyenv/bin/pyenv global 3.6.0
-ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
+    PYENV_ROOT=/opt/pyenv /opt/pyenv/bin/pyenv install 3.6.0 && \
+    PYENV_ROOT=/opt/pyenv /opt/pyenv/bin/pyenv rehash && \
+    PYENV_ROOT=/opt/pyenv /opt/pyenv/bin/pyenv global 3.6.0
 
 # install CS50 PPA and CS50-specific packages
 RUN add-apt-repository -y ppa:cs50/ppa && \
@@ -178,5 +176,6 @@ COPY ./etc/vim/vimrc.local /etc/vim/
 RUN useradd --create-home --groups sudo --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
     chown -R ubuntu:ubuntu /home/ubuntu && \
     sed -i 's/^%sudo\s.*/%sudo ALL=NOPASSWD:ALL/' /etc/sudoers
+USER ubuntu
 WORKDIR /home/ubuntu/workspace
 CMD ["bash", "-l"]
