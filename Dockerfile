@@ -89,9 +89,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     rm -f /tmp/master.zip && \
     mkdir /opt/rbenv/plugins && \
     mv /tmp/ruby-build-master /opt/rbenv/plugins/ruby-build
-RUN export RBENV_ROOT=/opt/rbenv && \
-    export PATH="$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH" && \
-    rbenv install 2.4.0 && \
+ENV RBENV_ROOT /opt/rbenv
+ENV PATH "$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH"
+RUN rbenv install 2.4.0 && \
     rbenv rehash && \
     rbenv global 2.4.0 && \
     gem install \
@@ -126,9 +126,9 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     rm -f /tmp/master.zip && \
     mv /tmp/pyenv-master /opt/pyenv && \
     chmod a+x /opt/pyenv/bin/pyenv
-RUN export PYENV_ROOT=/opt/pyenv && \
-    export PATH="$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH" && \
-    pyenv install 3.6.0 && \
+ENV PYENV_ROOT /opt/pyenv
+ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
+RUN pyenv install 3.6.0 && \
     pyenv rehash && \
     pyenv global 3.6.0
 
@@ -137,9 +137,7 @@ RUN export DEBIAN_FRONTEND=noninteractive && \
     add-apt-repository -y ppa:cs50/ppa && \
     apt-get update && \
     apt-get install -y libcs50 libcs50-java php-cs50
-RUN export PYENV_ROOT=/opt/pyenv && \
-    export PATH="$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH" && \
-    pip install check50 cs50 help50 render50 style50 submit50
+RUN pip install check50 cs50 help50 render50 style50 submit50
 
 # install git-lfs
 # https://packagecloud.io/github/git-lfs/install#manual
@@ -170,9 +168,10 @@ RUN echo "\n. /etc/profile.d/prompt.sh" >> /etc/skel/.bashrc
 
 # ubuntu 
 RUN useradd --create-home --groups sudo --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
+    mkdir /home/ubuntu/workspace && \
     chown -R ubuntu:ubuntu /home/ubuntu && \
     sed -i 's/^%sudo\s.*/%sudo ALL=NOPASSWD:ALL/' /etc/sudoers
-RUN echo 'alias cd="HOME=~/workspace cd"' >> /home/ubuntu/.bash_aliases
+RUN echo "alias cd=\"HOME=~/workspace cd\"" >> /home/ubuntu/.bash_aliases
 USER ubuntu
 WORKDIR /home/ubuntu/workspace
 CMD ["bash", "-l"]
