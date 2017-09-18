@@ -137,9 +137,10 @@ RUN apt-get update && \
     rm -f /tmp/master.zip && \
     mv /tmp/pyenv-master /opt/pyenv && \
     chmod a+x /opt/pyenv/bin/pyenv && \ 
+    /opt/pyenv/bin/pyenv install 2.7.13 && \
     /opt/pyenv/bin/pyenv install 3.6.0 && \
     /opt/pyenv/bin/pyenv rehash && \
-    /opt/pyenv/bin/pyenv global 3.6.0
+    /opt/pyenv/bin/pyenv global 2.7.13 3.6.0
 ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 
 # install CS50 PPA and CS50-specific packages
