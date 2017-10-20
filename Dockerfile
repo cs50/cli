@@ -141,8 +141,14 @@ RUN apt-get update && \
     /opt/pyenv/bin/pyenv global 3.6.0
 ENV PATH "$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:"$PATH"
 
-# install CS50-specific packages
-RUN pip install cs50 check50 render50 style50 submit50
+# install python packages
+RUN pip install \
+    cs50 \
+    check50 \
+    render50 \
+    style50 \
+    submit50 \
+    nltk && python -m nltk.downloader -d /usr/share/nltk_share/ punkt
 
 # clone checks
 RUN git clone -b master https://github.com/cs50/checks.git ~/.local/share/check50/cs50/checks
