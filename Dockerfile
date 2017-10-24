@@ -120,7 +120,7 @@ COPY ./etc/vim/vimrc.local /etc/vim/
 #ENTRYPOINT ["sudo", "-i", "-u", "ubuntu", "sh", "-c"]
 #CMD ["cd workspace ; bash -l"]
 
-# prepend /usr/local/{bin,sbin} to PATH
+# ensure /usr/local/{bin,sbin} are (still) first in PATH
 ENV PATH /usr/local/sbin:/usr/local/bin:"$PATH"
 
 # run shell in /root
