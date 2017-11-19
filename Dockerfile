@@ -47,8 +47,8 @@ RUN add-apt-repository -y ppa:ondrej/php && \
 # https://www.digitalocean.com/community/tutorials/how-to-install-and-use-composer-on-ubuntu-14-04
 RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
 
-# install Node.js 7.6.0
-RUN npm install -g n && PATH=/usr/local/bin:"$PATH" n 7.6.0
+# install Node.js 8.4.0
+RUN npm install -g n && PATH=/usr/local/bin:"$PATH" n 8.4.0
 
 # install CoffeeScript
 RUN npm install -g coffee-script
