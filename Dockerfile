@@ -1,9 +1,10 @@
 FROM cs50/baseimage:ubuntu
+USER root
 
-# ports
+# Expose ports
 EXPOSE 8080 8081 8082
 
-# packages
+# Install packages
 RUN add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -43,17 +44,14 @@ RUN add-apt-repository -y ppa:ondrej/php && \
         zip && \
     apt-file update
 
-# install Composer
+# Install Composer
 # https://www.digitalocean.com/community/tutorials/how-to-install-and-use-composer-on-ubuntu-14-04
-RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# install Node.js 8.4.0
+# Install Node.js 8.4.0
 RUN npm install -g n && PATH=/usr/local/bin:"$PATH" n 8.4.0
 
-# install CoffeeScript
-RUN npm install -g coffee-script
-
-# install Ruby 2.4
+# Install Ruby 2.4
 # https://github.com/rbenv/rbenv/blob/master/README.md#installation
 # https://github.com/rbenv/ruby-build/blob/master/README.md
 ENV RBENV_ROOT /opt/rbenv
@@ -74,24 +72,19 @@ RUN apt-get update && \
     /opt/rbenv/bin/rbenv global 2.4.0
 ENV PATH "$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH"
 
-# install fpm, asciidoctor
+# Install fpm, asciidoctor
 # https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
 # https://github.com/asciidoctor/jekyll-asciidoc#development
-#RUN apt-add-repository -y ppa:brightbox/ruby-ng && \
-#    apt-get update && \
-#    DEBIAN_FRONTEND=noninteractive apt-get install -y ruby2.4 ruby2.4-dev
 RUN gem install \
     asciidoctor \
     bundler \
     fpm \
-    jekyll-redirect-from \
-    pygments.rb \
-    specific_install && \
-    gem specific_install https://github.com/asciidoctor/jekyll-asciidoc.git
+    jekyll-asciidoc \
+    pygments.rb
 
 # Install CS50 packages
 RUN apt-get update && \
-    apt-get install -y \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
         libcs50-java \
         php-cs50
 
@@ -122,6 +115,6 @@ COPY ./etc/vim/vimrc.local /etc/vim/
 # ensure /usr/local/{bin,sbin} are (still) first in PATH
 ENV PATH /usr/local/sbin:/usr/local/bin:"$PATH"
 
-# run shell in /root
-WORKDIR /root
-CMD ["bash", "-l"]
+# Add user to sudoers 
+RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+USER ubuntu
