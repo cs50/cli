@@ -1,4 +1,4 @@
-FROM cs50/baseimage
+FROM cs50/baseimage:ubuntu
 
 # ports
 EXPOSE 8080 8081 8082
@@ -89,15 +89,20 @@ RUN gem install \
     specific_install && \
     gem specific_install https://github.com/asciidoctor/jekyll-asciidoc.git
 
-# install CS50 PPA and CS50-specific packages
-RUN add-apt-repository -y ppa:cs50/ppa && \
-    apt-get update && \
-    apt-get install -y astyle libcs50 libcs50-java php-cs50
+# Install CS50 packages
+RUN apt-get update && \
+    apt-get install -y \
+        libcs50-java \
+        php-cs50
 
-# install Python packages
-RUN pip install awscli help50 render50
+# Install Python packages
+RUN pip install \
+    awscli \
+    help50 \
+    render50 \
+    submit50
 
-# install hub
+# Install hub
 # https://hub.github.com/
 # http://stackoverflow.com/a/27869453
 RUN mkdir /tmp/hub-linux-amd64 && \
@@ -108,17 +113,11 @@ RUN mkdir /tmp/hub-linux-amd64 && \
     /tmp/hub-linux-amd64/install && \
     rm -rf /tmp/hub-linux-amd64
 
-# /etc
+# Copy files to image
 #RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 COPY ./etc/motd /etc/
+COPY ./etc/profile.d/cli.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
-
-# TODO: decide if this breaks child files
-#RUN useradd --create-home --groups sudo --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
-#    chown -R ubuntu:ubuntu /home/ubuntu && \
-#    sed -i 's/^%sudo\s.*/%sudo ALL=NOPASSWD:ALL/' /etc/sudoers
-#ENTRYPOINT ["sudo", "-i", "-u", "ubuntu", "sh", "-c"]
-#CMD ["cd workspace ; bash -l"]
 
 # ensure /usr/local/{bin,sbin} are (still) first in PATH
 ENV PATH /usr/local/sbin:/usr/local/bin:"$PATH"
