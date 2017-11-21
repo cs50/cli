@@ -70,7 +70,6 @@ RUN apt-get update && \
     /opt/rbenv/bin/rbenv install 2.4.0 && \
     /opt/rbenv/bin/rbenv rehash && \
     /opt/rbenv/bin/rbenv global 2.4.0
-ENV PATH "$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH"
 
 # Install fpm, asciidoctor
 # https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
@@ -114,6 +113,10 @@ COPY ./etc/vim/vimrc.local /etc/vim/
 
 # ensure /usr/local/{bin,sbin} are (still) first in PATH
 ENV PATH /usr/local/sbin:/usr/local/bin:"$PATH"
+
+# Set PATH
+ENV PATH /opt/cs50/bin:/usr/local/sbin:/usr/local/bin:"$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH":"$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:/usr/sbin:/usr/bin:/sbin:/bin
+sed -e "s|^PATH=.*$|PATH='$PATH'|g" -i /etc/environment
 
 # Add user to sudoers 
 RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
