@@ -74,7 +74,7 @@ RUN apt-get update && \
 # Install fpm, asciidoctor
 # https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
 # https://github.com/asciidoctor/jekyll-asciidoc#development
-RUN gem install \
+RUN PATH="$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH" gem install \
     asciidoctor \
     bundler \
     fpm \
@@ -116,8 +116,11 @@ ENV PATH /usr/local/sbin:/usr/local/bin:"$PATH"
 
 # Set PATH
 ENV PATH /opt/cs50/bin:/usr/local/sbin:/usr/local/bin:"$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH":"$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:/usr/sbin:/usr/bin:/sbin:/bin
-sed -e "s|^PATH=.*$|PATH='$PATH'|g" -i /etc/environment
+RUN sed -e "s|^PATH=.*$|PATH='$PATH'|g" -i /etc/environment
 
 # Add user to sudoers 
+RUN echo "\n# CS50 CLI" >> /etc/sudoers
 RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN echo "Defaults umask_override" >> /etc/sudoers
+RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
 USER ubuntu
