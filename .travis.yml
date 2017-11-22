@@ -6,6 +6,10 @@ deploy:
 - provider: script
   script: docker push cs50/cli
 - provider: script
+  script: docker tag cs50/cli cs50/cli:ubuntu && docker push cs50/cli:ubuntu
+  on:
+    branch: ubuntu
+- provider: script
   script: 'curl -s -X POST -H "Content-Type: application/json" -H "Accept: application/json" -H "Travis-API-Version: 3" -H "Authorization: token $TRAVIS_PUBLIC_TOKEN" -d "{ \"request\": { \"branch\": \"ubuntu\" } }" "https://api.travis-ci.org/repo/cs50%2Fserver/requests"'
   on:
     branch: ubuntu
