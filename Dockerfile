@@ -51,26 +51,6 @@ RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local
 # Install Node.js 8.4.0
 RUN npm install -g n && PATH=/usr/local/bin:"$PATH" n 8.4.0
 
-# Install Ruby 2.4
-# https://github.com/rbenv/rbenv/blob/master/README.md#installation
-# https://github.com/rbenv/ruby-build/blob/master/README.md
-ENV RBENV_ROOT /opt/rbenv
-RUN apt-get update && \
-    apt-get install -y libreadline-dev zlib1g-dev && \
-    wget -P /tmp https://github.com/rbenv/rbenv/archive/master.zip && \
-    unzip -d /tmp /tmp/master.zip && \
-    rm -f /tmp/master.zip && \
-    mv /tmp/rbenv-master /opt/rbenv && \
-    chmod a+x /opt/rbenv/bin/rbenv && \
-    wget -P /tmp https://github.com/rbenv/ruby-build/archive/master.zip && \
-    unzip -d /tmp /tmp/master.zip && \
-    rm -f /tmp/master.zip && \
-    mkdir /opt/rbenv/plugins && \
-    mv /tmp/ruby-build-master /opt/rbenv/plugins/ruby-build && \
-    /opt/rbenv/bin/rbenv install 2.4.0 && \
-    /opt/rbenv/bin/rbenv rehash && \
-    /opt/rbenv/bin/rbenv global 2.4.0
-
 # Install fpm, asciidoctor
 # https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
 # https://github.com/asciidoctor/jekyll-asciidoc#development
