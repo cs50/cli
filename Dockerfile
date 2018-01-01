@@ -1,9 +1,10 @@
-FROM cs50/baseimage
+FROM cs50/baseimage:ubuntu
+USER root
 
-# ports
+# Expose ports (just like Cloud9)
 EXPOSE 8080 8081 8082
 
-# packages
+# Install packages
 RUN add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y \
@@ -43,17 +44,14 @@ RUN add-apt-repository -y ppa:ondrej/php && \
         zip && \
     apt-file update
 
-# install Composer
+# Install Composer
 # https://www.digitalocean.com/community/tutorials/how-to-install-and-use-composer-on-ubuntu-14-04
-RUN curl -sS https://getcomposer.org/installer | sudo php -- --install-dir=/usr/local/bin --filename=composer
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# install Node.js 7.6.0
-RUN npm install -g n && PATH=/usr/local/bin:"$PATH" n 7.6.0
+# Install Node.js 8.4.0
+RUN npm install -g n && PATH=/usr/local/bin:"$PATH" n 8.4.0
 
-# install CoffeeScript
-RUN npm install -g coffee-script
-
-# install Ruby 2.4
+# Install Ruby 2.4
 # https://github.com/rbenv/rbenv/blob/master/README.md#installation
 # https://github.com/rbenv/ruby-build/blob/master/README.md
 ENV RBENV_ROOT /opt/rbenv
@@ -72,32 +70,31 @@ RUN apt-get update && \
     /opt/rbenv/bin/rbenv install 2.4.0 && \
     /opt/rbenv/bin/rbenv rehash && \
     /opt/rbenv/bin/rbenv global 2.4.0
-ENV PATH "$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH"
 
-# install fpm, asciidoctor
+# Install fpm, asciidoctor
 # https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
 # https://github.com/asciidoctor/jekyll-asciidoc#development
-#RUN apt-add-repository -y ppa:brightbox/ruby-ng && \
-#    apt-get update && \
-#    DEBIAN_FRONTEND=noninteractive apt-get install -y ruby2.4 ruby2.4-dev
-RUN gem install \
+RUN PATH="$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PATH" gem install \
     asciidoctor \
     bundler \
     fpm \
-    jekyll-redirect-from \
-    pygments.rb \
-    specific_install && \
-    gem specific_install https://github.com/asciidoctor/jekyll-asciidoc.git
+    jekyll-asciidoc \
+    pygments.rb
 
-# install CS50 PPA and CS50-specific packages
-RUN add-apt-repository -y ppa:cs50/ppa && \
-    apt-get update && \
-    apt-get install -y astyle libcs50 libcs50-java php-cs50
+# Install CS50 packages
+RUN apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y \
+        libcs50-java \
+        php-cs50
 
-# install Python packages
-RUN pip install awscli help50 render50
+# Install Python packages
+RUN pip install \
+    awscli \
+    help50 \
+    render50 \
+    submit50
 
-# install hub
+# Install hub
 # https://hub.github.com/
 # http://stackoverflow.com/a/27869453
 RUN mkdir /tmp/hub-linux-amd64 && \
@@ -108,21 +105,19 @@ RUN mkdir /tmp/hub-linux-amd64 && \
     /tmp/hub-linux-amd64/install && \
     rm -rf /tmp/hub-linux-amd64
 
-# /etc
+# Copy files to image
 #RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 COPY ./etc/motd /etc/
+COPY ./etc/profile.d/cli.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
 
-# TODO: decide if this breaks child files
-#RUN useradd --create-home --groups sudo --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
-#    chown -R ubuntu:ubuntu /home/ubuntu && \
-#    sed -i 's/^%sudo\s.*/%sudo ALL=NOPASSWD:ALL/' /etc/sudoers
-#ENTRYPOINT ["sudo", "-i", "-u", "ubuntu", "sh", "-c"]
-#CMD ["cd workspace ; bash -l"]
+# Set PATH
+ENV PATH /opt/cs50/bin:/usr/local/sbin:/usr/local/bin:"$RBENV_ROOT"/shims:"$RBENV_ROOT"/bin:"$PYENV_ROOT"/shims:"$PYENV_ROOT"/bin:/usr/sbin:/usr/bin:/sbin:/bin
+RUN sed -e "s|^PATH=.*$|PATH='$PATH'|g" -i /etc/environment
 
-# ensure /usr/local/{bin,sbin} are (still) first in PATH
-ENV PATH /usr/local/sbin:/usr/local/bin:"$PATH"
-
-# run shell in /root
-WORKDIR /root
-CMD ["bash", "-l"]
+# Add user to sudoers 
+RUN echo "\n# CS50 CLI" >> /etc/sudoers
+RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
+RUN echo "Defaults umask_override" >> /etc/sudoers
+RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
+USER ubuntu
