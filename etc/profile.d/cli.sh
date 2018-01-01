@@ -31,8 +31,17 @@ if [ "$PS1" ]; then
         ;;
     esac
 
+    # Override HOME for cd if ~/workspace exists
+    cd()
+    {
+        if [ -d "$HOME"/workspace ]; then
+            HOME=~/workspace command cd "$@"
+        else
+            command cd "$@"
+        fi
+    }
+
     # Aliases
-    alias cd="HOME=~/workspace cd"
     alias cp="cp -i"
     alias ll="ls -l --color=auto"
     alias mv="mv -i"
