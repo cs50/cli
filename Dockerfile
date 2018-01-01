@@ -1,7 +1,7 @@
 FROM cs50/baseimage:ubuntu
 USER root
 
-# Expose ports
+# Expose ports (just like Cloud9)
 EXPOSE 8080 8081 8082
 
 # Install packages
