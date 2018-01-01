@@ -1,4 +1,4 @@
-FROM cs50/baseimage:ubuntu
+FROM cs50/baseimage
 USER root
 
 # Expose ports (just like Cloud9)
