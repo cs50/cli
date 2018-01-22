@@ -29,10 +29,11 @@ RUN add-apt-repository -y ppa:ondrej/php && \
         npm \
         perl \
         libpcre3 `# https://github.com/oerdnj/deb.sury.org/issues/683#issuecomment-325576448 ` \
-        php7.2-cli \
-        php7.2-curl \
-        php7.2-gmp \
-        php7.2-intl \
+        php7.1-cli \
+        php7.1-curl \
+        php7.1-gmp \
+        php7.1-intl \
+        php7.1-mcrypt \
         python \
         python-dev \
         python-pip \
