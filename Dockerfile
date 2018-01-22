@@ -28,11 +28,12 @@ RUN add-apt-repository -y ppa:ondrej/php && \
         openjdk-7-jre-headless \
         npm \
         perl \
-        php-cli \
-        php-curl \
-        php-gmp \
-        php-intl \
-        php-mcrypt \
+        libpcre3 `# https://github.com/oerdnj/deb.sury.org/issues/683#issuecomment-325576448 ` \
+        php7.1-cli \
+        php7.1-curl \
+        php7.1-gmp \
+        php7.1-intl \
+        php7.1-mcrypt \
         python \
         python-dev \
         python-pip \
