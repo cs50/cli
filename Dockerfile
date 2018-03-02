@@ -38,6 +38,7 @@ RUN add-apt-repository -y ppa:ondrej/php && \
         python-dev \
         python-pip \
         rpm \
+        s3cmd \
         telnet \
         tree \
         unzip \
