@@ -50,8 +50,8 @@ RUN add-apt-repository -y ppa:ondrej/php && \
 # https://www.digitalocean.com/community/tutorials/how-to-install-and-use-composer-on-ubuntu-14-04
 RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install Node.js 8.10.0
-RUN npm install -g n && PATH=/usr/local/bin:"$PATH" n 8.10.0
+# Install Node.js 9.8.0
+RUN npm install -g n && PATH=/usr/local/bin:"$PATH" n 9.8.0
 
 # Install Node.js packages
 RUN npm install -g http-server
