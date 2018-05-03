@@ -3,7 +3,7 @@ services: docker
 script: docker build . -t cs50/cli
 before_deploy: docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 deploy:
-provider: script
+  provider: script
   script: docker push cs50/cli
 notifications:
   slack:
