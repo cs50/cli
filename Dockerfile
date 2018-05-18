@@ -94,8 +94,8 @@ RUN apt-get update && \
 
 # Install Python packages
 RUN pip install \
-    awscli \
     awsebcli \
+    awscli `# must come after awsebcli to ensure supported version` \
     help50 \
     render50 \
     submit50
