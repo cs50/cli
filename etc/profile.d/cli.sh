@@ -54,4 +54,7 @@ if [ "$PS1" ]; then
     # Editor
     export EDITOR=nano
 
+    # Flask
+    export FLASK_APP=application.py
+
 fi
