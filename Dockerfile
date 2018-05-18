@@ -34,9 +34,6 @@ RUN add-apt-repository -y ppa:ondrej/php && \
         php7.1-gmp \
         php7.1-intl \
         php7.1-mcrypt \
-        python \
-        python-dev \
-        python-pip \
         rpm \
         s3cmd \
         telnet \
@@ -65,16 +62,16 @@ RUN apt-get update && \
     wget -P /tmp https://github.com/rbenv/rbenv/archive/master.zip && \
     unzip -d /tmp /tmp/master.zip && \
     rm -f /tmp/master.zip && \
-    mv /tmp/rbenv-master /opt/rbenv && \
-    chmod a+x /opt/rbenv/bin/rbenv && \
+    mv /tmp/rbenv-master "$RBENV_ROOT" && \
+    chmod a+x "$RBENV_ROOT"/bin/rbenv && \
     wget -P /tmp https://github.com/rbenv/ruby-build/archive/master.zip && \
     unzip -d /tmp /tmp/master.zip && \
     rm -f /tmp/master.zip && \
-    mkdir /opt/rbenv/plugins && \
-    mv /tmp/ruby-build-master /opt/rbenv/plugins/ruby-build && \
-    /opt/rbenv/bin/rbenv install 2.4.0 && \
-    /opt/rbenv/bin/rbenv rehash && \
-    /opt/rbenv/bin/rbenv global 2.4.0
+    mkdir "$RBENV_ROOT"/plugins && \
+    mv /tmp/ruby-build-master "$RBENV_ROOT"/plugins/ruby-build && \
+    "$RBENV_ROOT"/bin/rbenv install 2.4.0 && \
+    "$RBENV_ROOT"/bin/rbenv rehash && \
+    "$RBENV_ROOT"/bin/rbenv global 2.4.0
 
 # Install fpm, asciidoctor
 # https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
