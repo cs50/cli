@@ -1,10 +1,10 @@
 default: run
 
 build:
-	docker build -t cs50/cli .
+	docker build -t cs50/cli:bionic .
 
 rebuild:
-	docker build --no-cache -t cs50/cli .
+	docker build --no-cache -t cs50/cli:bionic .
 
 run:
-	docker run --interactive --publish-all --rm --tty --volume "$(PWD)":/home/ubuntu/workspace cs50/cli
+	docker run -it -P --rm -v "$(PWD)":/home/ubuntu/workspace cs50/cli:bionic
