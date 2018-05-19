@@ -8,39 +8,34 @@ EXPOSE 8080 8081 8082
 # Install packages
 RUN apt-get update && \
     apt-get install -y \
+        apt-file \
+        bash-completion \
         bc \
+        bsdtar \
+        cmake \
         dos2unix \
         dnsutils `# for nslookup` \
+        exiftool \
+        gettext \
         golang-go \
+        imagemagick \
+        info \
         man \
         nano \
         mysql-client \
+        openjdk-11-jdk-headless \
+        openjdk-11-jre-headless \
         npm \
         php \
+        rpm \
         ruby \
         ruby-dev `# Avoid "can't find header files for ruby" for gem` \
         s3cmd \
         sudo \
         telnet \
         tree \
-        vim
-
-# TODO: decide which needed
-#        apt-file \
-#        bash-completion \
-#        bsdtar \
-#        build-essential \
-#        cmake \
-#        exiftool \
-#        gettext \
-#        ImageMagick \
-#        info \
-#        openjdk-7-jdk \
-#        openjdk-7-jre-headless \
-#        libpcre3 `# https://github.com/oerdnj/deb.sury.org/issues/683#issuecomment-325576448 ` \
-#        rpm \
-#        vim && \
-#    apt-file update
+        vim && \
+    apt-file update
 
 # Install Composer
 RUN wget https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer | php -- --quiet
