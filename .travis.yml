@@ -4,7 +4,7 @@ script: docker build . -t cs50/cli:${TRAVIS_BRANCH/master/latest}
 before_deploy: docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 deploy:
   provider: script
-  script: docker push cs50/cli
+  script: docker push cs50/cli:${TRAVIS_BRANCH/master/latest}
   on:
     all_branches: true
     condition: "$TRAVIS_BRANCH" =~ ^master|bionic$
