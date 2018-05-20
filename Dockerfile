@@ -58,10 +58,10 @@ RUN gem install \
     pygments.rb
 
 ## Install CS50 packages
-#RUN apt-get update && \
-#    apt-get install -y \
-#        libcs50-java \
-#        php-cs50
+RUN apt-get update && \
+    apt-get install -y \
+        libcs50-java \
+        php-cs50
 
 # Install Python packages
 RUN pip3 install \
