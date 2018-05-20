@@ -36,6 +36,7 @@ RUN apt-get update && \
         tree \
         vim && \
     apt-file update
+ENV EDITOR nano
 
 # Install Composer
 RUN wget https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer | php -- --quiet
@@ -78,10 +79,10 @@ RUN git clone https://github.com/github/hub.git /tmp/hub && \
     rm -rf /tmp/hub
 
 # Copy files to image
-#RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
-COPY ./etc/motd /etc/
+RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 COPY ./etc/profile.d/cli.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
+RUN echo "This is CS50 CLI." > /etc/motd
 
 # Add user to sudoers 
 RUN echo "\n# CS50 CLI" >> /etc/sudoers
