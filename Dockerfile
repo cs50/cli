@@ -2,6 +2,9 @@ FROM cs50/baseimage:bionic
 USER root
 ARG DEBIAN_FRONTEND=noninteractive
 
+# Configure terminal color support
+ENV TERM "xterm"
+
 # Expose ports (just like Cloud9)
 EXPOSE 8080 8081 8082
 
@@ -34,7 +37,8 @@ RUN apt-get update && \
         sudo \
         telnet \
         tree \
-        vim && \
+        vim \
+        wget && \
     apt-file update
 ENV EDITOR nano
 
