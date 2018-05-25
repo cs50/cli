@@ -73,7 +73,8 @@ RUN pip3 install \
     awscli `# must come after awsebcli to ensure supported version` \
     help50 \
     render50 \
-    submit50
+    submit50 \
+    virtualenv
 
 # Install hub
 # https://hub.github.com/
