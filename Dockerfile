@@ -33,13 +33,17 @@ RUN apt-get update && \
         s3cmd \
         sudo \
         telnet \
+        traceroute \
         tree \
-        vim && \
+        vim \
+        wget \
+        whois && \
     apt-file update
 ENV EDITOR nano
 
 # Install Composer
-RUN wget https://raw.githubusercontent.com/composer/getcomposer.org/master/web/installer | php -- --quiet
+RUN curl --silent --show-error https://getcomposer.org/installer | \
+        php -- --install-dir=/usr/local/bin --filename=composer
 
 # Install Node.js 10.1.0
 RUN npm install -g n && n 10.1.0
