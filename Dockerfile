@@ -36,6 +36,7 @@ RUN apt-get update && \
         traceroute \
         tree \
         vim \
+        wget \
         whois && \
     apt-file update
 ENV EDITOR nano
