@@ -40,4 +40,11 @@ if [ "$PS1" ]; then
             command cd "$@"
         fi
     }
+
+    # Aliases
+    alias cp="cp -i"
+    alias ll="ls -l --color=auto"
+    alias mv="mv -i"
+    alias rm="rm -i"
+    alias sudo="sudo "
 fi
