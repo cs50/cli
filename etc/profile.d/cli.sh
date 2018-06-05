@@ -51,10 +51,4 @@ if [ "$PS1" ]; then
     alias rm="rm -i"
     alias sudo="sudo "
 
-    # Editor
-    export EDITOR=nano
-
-    # Flask
-    export FLASK_APP=application.py
-
 fi
