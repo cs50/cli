@@ -1,4 +1,4 @@
-FROM cs50/baseimage:bionic
+FROM cs50/baseimage
 USER root
 ARG DEBIAN_FRONTEND=noninteractive
 
