@@ -25,7 +25,6 @@ RUN apt-get update && \
         mysql-client \
         openjdk-11-jdk-headless \
         openjdk-11-jre-headless \
-        npm \
         php \
         rpm \
         ruby \
@@ -45,8 +44,9 @@ ENV EDITOR nano
 RUN curl --silent --show-error https://getcomposer.org/installer | \
         php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install Node.js 10.1.0
-RUN npm install -g n && n 10.1.0
+# Install Node.js 10.x
+RUN curl -sL https://deb.nodesource.com/setup_10.x | sudo -E bash - && \
+    sudo apt-get install -y nodejs
 
 # Install Node.js packages
 RUN npm install -g grunt http-server
