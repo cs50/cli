@@ -70,7 +70,7 @@ RUN apt-get update && \
         php-cs50
 
 # Install Python packages
-RUN pip3 install \
+RUN "$PYENV_ROOT"/shims/pip3 install \
     awsebcli \
     awscli `# must come after awsebcli to ensure supported version` \
     help50 \
