@@ -59,6 +59,7 @@ RUN gem install \
     asciidoctor \
     bundler \
     fpm \
+    jekyll \
     jekyll-asciidoc \
     pygments.rb
 
