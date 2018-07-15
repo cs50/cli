@@ -23,10 +23,11 @@ RUN apt-get update && \
         man \
         nano \
         mysql-client \
-        openjdk-11-jdk-headless \
-        openjdk-11-jre-headless \
+        openjdk-11-jdk-headless `# Technically JDK 10` \
+        openjdk-11-jre-headless `Technically JDK 10` \
         npm \
         php \
+        rename `# For renaming files` \
         rpm \
         ruby \
         ruby-dev `# Avoid "can't find header files for ruby" for gem` \
@@ -45,8 +46,8 @@ ENV EDITOR nano
 RUN curl --silent --show-error https://getcomposer.org/installer | \
         php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install Node.js 10.1.0
-RUN npm install -g n && n 10.1.0
+# Install Node.js 10.6.0
+RUN npm install -g n && n 10.6.0
 
 # Install Node.js packages
 RUN npm install -g grunt http-server
@@ -58,6 +59,7 @@ RUN gem install \
     asciidoctor \
     bundler \
     fpm \
+    jekyll \
     jekyll-asciidoc \
     pygments.rb
 
@@ -78,10 +80,10 @@ RUN pip3 install \
 
 # Install hub
 # https://hub.github.com/
-RUN wget -P /tmp https://github.com/github/hub/releases/download/v2.4.0/hub-linux-amd64-2.4.0.tgz && \
-    tar xvf /tmp/hub-linux-amd64-2.4.0.tgz -C /tmp && \
-    /tmp/hub-linux-amd64-2.4.0/install && \
-    rm -rf /tmp/hub-linux-amd64-2.4.0*
+RUN wget -P /tmp https://github.com/github/hub/releases/download/v2.5.0/hub-linux-amd64-2.5.0.tgz && \
+    tar xvf /tmp/hub-linux-amd64-2.5.0.tgz -C /tmp && \
+    /tmp/hub-linux-amd64-2.5.0/install && \
+    rm -rf /tmp/hub-linux-amd64-2.5.0*
 
 # Copy files to image
 RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
