@@ -80,10 +80,10 @@ RUN pip3 install \
 
 # Install hub
 # https://hub.github.com/
-RUN wget -P /tmp https://github.com/github/hub/releases/download/v2.4.0/hub-linux-amd64-2.4.0.tgz && \
-    tar xvf /tmp/hub-linux-amd64-2.4.0.tgz -C /tmp && \
-    /tmp/hub-linux-amd64-2.4.0/install && \
-    rm -rf /tmp/hub-linux-amd64-2.4.0*
+RUN wget -P /tmp https://github.com/github/hub/releases/download/v2.5.0/hub-linux-amd64-2.5.0.tgz && \
+    tar xvf /tmp/hub-linux-amd64-2.5.0.tgz -C /tmp && \
+    /tmp/hub-linux-amd64-2.5.0/install && \
+    rm -rf /tmp/hub-linux-amd64-2.5.0*
 
 # Copy files to image
 RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
