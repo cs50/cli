@@ -27,6 +27,7 @@ RUN apt-get update && \
         openjdk-11-jre-headless \
         npm \
         php \
+        rename `# For renaming files` \
         rpm \
         ruby \
         ruby-dev `# Avoid "can't find header files for ruby" for gem` \
