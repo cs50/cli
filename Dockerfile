@@ -23,7 +23,6 @@ RUN apt-get update && \
         man \
         mysql-client \
         nano \
-        npm \
         openjdk-11-jdk-headless `# Technically JDK 10` \
         openjdk-11-jre-headless `# Technically JDK 10` \
         php \
@@ -46,8 +45,9 @@ ENV EDITOR nano
 RUN curl --silent --show-error https://getcomposer.org/installer | \
         php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install Node.js 10.6.0
-RUN npm install -g n && n 10.6.0
+# Install Node.js 10.x
+RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
+    apt-get install -y nodejs
 
 # Install Node.js packages
 RUN npm install -g grunt http-server
