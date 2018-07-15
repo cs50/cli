@@ -21,11 +21,11 @@ RUN apt-get update && \
         imagemagick \
         info \
         man \
-        nano \
         mysql-client \
+        nano \
+        npm \
         openjdk-11-jdk-headless `# Technically JDK 10` \
         openjdk-11-jre-headless `# Technically JDK 10` \
-        npm \
         php \
         rename `# For renaming files` \
         rpm \
@@ -70,7 +70,7 @@ RUN apt-get update && \
         php-cs50
 
 # Install Python packages
-RUN pip3 install \
+RUN "$PYENV_ROOT"/shims/pip3 install \
     awsebcli \
     awscli `# must come after awsebcli to ensure supported version` \
     help50 \
