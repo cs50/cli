@@ -23,8 +23,8 @@ RUN apt-get update && \
         man \
         nano \
         mysql-client \
-        openjdk-11-jdk-headless \
-        openjdk-11-jre-headless \
+        openjdk-11-jdk-headless `# Technically JDK 10` \
+        openjdk-11-jre-headless `Technically JDK 10` \
         npm \
         php \
         rename `# For renaming files` \
@@ -46,8 +46,8 @@ ENV EDITOR nano
 RUN curl --silent --show-error https://getcomposer.org/installer | \
         php -- --install-dir=/usr/local/bin --filename=composer
 
-# Install Node.js 10.1.0
-RUN npm install -g n && n 10.1.0
+# Install Node.js 10.6.0
+RUN npm install -g n && n 10.6.0
 
 # Install Node.js packages
 RUN npm install -g grunt http-server
