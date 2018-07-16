@@ -1,6 +1,6 @@
 sudo: required
 services: docker
-script: docker build --no-cache . -t cs50/cli:${TRAVIS_BRANCH/master/latest}
+script: docker build . -t cs50/cli:${TRAVIS_BRANCH/master/latest}
 before_deploy: docker login -u="$DOCKER_USERNAME" -p="$DOCKER_PASSWORD"
 deploy:
   provider: script
