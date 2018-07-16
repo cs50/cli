@@ -23,8 +23,6 @@ RUN apt-get update && \
         man \
         mysql-client \
         nano \
-        openjdk-11-jdk-headless `# Technically JDK 10` \
-        openjdk-11-jre-headless `# Technically JDK 10` \
         php \
         rename `# For renaming files` \
         rpm \
