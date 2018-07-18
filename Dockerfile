@@ -23,7 +23,6 @@ RUN apt-get update && \
         man \
         mysql-client \
         nano \
-        php \
         rename `# For renaming files` \
         rpm \
         s3cmd \
