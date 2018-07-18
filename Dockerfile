@@ -23,11 +23,8 @@ RUN apt-get update && \
         man \
         mysql-client \
         nano \
-        php \
         rename `# For renaming files` \
         rpm \
-        ruby \
-        ruby-dev `# Avoid "can't find header files for ruby" for gem` \
         s3cmd \
         sudo \
         telnet \
@@ -38,14 +35,6 @@ RUN apt-get update && \
         whois && \
     apt-file update
 ENV EDITOR nano
-
-# Install Composer
-RUN curl --silent --show-error https://getcomposer.org/installer | \
-        php -- --install-dir=/usr/local/bin --filename=composer
-
-# Install Node.js 10.x
-RUN curl -sL https://deb.nodesource.com/setup_10.x | bash - && \
-    apt-get install -y nodejs
 
 # Install Node.js packages
 RUN npm install -g grunt http-server
@@ -60,12 +49,6 @@ RUN gem install \
     jekyll \
     jekyll-asciidoc \
     pygments.rb
-
-## Install CS50 packages
-RUN apt-get update && \
-    apt-get install -y \
-        libcs50-java \
-        php-cs50
 
 # Install Python packages
 RUN pip3 install \
