@@ -47,4 +47,10 @@ if [ "$PS1" ]; then
     alias mv="mv -i"
     alias rm="rm -i"
     alias sudo="sudo "
+
+    # gem install --user-install
+    export PATH="$HOME"/.gem/ruby/2.5.0/bin:"$PATH"
+
+    # pip install --user
+    export PATH="$HOME"/.local/bin:"$PATH"
 fi
