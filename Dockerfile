@@ -37,7 +37,7 @@ RUN apt-get update && \
 ENV EDITOR nano
 
 # Install Node.js packages
-RUN npm install -g grunt http-server
+RUN npm install -g grunt http-server nodemon
 
 # Install fpm, asciidoctor
 # https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
