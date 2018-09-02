@@ -46,6 +46,7 @@ RUN gem install \
     asciidoctor \
     bundler \
     fpm \
+    github-pages \
     jekyll \
     jekyll-asciidoc \
     pygments.rb
@@ -76,5 +77,6 @@ RUN echo "This is CS50 CLI." > /etc/motd
 RUN echo "\n# CS50 CLI" >> /etc/sudoers
 RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 RUN echo "Defaults umask_override" >> /etc/sudoers
+RUN echo "Defaults umask=0022" >> /etc/sudoers
 RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
 USER ubuntu
