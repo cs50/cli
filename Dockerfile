@@ -39,18 +39,6 @@ ENV EDITOR nano
 # Install Node.js packages
 RUN npm install -g grunt http-server nodemon
 
-# Install fpm, asciidoctor
-# https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
-# https://github.com/asciidoctor/jekyll-asciidoc#development
-RUN gem install \
-    asciidoctor \
-    bundler \
-    fpm \
-    github-pages \
-    jekyll \
-    jekyll-asciidoc \
-    pygments.rb
-
 # Install Python packages
 RUN pip3 install \
     awsebcli \
@@ -80,3 +68,15 @@ RUN echo "Defaults umask_override" >> /etc/sudoers
 RUN echo "Defaults umask=0022" >> /etc/sudoers
 RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
 USER ubuntu
+
+# Install fpm, asciidoctor
+# https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
+# https://github.com/asciidoctor/jekyll-asciidoc#development
+RUN bash -lc 'gem install \
+    asciidoctor \
+    bundler \
+    fpm \
+    github-pages \
+    jekyll \
+    jekyll-asciidoc \
+    pygments.rb'
