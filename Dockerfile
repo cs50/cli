@@ -5,6 +5,16 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Expose ports (just like Cloud9)
 EXPOSE 8080 8081 8082
 
+# Do not exclude man pages & other documentation
+# https://github.com/tianon/docker-brew-ubuntu-core/issues/122#issuecomment-380529430
+RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
+
+# Reinstall all currently installed packages in order to get the man pages back
+# https://github.com/tianon/docker-brew-ubuntu-core/issues/122#issuecomment-380529430
+RUN apt-get update && \
+    dpkg -l | grep ^ii | cut -d' ' -f3 | xargs apt-get install -y --reinstall && \
+    rm -r /var/lib/apt/lists/*
+
 # Install packages
 RUN apt-get update && \
     apt-get install -y \
@@ -58,13 +68,6 @@ RUN pip3 install \
     render50 \
     submit50 \
     virtualenv
-
-# Install hub
-# https://hub.github.com/
-RUN wget -P /tmp https://github.com/github/hub/releases/download/v2.5.0/hub-linux-amd64-2.5.0.tgz && \
-    tar xvf /tmp/hub-linux-amd64-2.5.0.tgz -C /tmp && \
-    /tmp/hub-linux-amd64-2.5.0/install && \
-    rm -rf /tmp/hub-linux-amd64-2.5.0*
 
 # Copy files to image
 RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
