@@ -70,6 +70,9 @@ RUN pip3 install \
     submit50 \
     virtualenv
 
+# TEMP, until v43, https://github.com/Kozea/WeasyPrint/releases, is released, per https://github.com/Kozea/WeasyPrint/issues/720#event-1931838472
+RUN pip3 install git+https://github.com/Kozea/WeasyPrint.git@07d3da653391bd678c7a71424f64e3c38edf6ae6
+
 # Copy files to image
 RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 COPY ./etc/profile.d/cli.sh /etc/profile.d/
