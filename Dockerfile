@@ -24,8 +24,9 @@ RUN apt-get update && \
         bsdtar \
         cmake \
         dos2unix \
-        dnsutils `# for nslookup` \
+        dnsutils `# For nslookup` \
         exiftool \
+        expect `# For unbuffer` \
         gettext \
         golang-go \
         imagemagick \
