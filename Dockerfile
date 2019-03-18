@@ -68,6 +68,9 @@ RUN pip3 install \
     awscli `# must come after awsebcli to ensure supported version` \
     compare50 \
     help50 \
+    matplotlib \
+    numpy \
+    pandas \
     render50 \
     submit50 \
     virtualenv \
