@@ -73,8 +73,7 @@ RUN pip3 install \
     pandas \
     render50 \
     submit50 \
-    virtualenv \
-    weasyprint
+    virtualenv
 
 # Copy files to image
 RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
