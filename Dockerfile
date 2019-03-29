@@ -34,6 +34,7 @@ RUN apt-get update && \
         man \
         mysql-client \
         nano \
+        poppler-utils `# for pdftoppm` \
         rename `# For renaming files` \
         rpm \
         s3cmd \
