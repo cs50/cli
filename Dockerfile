@@ -76,6 +76,9 @@ RUN pip3 install \
     submit50 \
     virtualenv
 
+# Install Heroku CLI
+RUN curl https://cli-assets.heroku.com/install.sh | sh
+
 # Copy files to image
 RUN wget --directory-prefix /etc/profile.d/ https://raw.githubusercontent.com/git/git/master/contrib/completion/git-prompt.sh
 COPY ./etc/profile.d/cli.sh /etc/profile.d/
