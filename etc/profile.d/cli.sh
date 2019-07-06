@@ -43,8 +43,12 @@ if [ "$PS1" ]; then
 
     # Aliases
     alias cp="cp -i"
-    alias ll="ls -l --color=auto"
+    alias ls="ls -F"
+    alias ll="ls -F -l"
     alias mv="mv -i"
     alias rm="rm -i"
     alias sudo="sudo "
+
+    # Which manual sections to search
+    export MANSECT=3,2,1
 fi
