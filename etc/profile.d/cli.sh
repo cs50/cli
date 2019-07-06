@@ -47,4 +47,7 @@ if [ "$PS1" ]; then
     alias mv="mv -i"
     alias rm="rm -i"
     alias sudo="sudo "
+
+    # Which manual sections to search
+    export MANSECT=3,2,1
 fi
