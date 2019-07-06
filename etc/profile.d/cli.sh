@@ -1,9 +1,6 @@
 # Interactive shells
 if [ "$PS1" ]; then
 
-    # MOTD
-    cat /etc/motd
-
     # Append trailing slashes
     cwdSlashAtEnd () {
         TITLE="$(dirs +0)"
