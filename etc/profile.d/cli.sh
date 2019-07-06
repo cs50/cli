@@ -1,9 +1,6 @@
 # Interactive shells
 if [ "$PS1" ]; then
 
-    # MOTD
-    cat /etc/motd
-
     # Append trailing slashes
     cwdSlashAtEnd () {
         TITLE="$(dirs +0)"
@@ -31,11 +28,11 @@ if [ "$PS1" ]; then
         ;;
     esac
 
-    # Override HOME for cd if ~/workspace exists
+    # Override HOME for cd if ~/environment exists
     cd()
     {
-        if [ -d "$HOME"/workspace ]; then
-            HOME=~/workspace command cd "$@"
+        if [ -d "$HOME"/environment ]; then
+            HOME=~/environment command cd "$@"
         else
             command cd "$@"
         fi

@@ -84,7 +84,6 @@ COPY ./etc/profile.d/cli.sh /etc/profile.d/
 COPY ./etc/vim/vimrc.local /etc/vim/
 COPY ./opt/cs50/bin/* /opt/cs50/bin/
 RUN chmod a+rx /opt/cs50/bin/*
-RUN echo "This is CS50 CLI." > /etc/motd
 
 # Add user to sudoers 
 RUN echo "\n# CS50 CLI" >> /etc/sudoers
