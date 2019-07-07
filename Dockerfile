@@ -81,9 +81,8 @@ RUN pip3 install \
 RUN curl https://cli-assets.heroku.com/install.sh | sh
 
 # Copy files to image
-COPY ./etc/profile.d/cli.sh /etc/profile.d/
-COPY ./etc/vim/vimrc.local /etc/vim/
-COPY ./opt/cs50/bin/* /opt/cs50/bin/
+COPY ./etc /etc
+COPY ./opt /opt
 RUN chmod a+rx /opt/cs50/bin/*
 
 # Add user to sudoers 
