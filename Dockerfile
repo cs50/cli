@@ -61,6 +61,7 @@ RUN gem install \
     github-pages \
     jekyll \
     jekyll-asciidoc \
+    minitest `# so that Bundler needn't install` \
     pygments.rb
 
 # Install Python packages
