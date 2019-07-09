@@ -42,5 +42,11 @@ done
 # using regex to handle -pxxxx, -p xxxx, --port xxxx, --port=xxxx
 fuser --kill -INT "${port//[^0-9]}/tcp" &>/dev/null
 
+if [ "$CS50_IDE_TYPE" == "online" ]; then
+    URL="https://$C9_HOSTNAME"
+else
+    URL="http://localhost"
+fi
+
 # Spawn http-server, retaining colorized output using expect's unbuffer
-unbuffer "$(npm prefix -g)/bin/http-server" $a $c $cors $i $port $options | unbuffer -p sed "s#\(.*http://\)[^:]\+\(:.\+\)#\1localhost\2#" | uniq
+unbuffer "$(npm prefix -g)/bin/http-server" $a $c $cors $i $port $options | unbuffer -p sed "s#\(.*\)http://[^:]\+\(:.\+\)#\1$URL\2#" | uniq
