@@ -36,8 +36,14 @@ if [[ "$1" == "run" ]]; then
     # using regex to handle -pxxxx, -p xxxx, --port xxxx, --port=xxxx
     fuser --kill -INT "${port//[^0-9]}/tcp" &> /dev/null
 
+	if [ "$CS50_IDE_TYPE" == "online" ]; then
+		URL="https://$C9_HOSTNAME"
+	else
+		URL="http://localhost"
+	fi
+
     # Spawn flask
-    FLASK_APP="$FLASK_APP" FLASK_DEBUG="${FLASK_DEBUG:-0}" unbuffer /usr/local/bin/flask run $host $port $reload $threads $options | sed "s#\(.*http://\)[^:]\+\(:.\+\)#\1localhost\2#"
+    FLASK_APP="$FLASK_APP" FLASK_DEBUG="${FLASK_DEBUG:-0}" unbuffer /usr/local/bin/flask run $host $port $reload $threads $options | sed "s#\(.*\)http://[^:]\+\(:.\+\)#\1$URL\2#"
 else
     /usr/local/bin/flask "$@"
 fi
