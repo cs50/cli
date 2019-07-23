@@ -32,6 +32,7 @@ RUN apt-get update && \
         imagemagick \
         info \
         man \
+        mlocate \
         mysql-client \
         nano \
         poppler-utils `# for pdftoppm` \
@@ -84,6 +85,9 @@ RUN curl https://cli-assets.heroku.com/install.sh | sh
 COPY ./etc /etc
 COPY ./opt /opt
 RUN chmod a+rx /opt/cs50/bin/*
+
+# Update mlocate database
+RUN updatedb
 
 # Add user to sudoers 
 RUN echo "\n# CS50 CLI" >> /etc/sudoers
