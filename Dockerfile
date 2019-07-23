@@ -86,9 +86,6 @@ COPY ./etc /etc
 COPY ./opt /opt
 RUN chmod a+rx /opt/cs50/bin/*
 
-# Update mlocate database
-RUN updatedb
-
 # Add user to sudoers 
 RUN echo "\n# CS50 CLI" >> /etc/sudoers
 RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -96,3 +93,6 @@ RUN echo "Defaults umask_override" >> /etc/sudoers
 RUN echo "Defaults umask=0022" >> /etc/sudoers
 RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
 USER ubuntu
+
+# Update mlocate database in background
+CMD (sudo updatedb &) && (bash -l)
