@@ -42,8 +42,8 @@ if [ "$(id -u)" != "0" ]; then
     # Aliases
     alias cp="cp -i"
     alias gdb="gdb -q" # Suppress gdb's startup output
-    alias ls="ls -F" # Add trailing slashes
-    alias ll="ls -F -l"
+    alias ll="ls --color -F -l"
+    alias ls="ls --color -F" # Add trailing slashes
     alias mv="mv -i"
     alias rm="rm -i"
     alias sqlite3="sqlite3 -column -header"
