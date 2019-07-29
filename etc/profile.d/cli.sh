@@ -75,4 +75,7 @@ if [ "$(id -u)" != "0" ]; then
 
     # Which manual sections to search
     export MANSECT=3,2,1
+
+    # Editor
+    export EDITOR="nano"
 fi
