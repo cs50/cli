@@ -32,6 +32,7 @@ RUN apt-get update && \
         imagemagick \
         info \
         man \
+        mlocate \
         mysql-client \
         nano \
         poppler-utils `# for pdftoppm` \
@@ -92,3 +93,6 @@ RUN echo "Defaults umask_override" >> /etc/sudoers
 RUN echo "Defaults umask=0022" >> /etc/sudoers
 RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
 USER ubuntu
+
+# Update mlocate database in background
+CMD (sudo updatedb &) && (bash -l)
