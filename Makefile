@@ -7,4 +7,4 @@ rebuild:
 	docker build --no-cache -t cs50/cli .
 
 run:
-	docker run -it -P --rm -v "$(PWD)":/mnt cs50/cli
+	docker run -it -P --rm --security-opt seccomp=unconfined -v "$(PWD)":/mnt cs50/cli
