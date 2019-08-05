@@ -45,13 +45,12 @@ RUN apt-get update && \
         tree \
         vim \
         wget \
-        whois \
-        yarn && \
+        whois && \
     apt-file update
 ENV EDITOR nano
 
 # Install Node.js packages
-RUN npm install -g grunt http-server nodemon
+RUN npm install -g grunt http-server nodemon yarn
 
 # Install fpm, asciidoctor
 # https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
