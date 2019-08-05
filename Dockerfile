@@ -45,7 +45,8 @@ RUN apt-get update && \
         tree \
         vim \
         wget \
-        whois && \
+        whois \
+        yarn && \
     apt-file update
 ENV EDITOR nano
 
