@@ -69,6 +69,7 @@ RUN gem install \
     github-pages \
     jekyll \
     jekyll-asciidoc \
+    jekyll-theme-cs50 \
     minitest `# so that Bundler needn't install` \
     pygments.rb
 
