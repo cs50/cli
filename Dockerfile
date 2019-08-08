@@ -68,7 +68,6 @@ RUN gem install \
 
 # Install Python packages
 RUN pip3 install \
-    awsebcli \
     awscli `# must come after awsebcli to ensure supported version` \
     compare50 \
     help50 \
@@ -87,7 +86,7 @@ COPY ./etc /etc
 COPY ./opt /opt
 RUN chmod a+rx /opt/cs50/bin/*
 
-# Add user to sudoers 
+# Add user to sudoers
 RUN echo "\n# CS50 CLI" >> /etc/sudoers
 RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 RUN echo "Defaults umask_override" >> /etc/sudoers
