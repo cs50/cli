@@ -68,7 +68,6 @@ RUN gem install \
 
 # Install Python packages
 RUN pip3 install \
-    awsebcli \
     awscli `# must come after awsebcli to ensure supported version` \
     compare50 \
     help50 \
@@ -77,8 +76,7 @@ RUN pip3 install \
     pandas \
     render50 \
     submit50 \
-    virtualenv \
-    six>=1.12 `# required by jsbeautifier (style50)`
+    virtualenv
 
 # Install Heroku CLI
 RUN curl https://cli-assets.heroku.com/install.sh | sh
