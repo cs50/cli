@@ -71,7 +71,7 @@ if [ "$(id -u)" != "0" ]; then
     }
 
     # Valgrind
-    export VALGRIND_OPTS="--memcheck:leak-check=full --memcheck:track-origins=yes"
+    export VALGRIND_OPTS="--memcheck:leak-check=full --memcheck:show-leak-kinds=all --memcheck:track-origins=yes"
 
     # Which manual sections to search
     export MANSECT=3,2,1
