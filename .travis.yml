@@ -4,7 +4,7 @@ script: |
   set -eo pipefail
 
   [[ -z "$TAG" ]] && [[ "$TRAVIS_BRANCH" == "master" ]]  && TAG="latest" || TAG="$TRAVIS_BRANCH"
-  IMAGE="$TRAVIS_SLUG:$TAG"
+  IMAGE="$TRAVIS_REPO_SLUG:$TAG"
 
   if [[ -n "$BASE_IMAGE" ]]; then
       sed -i "s#FROM.*#FROM $BASE_IMAGE#" Dockerfile
