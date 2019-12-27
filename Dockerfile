@@ -38,7 +38,6 @@ RUN apt-get update && \
         poppler-utils `# for pdftoppm` \
         rename `# For renaming files` \
         rpm \
-        s3cmd \
         sudo \
         telnet \
         traceroute \
@@ -82,6 +81,7 @@ RUN pip3 install \
     numpy \
     pandas \
     render50 \
+    s3cmd \
     submit50 \
     virtualenv
 
