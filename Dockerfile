@@ -74,6 +74,7 @@ RUN gem install \
 
 # Install Python packages
 RUN pip3 install \
+    authlib \
     awscli `# must come after awsebcli to ensure supported version` \
     compare50 \
     help50 \
