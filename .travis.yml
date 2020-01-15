@@ -5,7 +5,7 @@ branches:
 script: |
   export TRAVIS_TAG="$(sed -rn 's/^LABEL version="([[:digit:]])+"$/\1/p' Dockerfile)"
   if ! git tag --list | grep -q "^$TRAVIS_TAG$"; then
-    echo "Tag already exists. Please increment the version label in the Dockerfile and try again!"
+    echo "Tag $TRAVIS_TAG already exists. Please increment the version label in the Dockerfile and try again!"
     exit 1
   fi
   docker build . -t "$TRAVIS_REPO_SLUG:$TRAVIS_TAG"
