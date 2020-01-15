@@ -4,7 +4,7 @@ branches:
   except: /^v\d+/
 script: |
   export TRAVIS_TAG="$(sed -rn 's/^LABEL version="([[:digit:]])+"$/\1/p' Dockerfile)"
-  if [[ $(git tag --list "^$TRAVIS_TAG$") ]]; then
+  if [[ $(git tag --list "$TRAVIS_TAG") ]]; then
     echo "Tag $TRAVIS_TAG already exists. Please increment the version label in the Dockerfile and try again!"
     exit 1
   fi
