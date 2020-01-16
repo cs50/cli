@@ -241,7 +241,5 @@ RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
 USER ubuntu
 WORKDIR /home/ubuntu
 
-LABEL version="2"
-
 # Update mlocate database in background
 CMD (sudo updatedb &) && (bash -l)
