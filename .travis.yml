@@ -21,7 +21,7 @@ deploy:
   on:
     branch: master
 after_deploy: |
-  rdepends="check server"
+  rdepends="check server ide-docker"
   for r in $rdepends; do
     curl -s -X POST \
       -H "Content-Type: application/json" \
