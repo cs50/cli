@@ -22,7 +22,7 @@ deploy:
     branch: master
 after_deploy: |
   rdepends="check server"
-  for r in rdepends; do
+  for r in $rdepends; do
     curl -s -X POST \
       -H "Content-Type: application/json" \
       -H "Accept: application/json" \
