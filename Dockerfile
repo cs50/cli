@@ -68,6 +68,7 @@ RUN apt-get update && \
         telnet \
         traceroute \
         tree \
+        unrar \
         unzip \
         valgrind \
         vim \
