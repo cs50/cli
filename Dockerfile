@@ -52,6 +52,7 @@ RUN apt-get update && \
         golang-go \
         imagemagick \
         info \
+        jq \
         lua5.3 \
         man \
         mlocate \
