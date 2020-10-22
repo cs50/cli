@@ -1,0 +1,10 @@
+#!/bin/bash
+
+echo -en "\e[33m"
+if [[ "$#" -eq 0 ]]; then
+    echo "Warning: because you ran sqlite3 without any command-line arguments, no database will be opened or created by default. If you intended otherwise, quit sqlite3 with .quit and re-run sqlite3 with a command-line argument." | fold -s -w $(tput cols)
+elif [[ "$#" -eq 1 ]] && [[ "$1" == *.db ]] && [[ ! -f "$1" ]]; then
+    echo "Warning: $1 does not seem to exist, so it will be created as an empty database. If it should, in fact, exist, you might not be in the correct directory, in which case you can quite sqlite3 with .quit, cd into that directory, and re-run sqlite3." | fold -s -w $(tput cols)
+fi
+echo -en "\e[0m"
+sqlite3 "$@"

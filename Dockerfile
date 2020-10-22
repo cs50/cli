@@ -42,6 +42,7 @@ RUN apt-get update && \
         bsdtar \
         clang-8 \
         cmake \
+        coreutils `# for fold` \
         curl \
         dos2unix \
         dnsutils `# For nslookup` \
@@ -58,6 +59,7 @@ RUN apt-get update && \
         mlocate \
         mysql-client \
         nano \
+        ncurses-bin `# for tput` \
         php \
         poppler-utils `# for pdftoppm` \
         rename `# For renaming files` \
