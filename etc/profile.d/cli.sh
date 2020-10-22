@@ -55,7 +55,6 @@ if [ "$(id -u)" != "0" ]; then
     alias ls="ls --color -F" # Add trailing slashes
     alias mv="mv -i"
     alias rm="rm -i"
-    alias sqlite3="sqlite3 -header -separator ' | '"
     alias sudo="sudo " # Trailing space enables elevated command to be an alias
 
     # Make
