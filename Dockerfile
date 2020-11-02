@@ -153,7 +153,7 @@ RUN pip3 install \
     awscli `# must come after awsebcli to ensure supported version` \
     check50 \
     compare50 \
-    cs50 \
+    cs50==5.0.5 \
     Flask \
     Flask-Session \
     help50 \
