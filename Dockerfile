@@ -75,6 +75,7 @@ RUN apt-get update && \
         unzip \
         valgrind \
         vim \
+        tmux \
         wget \
         whois && \
     apt-file update
