@@ -151,7 +151,7 @@ ENV PYTHONDONTWRITEBYTECODE "1"
 RUN pip3 install \
     authlib \
     awscli `# must come after awsebcli to ensure supported version` \
-    check50 \
+    check50==3.1.2 \
     compare50 \
     cs50==5.0.5 \
     Flask \
