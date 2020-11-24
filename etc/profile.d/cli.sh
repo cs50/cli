@@ -81,7 +81,7 @@ if [ "$(id -u)" != "0" ]; then
     # Valgrind
     valgrind() {
         for arg; do
-            if $arg | grep -Eq "(^python|.py$)"; then
+            if echo "$arg" | grep -Eq "(^python|.py$)"; then
                 echo "Afraid valgrind does not support Python programs!"
                 return 1
             fi
