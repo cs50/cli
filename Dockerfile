@@ -170,11 +170,11 @@ RUN pip3 install \
     virtualenv
 
 
-# Install Swift 5.1
+# Install Swift 5.3
 RUN cd /tmp && \
-    wget https://swift.org/builds/swift-5.1.3-release/ubuntu1804/swift-5.1.3-RELEASE/swift-5.1.3-RELEASE-ubuntu18.04.tar.gz && \
-    tar xzf swift-5.1.3-RELEASE-ubuntu18.04.tar.gz --strip-components=1 -C / && \
-    rm -f swift-5.1.3-RELEASE-ubuntu18.04.tar.gz && \
+    wget https://swift.org/builds/swift-5.3.1-release/ubuntu1804/swift-5.3.1-RELEASE/swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
+    tar xzf swift-5.3.1-RELEASE-ubuntu18.04.tar.gz --strip-components=1 -C / && \
+    rm -f swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
     apt-get update && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y libpython2.7
 
