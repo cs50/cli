@@ -108,17 +108,17 @@ RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
 RUN npm install -g grunt http-server nodemon
 
 
-# Install Java 13
-# http://jdk.java.net/13/
+# Install Java 15
+# http://jdk.java.net/15/
 RUN cd /tmp && \
-    wget https://download.java.net/java/GA/jdk13.0.1/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-13.0.1_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-13.0.1_linux-x64_bin.tar.gz && \
-    rm -f openjdk-13.0.1_linux-x64_bin.tar.gz && \
-    mv jdk-13.0.1 /opt/ && \
+    wget https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-15.0.1_linux-x64_bin.tar.gz && \
+    rm -f openjdk-15.0.1_linux-x64_bin.tar.gz && \
+    mv jdk-15.0.1 /opt/ && \
     mkdir -p /opt/bin && \
-    ln -s /opt/jdk-13.0.1/bin/* /opt/bin/ && \
+    ln -s /opt/jdk-15.0.1/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
-ENV JAVA_HOME "/opt/jdk-13.0.1"
+ENV JAVA_HOME "/opt/jdk-15.0.1"
 
 
 # Install Python 3.7.x
