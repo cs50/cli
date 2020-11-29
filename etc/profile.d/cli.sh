@@ -95,8 +95,9 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Aliases
-alias pip="pip3 --no-cache-dir"
-alias pip3="pip3 --no-cache-dir"
+alias gem="env -u CC -u CFLAGS -u LDLIBS gem"
+alias pip="env -u CC -u CFLAGS -u LDLIBS pip3 --no-cache-dir"
+alias pip3="env -u CC -u CFLAGS -u LDLIBS pip3 --no-cache-dir"
 alias pylint="pylint3"
 alias python="python3"
 alias swift="swift 2> /dev/null"  # https://github.com/cs50/baseimage/issues/49
