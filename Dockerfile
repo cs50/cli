@@ -94,12 +94,14 @@ RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - && \
     npm install -g npm `# Upgrades npm to latest`
 ENV NODE_ENV "dev"
 
+
 # Install Yarn
 # https://yarnpkg.com/en/docs/install#debian-stable
 RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
     echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
     apt-get update && \
     apt-get install yarn
+
 
 # Install Node.js packages
 RUN npm install -g grunt http-server nodemon
@@ -151,9 +153,9 @@ ENV PYTHONDONTWRITEBYTECODE "1"
 RUN pip3 install \
     authlib \
     awscli `# must come after awsebcli to ensure supported version` \
-    check50==3.1.2 \
+    check50 \
     compare50 \
-    cs50==5.0.5 \
+    cs50 \
     Flask \
     Flask-Session \
     help50 \
@@ -236,6 +238,7 @@ RUN useradd --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
     mkdir -p /home/ubuntu && \
     chown -R ubuntu:ubuntu /home/ubuntu
 
+
 # Add user to sudoers
 RUN echo "\n# CS50 CLI" >> /etc/sudoers
 RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
@@ -244,6 +247,7 @@ RUN echo "Defaults umask=0022" >> /etc/sudoers
 RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
 USER ubuntu
 WORKDIR /home/ubuntu
+
 
 # Update mlocate database in background
 CMD (sudo updatedb &) && (bash -l)
