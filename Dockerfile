@@ -121,7 +121,7 @@ RUN cd /tmp && \
 ENV JAVA_HOME "/opt/jdk-13.0.1"
 
 
-# Install Python 3.7
+# Install Python 3.7.x
 # https://www.python.org/downloads/
 # https://stackoverflow.com/a/44758621/5156190
 RUN apt-get update && \
@@ -138,15 +138,15 @@ RUN apt-get update && \
         tk-dev \
         zlib1g-dev && \
     cd /tmp && \
-    wget https://www.python.org/ftp/python/3.7.6/Python-3.7.6.tgz && \
-    tar xzf Python-3.7.6.tgz && \
-    rm -f Python-3.7.6.tgz && \
-    cd Python-3.7.6 && \
+    wget https://www.python.org/ftp/python/3.7.9/Python-3.7.9.tgz && \
+    tar xzf Python-3.7.9.tgz && \
+    rm -f Python-3.7.9.tgz && \
+    cd Python-3.7.9 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm -rf Python-3.7.6 && \
+    rm -rf Python-3.7.9 && \
     pip3 install --upgrade pip
 ENV PYTHONDONTWRITEBYTECODE "1"
 
