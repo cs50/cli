@@ -54,6 +54,7 @@ RUN apt-get update && \
         imagemagick \
         info \
         jq \
+        libmysqlclient-dev \
         lua5.3 \
         man \
         mlocate \
