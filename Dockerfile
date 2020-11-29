@@ -87,10 +87,10 @@ RUN (update-alternatives --remove-all clang || true) && \
     update-alternatives --install /usr/bin/clang clang $(which clang-8) 1
 
 
-# Install Node.js 13.x
+# Install Node.js 15.x
 # https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions-enterprise-linux-fedora-and-snap-packages
-# https://github.com/nodesource/distributions/blob/master/README.md#debinstall
-RUN curl -sL https://deb.nodesource.com/setup_13.x | bash - && \
+# https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions
+RUN curl -sL https://deb.nodesource.com/setup_15.x | bash - && \
     apt-get install -y nodejs && \
     npm install -g npm `# Upgrades npm to latest`
 ENV NODE_ENV "dev"
