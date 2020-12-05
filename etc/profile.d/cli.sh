@@ -97,7 +97,7 @@ if [ "$USER" != "root" ]; then
 fi
 
 # If ubuntu
-if [ "$USER" == "root" ]; then
+if [ "$USER" == "ubuntu" ]; then
 
     # Alias
     alias cd="HOME=~/workspace cd"
