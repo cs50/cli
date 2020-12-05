@@ -37,7 +37,7 @@ if [ "$PS1" ]; then
 fi
 
 # If not root
-if [ "$(id -u)" != "0" ]; then
+if [ "$USER" != "root" ]; then
 
     # Clang
 
@@ -94,7 +94,12 @@ if [ "$(id -u)" != "0" ]; then
     # Which manual sections to search
     export MANSECT=3,2,1
 
-    # Aliases
+fi
+
+# If ubuntu
+if [ "$USER" == "root" ]; then
+
+    # Alias
     alias cd="HOME=~/workspace cd"
 fi
 

@@ -19,9 +19,12 @@ ENV LC_ALL "C.UTF-8"
 ENV LC_CTYPE "C.UTF-8"
 
 
+# Unminimize system
+RUN echo y | unminimize
+
 # Do not exclude man pages & other documentation
 # https://github.com/tianon/docker-brew-ubuntu-core/issues/122#issuecomment-380529430
-RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
+#RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 
 
 # TODO
@@ -58,8 +61,10 @@ RUN apt-get update && \
         info \
         jq \
         libmysqlclient-dev \
+        libtinfo5 `# for clang, https://stackoverflow.com/a/62721741/5156190` \
         lua5.3 \
         man \
+        man-db \
         mlocate \
         mysql-client \
         nano \
@@ -70,7 +75,6 @@ RUN apt-get update && \
         rpm \
         ruby \
         ruby-dev `# Avoid "can't find header files for ruby" for gem` \
-        sqlite3 \
         sudo \
         telnet \
         traceroute \
@@ -86,19 +90,6 @@ RUN apt-get update && \
 ENV EDITOR nano
 
 
-# Install Node.js 15.x
-# https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions-enterprise-linux-fedora-and-snap-packages
-# https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions
-RUN curl -sL https://deb.nodesource.com/setup_15.x | bash - && \
-    apt-get install -y nodejs && \
-    npm install -g npm `# Upgrades npm to latest`
-ENV NODE_ENV "dev"
-
-
-# Install Node.js packages
-RUN npm install -g grunt http-server nodemon
-
-
 # Install Java 15
 # http://jdk.java.net/15/
 RUN cd /tmp && \
@@ -110,6 +101,19 @@ RUN cd /tmp && \
     ln -s /opt/jdk-15.0.1/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
 ENV JAVA_HOME "/opt/jdk-15.0.1"
+
+
+# Install Node.js 15.x
+# https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions-enterprise-linux-fedora-and-snap-packages
+# https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions
+RUN curl -sL https://deb.nodesource.com/setup_15.x | bash - && \
+    apt-get install -y nodejs && \
+    npm install -g npm `# Upgrades npm to latest`
+ENV NODE_ENV "dev"
+
+
+# Install Node.js packages
+RUN npm install -g grunt http-server nodemon
 
 
 # Install Python 3.7.x
@@ -147,6 +151,13 @@ RUN pip3 install \
     submit50 \
     virtualenv
 
+
+# Install SQLite 3.34
+RUN cd /tmp && \
+    wget https://www.sqlite.org/2020/sqlite-tools-linux-x86-3340000.zip && \
+    unzip sqlite-tools-linux-x86-3340000.zip && \
+    mv sqlite-tools-linux-x86-3340000/* /usr/local/bin/ && \
+    rm -rf sqlite-tools-linux-x86-3340000 sqlite-tools-linux-x86-3340000.zip
 
 # Install Swift 5.3
 RUN cd /tmp && \
