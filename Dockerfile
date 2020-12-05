@@ -73,8 +73,6 @@ RUN apt-get update && \
         poppler-utils `# for pdftoppm` \
         rename `# For renaming files` \
         rpm \
-        ruby \
-        ruby-dev `# Avoid "can't find header files for ruby" for gem` \
         sudo \
         telnet \
         traceroute \
@@ -90,7 +88,11 @@ RUN apt-get update && \
 ENV EDITOR nano
 
 
-# Install Java 15
+# Install Heroku CLI
+RUN curl https://cli-assets.heroku.com/install.sh | sh
+
+
+# Install Java 15.x
 # http://jdk.java.net/15/
 RUN cd /tmp && \
     wget https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
@@ -152,25 +154,21 @@ RUN pip3 install \
     virtualenv
 
 
-# Install SQLite 3.34
+# Install Ruby 2.7.x
+# https://www.ruby-lang.org/en/downloads/
 RUN cd /tmp && \
-    wget https://www.sqlite.org/2020/sqlite-tools-linux-x86-3340000.zip && \
-    unzip sqlite-tools-linux-x86-3340000.zip && \
-    mv sqlite-tools-linux-x86-3340000/* /usr/local/bin/ && \
-    rm -rf sqlite-tools-linux-x86-3340000 sqlite-tools-linux-x86-3340000.zip
-
-# Install Swift 5.3
-RUN cd /tmp && \
-    wget https://swift.org/builds/swift-5.3.1-release/ubuntu1804/swift-5.3.1-RELEASE/swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
-    tar xzf swift-5.3.1-RELEASE-ubuntu18.04.tar.gz --strip-components=1 -C / && \
-    rm -f swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y libpython2.7
+    wget https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz && \
+    tar xzf ruby-2.7.2.tar.gz && \
+    rm -f ruby-2.7.2.tar.gz && \
+    cd ruby-2.7.2 && \
+    ./configure && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf ruby-2.7.2
 
 
-# Install fpm, asciidoctor
-# https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
-# https://github.com/asciidoctor/jekyll-asciidoc#development
+# Install Ruby packages
 RUN gem install \
     asciidoctor \
     bundler \
@@ -183,6 +181,24 @@ RUN gem install \
     pygments.rb
 
 
+# Install SQLite 3.x
+RUN cd /tmp && \
+    wget https://www.sqlite.org/2020/sqlite-tools-linux-x86-3340000.zip && \
+    unzip sqlite-tools-linux-x86-3340000.zip && \
+    rm -f sqlite-tools-linux-x86-3340000.zip && \
+    mv sqlite-tools-linux-x86-3340000/* /usr/local/bin/ && \
+    rm -rf sqlite-tools-linux-x86-3340000
+
+
+# Install Swift 5.3
+RUN cd /tmp && \
+    wget https://swift.org/builds/swift-5.3.1-release/ubuntu1804/swift-5.3.1-RELEASE/swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
+    tar xzf swift-5.3.1-RELEASE-ubuntu18.04.tar.gz --strip-components=1 -C / && \
+    rm -f swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y libpython2.7
+
+
 # Install CS50 packages
 RUN curl --silent https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
     apt-get install -y \
@@ -190,11 +206,6 @@ RUN curl --silent https://packagecloud.io/install/repositories/cs50/repo/script.
         libcs50-java \
         php-cs50
 ENV CLASSPATH ".:/usr/share/java/cs50.jar"
-
-
-
-# Install Heroku CLI
-RUN curl https://cli-assets.heroku.com/install.sh | sh
 
 
 # Copy files to image
@@ -215,7 +226,7 @@ RUN mkdir -p /opt/bin /opt/cs50/bin
 # Add user
 RUN useradd --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
     umask 0077 && \
-    mkdir -p /home/ubuntu && \
+    mkdir -p /home/ubuntu/workspace && \
     chown -R ubuntu:ubuntu /home/ubuntu
 
 
@@ -225,6 +236,9 @@ RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 RUN echo "Defaults umask_override" >> /etc/sudoers
 RUN echo "Defaults umask=0022" >> /etc/sudoers
 RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
+
+
+# Set user
 USER ubuntu
 WORKDIR /home/ubuntu/workspace
 
