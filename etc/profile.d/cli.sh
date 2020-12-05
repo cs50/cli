@@ -40,9 +40,6 @@ fi
 if [ "$(id -u)" != "0" ]; then
 
     # Clang
-    export CC="clang"
-    export CFLAGS="-ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wshadow"
-    export LDLIBS="-lcrypt -lcs50 -lm"
 
     # File mode creation mask
     umask 0077
@@ -59,23 +56,27 @@ if [ "$(id -u)" != "0" ]; then
 
     # Make
     # Ensure no make targets end with .c
-    make () {
+    make() {
+
+        # Check for arguments ending with .c
         local args=""
         local invalid_args=0
-
         for arg; do
             case "$arg" in
                 (*.c) arg=${arg%.c}; invalid_args=1;;
             esac
             args="$args $arg"
         done
-
         if [ $invalid_args -eq 1 ]; then
             echo "Did you mean 'make$args'?"
             return 1
-        else
-            command make -B $*
         fi
+
+        # Run make
+        local CC="clang"
+        local CFLAGS="-ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wshadow"
+        local LDLIBS="-lcrypt -lcs50 -lm"
+        command make -B $*
     }
 
     # Valgrind
@@ -86,9 +87,9 @@ if [ "$(id -u)" != "0" ]; then
                 return 1
             fi
         done
+        local VALGRIND_OPTS="--memcheck:leak-check=full --memcheck:show-leak-kinds=all --memcheck:track-origins=yes"
         command valgrind $*
     }
-    export VALGRIND_OPTS="--memcheck:leak-check=full --memcheck:show-leak-kinds=all --memcheck:track-origins=yes"
 
     # Which manual sections to search
     export MANSECT=3,2,1
@@ -98,9 +99,8 @@ if [ "$(id -u)" != "0" ]; then
 fi
 
 # Aliases
-alias gem="env -u CC -u CFLAGS -u LDLIBS gem"
-alias pip="env -u CC -u CFLAGS -u LDLIBS pip3 --no-cache-dir"
-alias pip3="env -u CC -u CFLAGS -u LDLIBS pip3 --no-cache-dir"
+alias pip="pip3 --no-cache-dir"
+alias pip3="pip3 --no-cache-dir"
 alias pylint="pylint3"
 alias python="python3"
 alias swift="swift 2> /dev/null"  # https://github.com/cs50/baseimage/issues/49
