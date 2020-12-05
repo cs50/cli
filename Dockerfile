@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 LABEL maintainer="sysadmins@cs50.harvard.edu"
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -24,11 +24,12 @@ ENV LC_CTYPE "C.UTF-8"
 RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
 
 
+# TODO
 # Reinstall all currently installed packages in order to get the man pages back
 # https://github.com/tianon/docker-brew-ubuntu-core/issues/122#issuecomment-380529430
-RUN apt-get update && \
-    dpkg -l | grep ^ii | cut -d' ' -f3 | xargs apt-get install -y --reinstall && \
-    rm -r /var/lib/apt/lists/*
+#RUN apt-get update && \
+#    dpkg -l | grep ^ii | cut -d' ' -f3 | xargs apt-get install -y --reinstall && \
+#    rm -r /var/lib/apt/lists/*
 
 
 # Install packages
@@ -39,9 +40,10 @@ RUN apt-get update && \
         astyle \
         bash-completion \
         bc \
-        bsdtar \
-        clang-8 \
+        #bsdtar \
+        clang \
         cmake \
+        composer \
         coreutils `# for fold` \
         curl \
         dos2unix \
@@ -50,6 +52,7 @@ RUN apt-get update && \
         expect `# For unbuffer` \
         gettext \
         git \
+        git-lfs \
         golang-go \
         imagemagick \
         info \
@@ -77,14 +80,10 @@ RUN apt-get update && \
         valgrind \
         vim \
         wget \
-        whois && \
+        whois \ 
+        yarn && \
     apt-file update
 ENV EDITOR nano
-
-
-# Configure clang 8 last, else 7 takes priority
-RUN (update-alternatives --remove-all clang || true) && \
-    update-alternatives --install /usr/bin/clang clang $(which clang-8) 1
 
 
 # Install Node.js 15.x
@@ -96,59 +95,38 @@ RUN curl -sL https://deb.nodesource.com/setup_15.x | bash - && \
 ENV NODE_ENV "dev"
 
 
-# Install Yarn
-# https://yarnpkg.com/en/docs/install#debian-stable
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt-get update && \
-    apt-get install yarn
-
-
 # Install Node.js packages
 RUN npm install -g grunt http-server nodemon
 
 
-# Install Java 13
-# http://jdk.java.net/13/
+# Install Java 15
+# http://jdk.java.net/15/
 RUN cd /tmp && \
-    wget https://download.java.net/java/GA/jdk13.0.1/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-13.0.1_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-13.0.1_linux-x64_bin.tar.gz && \
-    rm -f openjdk-13.0.1_linux-x64_bin.tar.gz && \
-    mv jdk-13.0.1 /opt/ && \
+    wget https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-15.0.1_linux-x64_bin.tar.gz && \
+    rm -f openjdk-15.0.1_linux-x64_bin.tar.gz && \
+    mv jdk-15.0.1 /opt/ && \
     mkdir -p /opt/bin && \
-    ln -s /opt/jdk-13.0.1/bin/* /opt/bin/ && \
+    ln -s /opt/jdk-15.0.1/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
-ENV JAVA_HOME "/opt/jdk-13.0.1"
+ENV JAVA_HOME "/opt/jdk-15.0.1"
 
 
 # Install Python 3.7.x
 # https://www.python.org/downloads/
-# https://stackoverflow.com/a/44758621/5156190
-RUN apt-get update && \
-    apt-get install -y \
-        build-essential \
-        libbz2-dev \
-        libc6-dev \
-        libgdbm-dev \
-        liblzma-dev `# Required by pandas` \
-        libncursesw5-dev \
-        libreadline-gplv2-dev \
-        libsqlite3-dev \
-        libssl-dev \
-        tk-dev \
-        zlib1g-dev && \
-    cd /tmp && \
-    wget https://www.python.org/ftp/python/3.7.9/Python-3.7.9.tgz && \
-    tar xzf Python-3.7.9.tgz && \
-    rm -f Python-3.7.9.tgz && \
-    cd Python-3.7.9 && \
+RUN cd /tmp && \
+    wget https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz && \
+    tar xzf Python-3.9.0.tgz && \
+    rm -f Python-3.9.0.tgz && \
+    cd Python-3.9.0 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm -rf Python-3.7.9 && \
+    rm -rf Python-3.9.0 && \
     pip3 install --upgrade pip
 ENV PYTHONDONTWRITEBYTECODE "1"
+
 
 # Install Python packages
 RUN pip3 install \
@@ -203,16 +181,6 @@ RUN curl --silent https://packagecloud.io/install/repositories/cs50/repo/script.
 ENV CLASSPATH ".:/usr/share/java/cs50.jar"
 
 
-# Install git-lfs
-# https://packagecloud.io/github/git-lfs/install#manual
-RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
-    apt-get install -y git-lfs
-
-
-# Install Composer
-RUN curl --silent --show-error https://getcomposer.org/installer | \
-        php -- --install-dir=/usr/local/bin --filename=composer
-
 
 # Install Heroku CLI
 RUN curl https://cli-assets.heroku.com/install.sh | sh
@@ -247,7 +215,7 @@ RUN echo "Defaults umask_override" >> /etc/sudoers
 RUN echo "Defaults umask=0022" >> /etc/sudoers
 RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
 USER ubuntu
-WORKDIR /home/ubuntu
+WORKDIR /home/ubuntu/workspace
 
 
 # Update mlocate database in background
