@@ -117,24 +117,14 @@ RUN npm install -g grunt http-server nodemon
 
 
 # Install PHP 8.0.x
-# https://www.php.net/downloads
+# https://launchpad.net/~ondrej/+archive/ubuntu/php
 RUN apt-get update && \
     apt-get install -y \
-        libsqlite3-dev \
-        libsystemd-dev \
-        libxml2-dev && \
-    cd /tmp && \
-    wget https://www.php.net/distributions/php-8.0.0.tar.gz && \
-    tar xzf php-8.0.0.tar.gz && \
-    rm -f php-8.0.0.tar.gz && \
-    cd php-8.0.0 && \
-    ./configure --enable-fpm --with-fpm-systemd --with-openssl && \
-    make && \
-    make install && \
-    cd .. && \
-    rm -rf php-8.0.0 && \
-    curl --silent --show-error https://getcomposer.org/installer | \
-        php -- --install-dir=/usr/local/bin --filename=composer
+        software-properties-common && \
+    add-apt-repository ppa:ondrej/php && \
+    apt-get update && \
+    apt-get install -y \
+        php8.0-fpm
 
 
 # Install Python 3.7.x
