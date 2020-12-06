@@ -46,7 +46,6 @@ RUN apt-get update && \
         #bsdtar \
         clang \
         cmake \
-        composer \
         coreutils `# for fold` \
         curl \
         dos2unix \
@@ -69,7 +68,6 @@ RUN apt-get update && \
         mysql-client \
         nano \
         ncurses-bin `# for tput` \
-        php \
         poppler-utils `# for pdftoppm` \
         rename `# For renaming files` \
         rpm \
@@ -118,8 +116,30 @@ ENV NODE_ENV "dev"
 RUN npm install -g grunt http-server nodemon
 
 
+# Install PHP 8.0.x
+# https://www.php.net/downloads
+RUN apt-get update && \
+    apt-get install -y \
+        libsqlite3-dev \
+        libsystemd-dev \
+        libxml2-dev && \
+    cd /tmp && \
+    wget https://www.php.net/distributions/php-8.0.0.tar.gz && \
+    tar xzf php-8.0.0.tar.gz && \
+    rm -f php-8.0.0.tar.gz && \
+    cd php-8.0.0 && \
+    ./configure --enable-fpm --with-fpm-systemd --with-openssl && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf php-8.0.0 && \
+    curl --silent --show-error https://getcomposer.org/installer | \
+        php -- --install-dir=/usr/local/bin --filename=composer
+
+
 # Install Python 3.7.x
 # https://www.python.org/downloads/
+# https://www.php.net/manual/en/install.fpm.install.php
 RUN cd /tmp && \
     wget https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz && \
     tar xzf Python-3.9.0.tgz && \
@@ -188,15 +208,6 @@ RUN cd /tmp && \
     rm -f sqlite-tools-linux-x86-3340000.zip && \
     mv sqlite-tools-linux-x86-3340000/* /usr/local/bin/ && \
     rm -rf sqlite-tools-linux-x86-3340000
-
-
-# Install Swift 5.3
-RUN cd /tmp && \
-    wget https://swift.org/builds/swift-5.3.1-release/ubuntu1804/swift-5.3.1-RELEASE/swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
-    tar xzf swift-5.3.1-RELEASE-ubuntu18.04.tar.gz --strip-components=1 -C / && \
-    rm -f swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y libpython2.7
 
 
 # Install CS50 packages
