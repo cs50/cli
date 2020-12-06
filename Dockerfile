@@ -22,18 +22,6 @@ ENV LC_CTYPE "C.UTF-8"
 # Unminimize system
 RUN echo y | unminimize
 
-# Do not exclude man pages & other documentation
-# https://github.com/tianon/docker-brew-ubuntu-core/issues/122#issuecomment-380529430
-#RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
-
-
-# TODO
-# Reinstall all currently installed packages in order to get the man pages back
-# https://github.com/tianon/docker-brew-ubuntu-core/issues/122#issuecomment-380529430
-#RUN apt-get update && \
-#    dpkg -l | grep ^ii | cut -d' ' -f3 | xargs apt-get install -y --reinstall && \
-#    rm -r /var/lib/apt/lists/*
-
 
 # Install packages
 RUN apt-get update && \
@@ -43,7 +31,6 @@ RUN apt-get update && \
         astyle \
         bash-completion \
         bc \
-        #bsdtar \
         clang \
         cmake \
         coreutils `# for fold` \
@@ -73,6 +60,7 @@ RUN apt-get update && \
         rpm \
         sudo \
         telnet \
+        tmux \
         traceroute \
         tree \
         unrar \
