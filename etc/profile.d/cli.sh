@@ -110,9 +110,6 @@ alias pylint="pylint3"
 alias python="python3"
 alias swift="swift 2> /dev/null"  # https://github.com/cs50/baseimage/issues/49
 
-# Flask
-export FLASK_APP="application.py"
-
 # Python
 export PATH="$HOME"/.local/bin:"$PATH"
 
