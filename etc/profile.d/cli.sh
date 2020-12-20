@@ -39,8 +39,6 @@ fi
 # If not root
 if [ "$USER" != "root" ]; then
 
-    # Clang
-
     # File mode creation mask
     umask 0077
 
@@ -73,21 +71,21 @@ if [ "$USER" != "root" ]; then
         fi
 
         # Run make
-        local CC="clang"
-        local CFLAGS="-ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wshadow"
-        local LDLIBS="-lcrypt -lcs50 -lm"
+        CC="clang" \
+        CFLAGS="-ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wshadow" \
+        LDLIBS="-lcrypt -lcs50 -lm" \
         command make -B $*
     }
 
     # Valgrind
     valgrind() {
         for arg; do
-            if echo "$arg" | grep -Eq "(^python|.py$)"; then
+            if echo "$arg" | grep -Eq "(^python|\.py$)"; then
                 echo "Afraid valgrind does not support Python programs!"
                 return 1
             fi
         done
-        local VALGRIND_OPTS="--memcheck:leak-check=full --memcheck:show-leak-kinds=all --memcheck:track-origins=yes"
+        VALGRIND_OPTS="--memcheck:leak-check=full --memcheck:show-leak-kinds=all --memcheck:track-origins=yes" \
         command valgrind $*
     }
 
@@ -109,6 +107,11 @@ alias pip3="pip3 --no-cache-dir"
 alias pylint="pylint3"
 alias python="python3"
 alias swift="swift 2> /dev/null"  # https://github.com/cs50/baseimage/issues/49
+
+# Flask
+export FLASK_APP="application.py"
+export FLASK_DEBUG="0"
+export FLASK_ENV="development"
 
 # Python
 export PATH="$HOME"/.local/bin:"$PATH"
