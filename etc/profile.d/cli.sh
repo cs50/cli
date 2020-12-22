@@ -39,7 +39,7 @@ if [ "$PS1" ]; then
 fi
 
 # If not root
-if [ "$USER" != "root" ]; then
+if [ "$(whoami)" != "root" ]; then
 
     # File mode creation mask
     umask 0077
@@ -106,7 +106,7 @@ if [ "$USER" != "root" ]; then
 fi
 
 # If ubuntu
-if [ "$USER" = "ubuntu" ]; then
+if [ "$(whoami)" = "ubuntu" ]; then
 
     # Alias
     alias cd="HOME=~/workspace cd"
