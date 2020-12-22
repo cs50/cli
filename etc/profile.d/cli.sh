@@ -24,7 +24,9 @@ if [ "$PS1" ]; then
     export PROMPT_COMMAND='history -a' # Store Bash History Immediately
 
     # Prompt
-    PS1='\[$(printf "\x0f")\033[01;34m\]$(cwdSlashAtEnd)\[\033[00m\]$(__git_ps1 " (%s)") $ '
+    if [ $(type -t __git_ps1) == "function" ]; then
+        PS1='\[$(printf "\x0f")\033[01;34m\]$(cwdSlashAtEnd)\[\033[00m\]$(__git_ps1 " (%s)") $ '
+    fi
 
     # Terminal windows' titles
     case "$TERM" in
