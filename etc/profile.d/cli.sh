@@ -49,14 +49,18 @@ if [ "$USER" != "root" ]; then
     alias ll="ls --color -F -l"
     alias ls="ls --color -F" # Add trailing slashes
     alias mv="mv -i"
+    alias pip="pip3 --no-cache-dir"
+    alias pip3="pip3 --no-cache-dir"
+    alias pylint="pylint3"
+    alias python="python3"
     alias rm="rm -i"
     alias sudo="sudo " # Trailing space enables elevated command to be an alias
+    alias swift="swift 2> /dev/null" # https://github.com/cs50/baseimage/issues/49
 
     # Make
-    # Ensure no make targets end with .c
     make() {
 
-        # Check for arguments ending with .c
+        # Ensure no make targets end with .c
         local args=""
         local invalid_args=0
         for arg; do
@@ -105,13 +109,6 @@ if [ "$USER" == "ubuntu" ]; then
     # Alias
     alias cd="HOME=~/workspace cd"
 fi
-
-# Aliases
-alias pip="pip3 --no-cache-dir"
-alias pip3="pip3 --no-cache-dir"
-alias pylint="pylint3"
-alias python="python3"
-alias swift="swift 2> /dev/null"  # https://github.com/cs50/baseimage/issues/49
 
 # Editor
 export EDITOR="nano"
