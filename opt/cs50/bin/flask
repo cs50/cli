@@ -1,5 +1,23 @@
 #!/bin/bash
 
+# If $FLASK_APP isn't set, check for application.py (for backwards compatibility), else default to app.py
+if [[ -z "$FLASK_APP" ]]; then
+    if [[ -f "application.py" ]]; then
+        FLASK_APP="application.py"
+    else
+        FLASK_APP="app.py"
+    fi
+fi
+
+# Disable debugger by default if $FLASK_ENV not explicitly set to "development"
+# https://flask.palletsprojects.com/en/1.1.x/config/#environment-and-debug-features
+if [[ "$FLASK_ENV" != "development" ]]; then
+    FLASK_DEBUG="${FLASK_DEBUG:-0}"
+fi
+
+# But enable development mode by default
+FLASK_ENV="${FLASK_ENV:-development}"
+
 if [[ "$1" == "run" ]]; then
 
     # Default options
@@ -39,7 +57,7 @@ if [[ "$1" == "run" ]]; then
     # Spawn flask
     FLASK_APP="$FLASK_APP" \
     FLASK_DEBUG="${FLASK_DEBUG:-0}" \
-    FLASK_ENV="development" \
+    FLASK_ENV="$FLASK_ENV" \
     /usr/local/bin/flask run $host $port $reload $threads $options
 else
     /usr/local/bin/flask "$@"
