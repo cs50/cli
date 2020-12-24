@@ -55,6 +55,7 @@ RUN apt-get update && \
         mysql-client \
         nano \
         ncurses-bin `# for tput` \
+        php \
         poppler-utils `# for pdftoppm` \
         rename `# For renaming files` \
         rpm \
@@ -102,19 +103,6 @@ ENV NODE_ENV "dev"
 
 # Install Node.js packages
 RUN npm install -g grunt http-server nodemon
-
-
-# Install PHP 8.0.x
-# https://launchpad.net/~ondrej/+archive/ubuntu/php
-RUN apt-get update && \
-    apt-get install -y \
-        software-properties-common && \
-    add-apt-repository ppa:ondrej/php && \
-    apt-get update && \
-    apt-get install -y \
-        php8.0-cli && \
-    curl --silent --show-error https://getcomposer.org/installer | \
-        php -- --install-dir=/usr/local/bin --filename=composer
 
 
 # Install Python 3.7.x
