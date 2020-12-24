@@ -20,7 +20,7 @@ ENV LC_CTYPE "C.UTF-8"
 
 
 # Unminimize system
-RUN echo y | unminimize
+RUN yes | unminimize
 
 
 # Install packages
@@ -68,7 +68,7 @@ RUN apt-get update && \
         valgrind \
         vim \
         wget \
-        whois \ 
+        whois \
         yarn && \
     apt-file update
 ENV EDITOR nano

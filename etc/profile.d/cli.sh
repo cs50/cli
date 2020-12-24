@@ -24,7 +24,9 @@ if [ "$PS1" ]; then
     export PROMPT_COMMAND='history -a' # Store Bash History Immediately
 
     # Prompt
-    PS1='\[$(printf "\x0f")\033[01;34m\]$(cwdSlashAtEnd)\[\033[00m\]$(__git_ps1 " (%s)") $ '
+    if type __git_ps1 > /dev/null; then
+        PS1='\[$(printf "\x0f")\033[01;34m\]$(cwdSlashAtEnd)\[\033[00m\]$(__git_ps1 " (%s)") $ '
+    fi
 
     # Terminal windows' titles
     case "$TERM" in
@@ -37,7 +39,7 @@ if [ "$PS1" ]; then
 fi
 
 # If not root
-if [ "$USER" != "root" ]; then
+if [ "$(whoami)" != "root" ]; then
 
     # File mode creation mask
     umask 0077
@@ -49,14 +51,18 @@ if [ "$USER" != "root" ]; then
     alias ll="ls --color -F -l"
     alias ls="ls --color -F" # Add trailing slashes
     alias mv="mv -i"
+    alias pip="pip3 --no-cache-dir"
+    alias pip3="pip3 --no-cache-dir"
+    alias pylint="pylint3"
+    alias python="python3"
     alias rm="rm -i"
     alias sudo="sudo " # Trailing space enables elevated command to be an alias
+    alias swift="swift 2> /dev/null" # https://github.com/cs50/baseimage/issues/49
 
     # Make
-    # Ensure no make targets end with .c
     make() {
 
-        # Check for arguments ending with .c
+        # Ensure no make targets end with .c
         local args=""
         local invalid_args=0
         for arg; do
@@ -92,29 +98,26 @@ if [ "$USER" != "root" ]; then
     # Which manual sections to search
     export MANSECT=3,2,1
 
+    # Localization
+    export LANG="C.UTF-8"
+    export LC_ALL="C.UTF-8"
+    export LC_CTYPE="C.UTF-8"
+
 fi
 
 # If ubuntu
-if [ "$USER" == "ubuntu" ]; then
+if [ "$(whoami)" = "ubuntu" ]; then
 
     # Alias
     alias cd="HOME=~/workspace cd"
 fi
 
-# Aliases
-alias pip="pip3 --no-cache-dir"
-alias pip3="pip3 --no-cache-dir"
-alias pylint="pylint3"
-alias python="python3"
-alias swift="swift 2> /dev/null"  # https://github.com/cs50/baseimage/issues/49
-
-# Flask
-export FLASK_APP="application.py"
-export FLASK_DEBUG="0"
-export FLASK_ENV="development"
+# Editor
+export EDITOR="nano"
 
 # Python
 export PATH="$HOME"/.local/bin:"$PATH"
+export PYTHONDONTWRITEBYTECODE="1"
 
 # Ruby
 export GEM_HOME="$HOME"/.gem

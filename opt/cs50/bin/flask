@@ -1,15 +1,18 @@
 #!/bin/bash
 
-# Disable debugger by default if $FLASK_ENV not explicitly set to "development"
-# https://flask.palletsprojects.com/en/1.1.x/config/#environment-and-debug-features
-if [[ "$FLASK_ENV" != "development" ]]; then
-    FLASK_DEBUG="${FLASK_DEBUG:-0}"
+# If $FLASK_APP isn't set, check for application.py (for backwards compatibility), else implicitly default to app.py
+if [[ -z "$FLASK_APP" ]]; then
+    if [[ -f "application.py" ]]; then
+        export FLASK_APP="application.py"
+    fi
 fi
 
-# But enable development mode by default
-FLASK_ENV="${FLASK_ENV:-development}"
+# Enable development mode by default
+export FLASK_ENV="${FLASK_ENV:-development}"
 
-# If `flask run`
+# But not debug mode
+export FLASK_DEBUG="${FLASK_DEBUG:-0}"
+
 if [[ "$1" == "run" ]]; then
 
     # Default options
@@ -46,24 +49,8 @@ if [[ "$1" == "run" ]]; then
     # using regex to handle -pxxxx, -p xxxx, --port xxxx, --port=xxxx
     fuser --kill -INT "${port//[^0-9]}/tcp" &> /dev/null
 
-    # Check whether online (or offline)
-	if [ "$CS50_IDE_TYPE" == "online" ]; then
-		URL="https://$C9_HOSTNAME"
-	else
-		URL="http://localhost"
-	fi
-
-    # If $FLASK_APP isn't set, check for application.py (for backwards compatibility), else default to app.py
-    if [[ -z "$FLASK_APP" ]]; then
-        if [[ -f "application.py" ]]; then
-            FLASK_APP="application.py"
-        else
-            FLASK_APP="app.py"
-        fi
-    fi
-
     # Spawn flask
-    unbuffer /usr/local/bin/flask run $host $port $reload $threads $options | sed "s#\(.*\)http://[^:]\+\(:.\+\)#\1$URL\2#"
+    /usr/local/bin/flask run $host $port $reload $threads $options
 else
     /usr/local/bin/flask "$@"
 fi
