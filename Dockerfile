@@ -1,4 +1,4 @@
-FROM ubuntu:20.04
+FROM ubuntu
 LABEL maintainer="sysadmins@cs50.harvard.edu"
 ARG DEBIAN_FRONTEND=noninteractive
 
