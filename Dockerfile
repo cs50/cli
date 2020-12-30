@@ -106,21 +106,21 @@ ENV NODE_ENV "dev"
 
 
 # Install Node.js packages
-RUN npm install -g grunt http-server nodemon
+RUN bash -l npm install -g grunt http-server
 
 
-# Install Python 3.7.x
+# Install Python 3.9.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    wget https://www.python.org/ftp/python/3.9.0/Python-3.9.0.tgz && \
-    tar xzf Python-3.9.0.tgz && \
-    rm -f Python-3.9.0.tgz && \
-    cd Python-3.9.0 && \
+    wget https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz && \
+    tar xzf Python-3.9.1.tgz && \
+    rm -f Python-3.9.1.tgz && \
+    cd Python-3.9.1 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm -rf Python-3.9.0 && \
+    rm -rf Python-3.9.1 && \
     pip3 install --upgrade pip
 ENV PYTHONDONTWRITEBYTECODE "1"
 

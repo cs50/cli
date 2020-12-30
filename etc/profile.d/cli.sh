@@ -115,6 +115,10 @@ fi
 # Editor
 export EDITOR="nano"
 
+# Node
+# Suppressed by -n in Dockerfile, per https://github.com/mklement0/n-install#installation-options
+export N_PREFIX="/opt/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PREFIX/bin"
+
 # Python
 export PATH="$HOME"/.local/bin:"$PATH"
 export PYTHONDONTWRITEBYTECODE="1"
