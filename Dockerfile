@@ -106,7 +106,7 @@ ENV NODE_ENV "dev"
 
 
 # Install Node.js packages
-RUN bash -l npm install -g grunt http-server
+RUN npm install -g http-server
 
 
 # Install Python 3.9.x
