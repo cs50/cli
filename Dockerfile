@@ -98,11 +98,10 @@ ENV JAVA_HOME "/opt/jdk-15.0.1"
 
 
 # Install Node.js 15.x
-# https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions-enterprise-linux-fedora-and-snap-packages
-# https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions
-RUN curl -sL https://deb.nodesource.com/setup_15.x | bash - && \
-    apt-get install -y nodejs && \
-    npm install -g npm `# Upgrades npm to latest`
+# https://github.com/tj/n#installation
+RUN curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o /usr/local/bin/n && \
+    chmod a+x /usr/local/bin/n && \
+    n 15.5.0
 ENV NODE_ENV "dev"
 
 
