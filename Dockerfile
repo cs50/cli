@@ -98,10 +98,10 @@ ENV JAVA_HOME "/opt/jdk-15.0.1"
 
 
 # Install Node.js 15.x
+# https://github.com/tj/n#installation
 RUN curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n latest
-
+    n 15.5.0
 ENV NODE_ENV "dev"
 
 
