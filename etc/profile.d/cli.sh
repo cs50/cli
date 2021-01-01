@@ -48,8 +48,8 @@ if [ "$(whoami)" != "root" ]; then
     alias cp="cp -i"
     alias gdb="gdb -q" # Suppress gdb's startup output
     alias grep="grep --color" # Suppress gdb's startup output
-    alias ll="ls --color -F -l"
-    alias ls="ls --color -F" # Add trailing slashes
+    alias ll="ls --color -F -l --ignore=lost+found"
+    alias ls="ls --color -F --ignore=lost+found" # Add trailing slashes
     alias mv="mv -i"
     alias pip="pip3 --no-cache-dir"
     alias pip3="pip3 --no-cache-dir"
