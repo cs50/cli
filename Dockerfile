@@ -108,20 +108,24 @@ ENV NODE_ENV "dev"
 # Install Node.js packages
 RUN npm install -g http-server
 
-# Install Python build dependencies
-RUN apt-get install -y \
+# Suggested build environment for Python, per pyenv, even though we're building ourselves
+# https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+RUN apt-get install --no-install-recommends -y \
     build-essential \
+    curl \
+    libssl-dev \
     libbz2-dev \
+    libncurses5-dev \
     libffi-dev \
     liblzma-dev \
-    libncurses5-dev \
-    libncursesw5-dev \
     libreadline-dev \
     libsqlite3-dev \
-    libssl-dev \
+    libxml2-dev \
+    libxmlsec1-dev \
     llvm \
-    python-openssl \
+    make \
     tk-dev \
+    wget \
     xz-utils \
     zlib1g-dev
 
@@ -138,7 +142,6 @@ RUN cd /tmp && \
     cd .. && \
     rm -rf Python-3.9.1 && \
     pip3 install --upgrade pip
-ENV PYTHONDONTWRITEBYTECODE "1"
 
 
 # Install Python packages
