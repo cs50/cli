@@ -108,6 +108,22 @@ ENV NODE_ENV "dev"
 # Install Node.js packages
 RUN npm install -g http-server
 
+# Install Python build dependencies
+RUN apt-get install -y \
+    build-essential \
+    libbz2-dev \
+    libffi-dev \
+    liblzma-dev \
+    libncurses5-dev \
+    libncursesw5-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libssl-dev \
+    llvm \
+    python-openssl \
+    tk-dev \
+    xz-utils \
+    zlib1g-dev
 
 # Install Python 3.9.x
 # https://www.python.org/downloads/
