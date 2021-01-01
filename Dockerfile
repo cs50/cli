@@ -1,4 +1,4 @@
-FROM ubuntu:18.04
+FROM ubuntu:20.04
 LABEL maintainer="sysadmins@cs50.harvard.edu"
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -19,16 +19,8 @@ ENV LC_ALL "C.UTF-8"
 ENV LC_CTYPE "C.UTF-8"
 
 
-# Do not exclude man pages & other documentation
-# https://github.com/tianon/docker-brew-ubuntu-core/issues/122#issuecomment-380529430
-RUN rm -f /etc/dpkg/dpkg.cfg.d/excludes
-
-
-# Reinstall all currently installed packages in order to get the man pages back
-# https://github.com/tianon/docker-brew-ubuntu-core/issues/122#issuecomment-380529430
-RUN apt-get update && \
-    dpkg -l | grep ^ii | cut -d' ' -f3 | xargs apt-get install -y --reinstall && \
-    rm -r /var/lib/apt/lists/*
+# Unminimize system
+RUN yes | unminimize
 
 
 # Install packages
@@ -39,8 +31,7 @@ RUN apt-get update && \
         astyle \
         bash-completion \
         bc \
-        bsdtar \
-        clang-8 \
+        clang \
         cmake \
         coreutils `# for fold` \
         curl \
@@ -50,13 +41,16 @@ RUN apt-get update && \
         expect `# For unbuffer` \
         gettext \
         git \
+        git-lfs \
         golang-go \
         imagemagick \
         info \
         jq \
         libmysqlclient-dev \
+        libtinfo5 `# for clang, https://stackoverflow.com/a/62721741/5156190` \
         lua5.3 \
         man \
+        man-db \
         mlocate \
         mysql-client \
         nano \
@@ -65,11 +59,9 @@ RUN apt-get update && \
         poppler-utils `# for pdftoppm` \
         rename `# For renaming files` \
         rpm \
-        ruby \
-        ruby-dev `# Avoid "can't find header files for ruby" for gem` \
-        sqlite3 \
         sudo \
         telnet \
+        tmux \
         traceroute \
         tree \
         unrar \
@@ -77,78 +69,77 @@ RUN apt-get update && \
         valgrind \
         vim \
         wget \
-        whois && \
+        whois \
+        yarn && \
     apt-file update
 ENV EDITOR nano
 
 
-# Configure clang 8 last, else 7 takes priority
-RUN (update-alternatives --remove-all clang || true) && \
-    update-alternatives --install /usr/bin/clang clang $(which clang-8) 1
+# Install Composer
+RUN curl --silent --show-error https://getcomposer.org/installer | \
+        php -- --install-dir=/usr/local/bin --filename=composer
+
+
+# Install Heroku CLI
+RUN curl https://cli-assets.heroku.com/install.sh | sh
+
+
+# Install Java 15.x
+# http://jdk.java.net/15/
+RUN cd /tmp && \
+    wget https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-15.0.1_linux-x64_bin.tar.gz && \
+    rm -f openjdk-15.0.1_linux-x64_bin.tar.gz && \
+    mv jdk-15.0.1 /opt/ && \
+    mkdir -p /opt/bin && \
+    ln -s /opt/jdk-15.0.1/bin/* /opt/bin/ && \
+    chmod a+rx /opt/bin/*
+ENV JAVA_HOME "/opt/jdk-15.0.1"
 
 
 # Install Node.js 15.x
-# https://nodejs.org/en/download/package-manager/#debian-and-ubuntu-based-linux-distributions-enterprise-linux-fedora-and-snap-packages
-# https://github.com/nodesource/distributions/blob/master/README.md#installation-instructions
-RUN curl -sL https://deb.nodesource.com/setup_15.x | bash - && \
-    apt-get install -y nodejs && \
-    npm install -g npm `# Upgrades npm to latest`
+# https://github.com/tj/n#installation
+RUN curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o /usr/local/bin/n && \
+    chmod a+x /usr/local/bin/n && \
+    n 15.5.0
 ENV NODE_ENV "dev"
 
 
-# Install Yarn
-# https://yarnpkg.com/en/docs/install#debian-stable
-RUN curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | apt-key add - && \
-    echo "deb https://dl.yarnpkg.com/debian/ stable main" | tee /etc/apt/sources.list.d/yarn.list && \
-    apt-get update && \
-    apt-get install yarn
-
-
 # Install Node.js packages
-RUN npm install -g grunt http-server nodemon
+RUN npm install -g http-server
 
+# Install Python build dependencies
+RUN apt-get install -y \
+    build-essential \
+    libbz2-dev \
+    libffi-dev \
+    liblzma-dev \
+    libncurses5-dev \
+    libncursesw5-dev \
+    libreadline-dev \
+    libsqlite3-dev \
+    libssl-dev \
+    llvm \
+    python-openssl \
+    tk-dev \
+    xz-utils \
+    zlib1g-dev
 
-# Install Java 13
-# http://jdk.java.net/13/
-RUN cd /tmp && \
-    wget https://download.java.net/java/GA/jdk13.0.1/cec27d702aa74d5a8630c65ae61e4305/9/GPL/openjdk-13.0.1_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-13.0.1_linux-x64_bin.tar.gz && \
-    rm -f openjdk-13.0.1_linux-x64_bin.tar.gz && \
-    mv jdk-13.0.1 /opt/ && \
-    mkdir -p /opt/bin && \
-    ln -s /opt/jdk-13.0.1/bin/* /opt/bin/ && \
-    chmod a+rx /opt/bin/*
-ENV JAVA_HOME "/opt/jdk-13.0.1"
-
-
-# Install Python 3.7.x
+# Install Python 3.9.x
 # https://www.python.org/downloads/
-# https://stackoverflow.com/a/44758621/5156190
-RUN apt-get update && \
-    apt-get install -y \
-        build-essential \
-        libbz2-dev \
-        libc6-dev \
-        libgdbm-dev \
-        liblzma-dev `# Required by pandas` \
-        libncursesw5-dev \
-        libreadline-gplv2-dev \
-        libsqlite3-dev \
-        libssl-dev \
-        tk-dev \
-        zlib1g-dev && \
-    cd /tmp && \
-    wget https://www.python.org/ftp/python/3.7.9/Python-3.7.9.tgz && \
-    tar xzf Python-3.7.9.tgz && \
-    rm -f Python-3.7.9.tgz && \
-    cd Python-3.7.9 && \
+RUN cd /tmp && \
+    wget https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz && \
+    tar xzf Python-3.9.1.tgz && \
+    rm -f Python-3.9.1.tgz && \
+    cd Python-3.9.1 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm -rf Python-3.7.9 && \
+    rm -rf Python-3.9.1 && \
     pip3 install --upgrade pip
 ENV PYTHONDONTWRITEBYTECODE "1"
+
 
 # Install Python packages
 RUN pip3 install \
@@ -170,18 +161,21 @@ RUN pip3 install \
     virtualenv
 
 
-# Install Swift 5.3
+# Install Ruby 2.7.x
+# https://www.ruby-lang.org/en/downloads/
 RUN cd /tmp && \
-    wget https://swift.org/builds/swift-5.3.1-release/ubuntu1804/swift-5.3.1-RELEASE/swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
-    tar xzf swift-5.3.1-RELEASE-ubuntu18.04.tar.gz --strip-components=1 -C / && \
-    rm -f swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y libpython2.7
+    wget https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz && \
+    tar xzf ruby-2.7.2.tar.gz && \
+    rm -f ruby-2.7.2.tar.gz && \
+    cd ruby-2.7.2 && \
+    ./configure && \
+    make && \
+    make install && \
+    cd .. && \
+    rm -rf ruby-2.7.2
 
 
-# Install fpm, asciidoctor
-# https://github.com/asciidoctor/jekyll-asciidoc/issues/135#issuecomment-241948040
-# https://github.com/asciidoctor/jekyll-asciidoc#development
+# Install Ruby packages
 RUN gem install \
     asciidoctor \
     bundler \
@@ -194,6 +188,24 @@ RUN gem install \
     pygments.rb
 
 
+# Install SQLite 3.x
+RUN cd /tmp && \
+    wget https://www.sqlite.org/2020/sqlite-tools-linux-x86-3340000.zip && \
+    unzip sqlite-tools-linux-x86-3340000.zip && \
+    rm -f sqlite-tools-linux-x86-3340000.zip && \
+    mv sqlite-tools-linux-x86-3340000/* /usr/local/bin/ && \
+    rm -rf sqlite-tools-linux-x86-3340000
+
+
+# Install Swift 5.3
+RUN cd /tmp && \
+    wget https://swift.org/builds/swift-5.3.1-release/ubuntu1804/swift-5.3.1-RELEASE/swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
+    tar xzf swift-5.3.1-RELEASE-ubuntu18.04.tar.gz --strip-components=1 -C / && \
+    rm -f swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
+    apt-get update && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y libpython2.7
+
+
 # Install CS50 packages
 RUN curl --silent https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
     apt-get install -y \
@@ -201,21 +213,6 @@ RUN curl --silent https://packagecloud.io/install/repositories/cs50/repo/script.
         libcs50-java \
         php-cs50
 ENV CLASSPATH ".:/usr/share/java/cs50.jar"
-
-
-# Install git-lfs
-# https://packagecloud.io/github/git-lfs/install#manual
-RUN curl -s https://packagecloud.io/install/repositories/github/git-lfs/script.deb.sh | bash && \
-    apt-get install -y git-lfs
-
-
-# Install Composer
-RUN curl --silent --show-error https://getcomposer.org/installer | \
-        php -- --install-dir=/usr/local/bin --filename=composer
-
-
-# Install Heroku CLI
-RUN curl https://cli-assets.heroku.com/install.sh | sh
 
 
 # Copy files to image
@@ -236,7 +233,7 @@ RUN mkdir -p /opt/bin /opt/cs50/bin
 # Add user
 RUN useradd --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
     umask 0077 && \
-    mkdir -p /home/ubuntu && \
+    mkdir -p /home/ubuntu/workspace && \
     chown -R ubuntu:ubuntu /home/ubuntu
 
 
@@ -246,8 +243,11 @@ RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
 RUN echo "Defaults umask_override" >> /etc/sudoers
 RUN echo "Defaults umask=0022" >> /etc/sudoers
 RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
+
+
+# Set user
 USER ubuntu
-WORKDIR /home/ubuntu
+WORKDIR /home/ubuntu/workspace
 
 
 # Update mlocate database in background

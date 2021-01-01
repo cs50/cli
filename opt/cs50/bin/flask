@@ -1,5 +1,18 @@
 #!/bin/bash
 
+# If $FLASK_APP isn't set, check for application.py (for backwards compatibility), else implicitly default to app.py
+if [[ -z "$FLASK_APP" ]]; then
+    if [[ -f "application.py" ]]; then
+        export FLASK_APP="application.py"
+    fi
+fi
+
+# Enable development mode by default
+export FLASK_ENV="${FLASK_ENV:-development}"
+
+# But not debug mode
+export FLASK_DEBUG="${FLASK_DEBUG:-0}"
+
 if [[ "$1" == "run" ]]; then
 
     # Default options
@@ -36,14 +49,8 @@ if [[ "$1" == "run" ]]; then
     # using regex to handle -pxxxx, -p xxxx, --port xxxx, --port=xxxx
     fuser --kill -INT "${port//[^0-9]}/tcp" &> /dev/null
 
-	if [ "$CS50_IDE_TYPE" == "online" ]; then
-		URL="https://$C9_HOSTNAME"
-	else
-		URL="http://localhost"
-	fi
-
     # Spawn flask
-    FLASK_APP="$FLASK_APP" FLASK_DEBUG="${FLASK_DEBUG:-0}" unbuffer /usr/local/bin/flask run $host $port $reload $threads $options | sed "s#\(.*\)http://[^:]\+\(:.\+\)#\1$URL\2#"
+    /usr/local/bin/flask run $host $port $reload $threads $options
 else
     /usr/local/bin/flask "$@"
 fi
