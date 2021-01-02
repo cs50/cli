@@ -70,7 +70,8 @@ RUN apt-get update && \
         vim \
         wget \
         whois \
-        yarn && \
+        yarn \
+        zip && \
     apt-file update
 ENV EDITOR nano
 
