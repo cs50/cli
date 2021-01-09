@@ -106,13 +106,6 @@ if [ "$(whoami)" != "root" ]; then
 
 fi
 
-# If ubuntu
-if [ "$(whoami)" = "ubuntu" ]; then
-
-    # Alias
-    alias cd="HOME=~/workspace cd"
-fi
-
 # Editor
 export EDITOR="nano"
 

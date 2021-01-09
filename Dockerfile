@@ -234,7 +234,7 @@ RUN mkdir -p /opt/bin /opt/cs50/bin
 # Add user
 RUN useradd --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
     umask 0077 && \
-    mkdir -p /home/ubuntu/workspace && \
+    mkdir -p /home/ubuntu && \
     chown -R ubuntu:ubuntu /home/ubuntu
 
 
@@ -248,7 +248,7 @@ RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
 
 # Set user
 USER ubuntu
-WORKDIR /home/ubuntu/workspace
+WORKDIR /home/ubuntu
 
 
 # Update mlocate database in background
