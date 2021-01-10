@@ -104,6 +104,8 @@ if [ "$(whoami)" != "root" ]; then
     export LC_ALL="C.UTF-8"
     export LC_CTYPE="C.UTF-8"
 
+    # Python
+    export PYTHONDONTWRITEBYTECODE="1"
 fi
 
 # If ubuntu
@@ -122,7 +124,6 @@ export N_PREFIX="/opt/n"; [[ :$PATH: == *":$N_PREFIX/bin:"* ]] || PATH+=":$N_PRE
 
 # Python
 export PATH="$HOME"/.local/bin:"$PATH"
-export PYTHONDONTWRITEBYTECODE="1"
 
 # Ruby
 export GEM_HOME="$HOME"/.gem
