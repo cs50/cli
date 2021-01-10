@@ -45,6 +45,9 @@ if [ "$(whoami)" != "root" ]; then
     # File mode creation mask
     umask 0077
 
+    # Don't create core files
+    ulimit -c 0
+
     # Aliases
     alias cp="cp -i"
     alias gdb="gdb -q" # Suppress gdb's startup output
