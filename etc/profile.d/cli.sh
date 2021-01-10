@@ -108,13 +108,6 @@ if [ "$(whoami)" != "root" ]; then
     export PYTHONDONTWRITEBYTECODE="1"
 fi
 
-# If ubuntu
-if [ "$(whoami)" = "ubuntu" ]; then
-
-    # Alias
-    alias cd="HOME=~/workspace cd"
-fi
-
 # Editor
 export EDITOR="nano"
 
