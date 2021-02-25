@@ -28,7 +28,7 @@ after_deploy: |
       -H "Accept: application/json" \
       -H "Travis-API-Version: 3" \
       -H "Authorization: token $TRAVIS_TOKEN" \
-      -d '{"request": {"branch": "main"}}' \
+      -d '{"request": {"branch": "master"}}' \
       "https://api.travis-ci.com/repo/cs50%2F${r}/requests"
   done
 notifications:
