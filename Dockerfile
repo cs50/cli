@@ -7,13 +7,12 @@ RUN sudo apt-get update && \
         texlive-extra-utils `# for pdfcrop` \
         texlive-xetex
 
+# devtools::install_github
 # https://stackoverflow.com/a/58804942/5156190
 RUN sudo apt-get update && \
     sudo apt-get install -y \
         libcurl4-gnutls-dev && \
-    sudo R -e "install.packages('devtools')" && \
-    sudo R -e "devtools::install_github('kbodwin/flair')" && \
-    sudo R -e "devtools::install_github('hadley/emo')"
+    sudo R -e "install.packages('devtools')"
 
 # https://github.com/owickstrom/pandoc-include-code
 RUN sudo apt-get update && \
