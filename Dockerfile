@@ -59,6 +59,7 @@ RUN apt-get update && \
         poppler-utils `# for pdftoppm` \
         rename `# For renaming files` \
         rpm \
+        subversion \
         sudo \
         telnet \
         tmux \
