@@ -30,6 +30,11 @@ RUN apt-get remove -y pandoc && \
     sudo dpkg -i /tmp/pandoc-2.11.4-1-amd64.deb && \
     sudo rm -f /tmp/pandoc-2.11.4-1-amd64.deb
 
+# pandoc-include
+# https://github.com/DCsunset/pandoc-include
+RUN sudo pip3 install \
+    pandoc-include
+
 # pandoc-include-code
 # https://github.com/owickstrom/pandoc-include-code
 RUN sudo apt-get update && \
