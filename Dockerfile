@@ -25,7 +25,7 @@ RUN sudo R -e "install.packages('bookdown')"
 
 # pandoc
 # https://pandoc.org/installing.html#linux
-RUN apt-get remove -y pandoc && \
+RUN sudo apt-get remove -y pandoc && \
     sudo wget --directory-prefix /tmp https://github.com/jgm/pandoc/releases/download/2.11.4/pandoc-2.11.4-1-amd64.deb && \
     sudo dpkg -i /tmp/pandoc-2.11.4-1-amd64.deb && \
     sudo rm -f /tmp/pandoc-2.11.4-1-amd64.deb
