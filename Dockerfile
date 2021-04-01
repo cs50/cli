@@ -23,6 +23,10 @@ RUN sudo apt-get update && \
 # Bookdown
 RUN sudo R -e "install.packages('bookdown')"
 
+# emo::ji
+# https://github.com/hadley/emo
+RUN sudo R -e "devtools::install_github('hadley/emo')"
+
 # pandoc
 # https://pandoc.org/installing.html#linux
 RUN sudo apt-get remove -y pandoc && \
