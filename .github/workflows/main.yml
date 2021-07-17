@@ -16,4 +16,4 @@ jobs:
         uses: docker/build-push-action@v2
         with:
           push: true
-          tags: cs50/check:${{ github.sha }},cs50/check:bookdown
+          tags: cs50/cli:${{ github.sha }},cs50/cli:bookdown
