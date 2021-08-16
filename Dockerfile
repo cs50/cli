@@ -202,15 +202,6 @@ RUN cd /tmp && \
     rm -rf sqlite-tools-linux-x86-3340000
 
 
-# Install Swift 5.3
-RUN cd /tmp && \
-    wget https://swift.org/builds/swift-5.3.1-release/ubuntu1804/swift-5.3.1-RELEASE/swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
-    tar xzf swift-5.3.1-RELEASE-ubuntu18.04.tar.gz --strip-components=1 -C / && \
-    rm -f swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y libpython2.7
-
-
 # Install CS50 packages
 RUN curl --silent https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
     apt-get install -y \
