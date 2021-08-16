@@ -150,7 +150,7 @@ RUN cd /tmp && \
 RUN pip3 install \
     authlib \
     awscli `# must come after awsebcli to ensure supported version` \
-    check50 \
+    "check50<=3" \
     compare50 \
     cs50 \
     Flask \
@@ -162,7 +162,7 @@ RUN pip3 install \
     render50 \
     s3cmd \
     style50 \
-    submit50 \
+    "submit50<=3" \
     virtualenv
 
 
