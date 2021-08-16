@@ -99,11 +99,11 @@ RUN cd /tmp && \
 ENV JAVA_HOME "/opt/jdk-16.0.2"
 
 
-# Install Node.js 15.x
+# Install Node.js 16.x
 # https://github.com/tj/n#installation
 RUN curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 15.5.0
+    n 16.6.2
 ENV NODE_ENV "dev"
 
 
