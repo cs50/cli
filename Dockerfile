@@ -86,17 +86,17 @@ RUN curl --silent --show-error https://getcomposer.org/installer | \
 RUN curl https://cli-assets.heroku.com/install.sh | sh
 
 
-# Install Java 15.x
-# http://jdk.java.net/15/
+# Install Java 16.x
+# http://jdk.java.net/16/
 RUN cd /tmp && \
-    wget https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-15.0.1_linux-x64_bin.tar.gz && \
-    rm -f openjdk-15.0.1_linux-x64_bin.tar.gz && \
-    mv jdk-15.0.1 /opt/ && \
+    wget https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/openjdk-16.0.2_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-16.0.2_linux-x64_bin.tar.gz && \
+    rm -f openjdk-16.0.2_linux-x64_bin.tar.gz && \
+    mv jdk-16.0.2 /opt/ && \
     mkdir -p /opt/bin && \
-    ln -s /opt/jdk-15.0.1/bin/* /opt/bin/ && \
+    ln -s /opt/jdk-16.0.2/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
-ENV JAVA_HOME "/opt/jdk-15.0.1"
+ENV JAVA_HOME "/opt/jdk-16.0.2"
 
 
 # Install Node.js 15.x
