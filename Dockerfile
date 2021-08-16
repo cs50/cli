@@ -86,29 +86,30 @@ RUN curl --silent --show-error https://getcomposer.org/installer | \
 RUN curl https://cli-assets.heroku.com/install.sh | sh
 
 
-# Install Java 15.x
-# http://jdk.java.net/15/
+# Install Java 16.x
+# http://jdk.java.net/16/
 RUN cd /tmp && \
-    wget https://download.java.net/java/GA/jdk15.0.1/51f4f36ad4ef43e39d0dfdbaf6549e32/9/GPL/openjdk-15.0.1_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-15.0.1_linux-x64_bin.tar.gz && \
-    rm -f openjdk-15.0.1_linux-x64_bin.tar.gz && \
-    mv jdk-15.0.1 /opt/ && \
+    wget https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/openjdk-16.0.2_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-16.0.2_linux-x64_bin.tar.gz && \
+    rm -f openjdk-16.0.2_linux-x64_bin.tar.gz && \
+    mv jdk-16.0.2 /opt/ && \
     mkdir -p /opt/bin && \
-    ln -s /opt/jdk-15.0.1/bin/* /opt/bin/ && \
+    ln -s /opt/jdk-16.0.2/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
-ENV JAVA_HOME "/opt/jdk-15.0.1"
+ENV JAVA_HOME "/opt/jdk-16.0.2"
 
 
-# Install Node.js 15.x
+# Install Node.js 16.x
 # https://github.com/tj/n#installation
 RUN curl -L https://raw.githubusercontent.com/tj/n/master/bin/n -o /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 15.5.0
+    n 16.6.2
 ENV NODE_ENV "dev"
 
 
 # Install Node.js packages
 RUN npm install -g http-server
+
 
 # Suggested build environment for Python, per pyenv, even though we're building ourselves
 # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
@@ -134,15 +135,15 @@ RUN apt-get install --no-install-recommends -y \
 # Install Python 3.9.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    wget https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz && \
-    tar xzf Python-3.9.1.tgz && \
-    rm -f Python-3.9.1.tgz && \
-    cd Python-3.9.1 && \
+    wget https://www.python.org/ftp/python/3.9.6/Python-3.9.6.tgz && \
+    tar xzf Python-3.9.6.tgz && \
+    rm -f Python-3.9.6.tgz && \
+    cd Python-3.9.6 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm -rf Python-3.9.1 && \
+    rm -rf Python-3.9.6 && \
     pip3 install --upgrade pip
 
 
@@ -150,7 +151,7 @@ RUN cd /tmp && \
 RUN pip3 install \
     authlib \
     awscli `# must come after awsebcli to ensure supported version` \
-    check50 \
+    "check50<=3" \
     compare50 \
     cs50 \
     Flask \
@@ -162,22 +163,22 @@ RUN pip3 install \
     render50 \
     s3cmd \
     style50 \
-    submit50 \
+    "submit50<=3" \
     virtualenv
 
 
 # Install Ruby 2.7.x
 # https://www.ruby-lang.org/en/downloads/
 RUN cd /tmp && \
-    wget https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz && \
-    tar xzf ruby-2.7.2.tar.gz && \
-    rm -f ruby-2.7.2.tar.gz && \
-    cd ruby-2.7.2 && \
+    wget https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.4.tar.gz && \
+    tar xzf ruby-2.7.4.tar.gz && \
+    rm -f ruby-2.7.4.tar.gz && \
+    cd ruby-2.7.4 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm -rf ruby-2.7.2
+    rm -rf ruby-2.7.4
 
 
 # Install Ruby packages
@@ -194,21 +195,13 @@ RUN gem install \
 
 
 # Install SQLite 3.x
+# https://www.sqlite.org/download.html
 RUN cd /tmp && \
-    wget https://www.sqlite.org/2020/sqlite-tools-linux-x86-3340000.zip && \
-    unzip sqlite-tools-linux-x86-3340000.zip && \
-    rm -f sqlite-tools-linux-x86-3340000.zip && \
-    mv sqlite-tools-linux-x86-3340000/* /usr/local/bin/ && \
-    rm -rf sqlite-tools-linux-x86-3340000
-
-
-# Install Swift 5.3
-RUN cd /tmp && \
-    wget https://swift.org/builds/swift-5.3.1-release/ubuntu1804/swift-5.3.1-RELEASE/swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
-    tar xzf swift-5.3.1-RELEASE-ubuntu18.04.tar.gz --strip-components=1 -C / && \
-    rm -f swift-5.3.1-RELEASE-ubuntu18.04.tar.gz && \
-    apt-get update && \
-    DEBIAN_FRONTEND=noninteractive apt-get install -y libpython2.7
+    wget https://www.sqlite.org/2021/sqlite-tools-linux-x86-3360000.zip && \
+    unzip sqlite-tools-linux-x86-3360000.zip && \
+    rm -f sqlite-tools-linux-x86-3360000.zip && \
+    mv sqlite-tools-linux-x86-3360000/* /usr/local/bin/ && \
+    rm -rf sqlite-tools-linux-x86-3360000
 
 
 # Install CS50 packages
