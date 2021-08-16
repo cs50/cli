@@ -170,15 +170,15 @@ RUN pip3 install \
 # Install Ruby 2.7.x
 # https://www.ruby-lang.org/en/downloads/
 RUN cd /tmp && \
-    wget https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.2.tar.gz && \
-    tar xzf ruby-2.7.2.tar.gz && \
-    rm -f ruby-2.7.2.tar.gz && \
-    cd ruby-2.7.2 && \
+    wget https://cache.ruby-lang.org/pub/ruby/2.7/ruby-2.7.4.tar.gz && \
+    tar xzf ruby-2.7.4.tar.gz && \
+    rm -f ruby-2.7.4.tar.gz && \
+    cd ruby-2.7.4 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm -rf ruby-2.7.2
+    rm -rf ruby-2.7.4
 
 
 # Install Ruby packages
