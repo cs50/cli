@@ -21,6 +21,7 @@ RUN sudo apt-get update && \
     sudo R -e "install.packages('devtools')"
 
 # Bookdown
+RUN sudo R -e "remotes::install_github('rstudio/rmarkdown')" # https://github.com/rstudio/bookdown/issues/917#issuecomment-703122366
 RUN sudo R -e "install.packages('bookdown')"
 
 # emo::ji
