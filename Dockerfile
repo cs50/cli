@@ -110,6 +110,7 @@ ENV NODE_ENV "dev"
 # Install Node.js packages
 RUN npm install -g http-server
 
+
 # Suggested build environment for Python, per pyenv, even though we're building ourselves
 # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
 RUN apt-get install --no-install-recommends -y \
@@ -134,15 +135,15 @@ RUN apt-get install --no-install-recommends -y \
 # Install Python 3.9.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    wget https://www.python.org/ftp/python/3.9.1/Python-3.9.1.tgz && \
-    tar xzf Python-3.9.1.tgz && \
-    rm -f Python-3.9.1.tgz && \
-    cd Python-3.9.1 && \
+    wget https://www.python.org/ftp/python/3.9.6/Python-3.9.6.tgz && \
+    tar xzf Python-3.9.6.tgz && \
+    rm -f Python-3.9.6.tgz && \
+    cd Python-3.9.6 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm -rf Python-3.9.1 && \
+    rm -rf Python-3.9.6 && \
     pip3 install --upgrade pip
 
 
