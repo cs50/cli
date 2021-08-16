@@ -195,12 +195,13 @@ RUN gem install \
 
 
 # Install SQLite 3.x
+# https://www.sqlite.org/download.html
 RUN cd /tmp && \
-    wget https://www.sqlite.org/2020/sqlite-tools-linux-x86-3340000.zip && \
-    unzip sqlite-tools-linux-x86-3340000.zip && \
-    rm -f sqlite-tools-linux-x86-3340000.zip && \
-    mv sqlite-tools-linux-x86-3340000/* /usr/local/bin/ && \
-    rm -rf sqlite-tools-linux-x86-3340000
+    wget https://www.sqlite.org/2021/sqlite-tools-linux-x86-3360000.zip && \
+    unzip sqlite-tools-linux-x86-3360000.zip && \
+    rm -f sqlite-tools-linux-x86-3360000.zip && \
+    mv sqlite-tools-linux-x86-3360000/* /usr/local/bin/ && \
+    rm -rf sqlite-tools-linux-x86-3360000
 
 
 # Install CS50 packages
