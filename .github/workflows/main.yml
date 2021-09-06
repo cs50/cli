@@ -16,7 +16,7 @@ jobs:
           load: true
           tags: cs50/cli:${{ github.sha }},cs50/cli:minimal
       - name: Push
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/minimal' }}
         run: |
           docker push cs50/cli:${{ github.sha }}
           docker push cs50/cli:minimal
