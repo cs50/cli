@@ -84,7 +84,7 @@ if [ "$(whoami)" != "root" ]; then
     export PYTHONDONTWRITEBYTECODE="1"
 
     # Valgrind
-    export VALGRIND_OPTS="--memcheck:leak-check=full --memcheck:show-leak-kinds=all --memcheck:track-origins=yes" \
+    export VALGRIND_OPTS="--memcheck:leak-check=full --memcheck:show-leak-kinds=all --memcheck:track-origins=yes"
     valgrind() {
         for arg; do
             if echo "$arg" | grep -Eq "(^python|\.py$)"; then
