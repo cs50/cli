@@ -104,6 +104,7 @@ RUN cd /tmp && \
     make install && \
     cd .. && \
     rm --force --recursive Python-3.9.7 && \
+    ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --upgrade pip
 
 
