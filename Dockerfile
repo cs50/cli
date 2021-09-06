@@ -185,10 +185,6 @@ RUN echo "Defaults umask=0022" >> /etc/sudoers
 RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
 
 
-# Temporary workaround for https://github.com/cs50/code.cs50.io/issues/19
-RUN echo "if [ -z \"\$_CLI_SH\" ] ; then . /etc/profile.d/cli.sh; export _CLI_SH=1; echo here; fi" >> /etc/bash.bashrc
-
-
 # Set user
 USER ubuntu
 WORKDIR /home/ubuntu
