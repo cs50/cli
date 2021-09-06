@@ -6,16 +6,16 @@ _make() {
     cur="${COMP_WORDS[COMP_CWORD]}"
     if [[ ${cur} != -* ]]; then
 
-        # back up nullglob setting
+        # Back up nullglob setting
         local glob=$(shopt -p nullglob)
 
-        # no suggestion when no .c files exist
+        # No suggestion when no .c files exist
         shopt -s nullglob
 
-        # complete C filenames without the .c extension
+        # Complete C filenames without the .c extension
         COMPREPLY=( $(compgen -W "$(for f in *.c; do echo ${f%.c}; done)" -- ${cur}) )
 
-        # restore nullglob setting
+        # Restore nullglob setting
         eval "${glob}" &> /dev/null
         return 0
     fi

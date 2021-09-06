@@ -5,11 +5,12 @@ if [ "$PS1" ]; then
     cwdSlashAtEnd () {
         TITLE="$(dirs +0)"
 
+        # No argument, full cwd
         if [ -z "$1" ] ; then
-            # no argument, full cwd
             TITLE="${TITLE%/}"
+
+        # One arg, basename only
         else
-            # one arg, basename only
             TITLE="${TITLE##*/}"
         fi
 
@@ -25,7 +26,7 @@ if [ "$PS1" ]; then
     export PROMPT_COMMAND='history -a' # Store Bash History Immediately
 
     # Prompt
-    if type __git_ps1 > /dev/null; then
+    if type __git_ps1 > /dev/null 2>&1; then
         PS1='\[$(printf "\x0f")\033[01;34m\]$(cwdSlashAtEnd)\[\033[00m\]$(__git_ps1 " (%s)") $ '
     fi
 
