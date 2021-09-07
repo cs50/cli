@@ -42,6 +42,7 @@ RUN apt update && \
         man \
         man-db \
         nano \
+        openssh-client `# For ssh-keygen` \
         sudo \
         unzip \
         valgrind \
