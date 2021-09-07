@@ -43,7 +43,6 @@ if [ "$(whoami)" != "root" ]; then
     alias grep="grep --color" # Suppress gdb's startup output
     alias ll="ls --color -F -l --ignore=lost+found"
     alias ls="ls --color -F --ignore=lost+found" # Add trailing slashes
-    alias make="make -s" # Don't print commands as they're executed
     alias mv="mv -i"
     alias pip="pip --no-cache-dir"
     alias rm="rm -i"
@@ -75,7 +74,7 @@ if [ "$(whoami)" != "root" ]; then
         fi
 
         # Run make
-        command make -B $*
+        command make -B -s $*
     }
 
     # Manual sections to search
