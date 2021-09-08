@@ -111,18 +111,20 @@ RUN cd /tmp && \
 
 
 # Install Python packages
-RUN pip3 install \
-    awscli \
-    "check50<4" \
-    compare50 \
-    cs50 \
-    Flask \
-    Flask-Session \
-    help50 \
-    render50 \
-    s3cmd \
-    style50 \
-    "submit50<4"
+RUN apt update && \
+    apt install --yes sudo libmagic-dev `# For style50` && \
+    pip3 install \
+        awscli \
+        "check50<4" \
+        compare50 \
+        cs50 \
+        Flask \
+        Flask-Session \
+        help50 \
+        render50 \
+        s3cmd \
+        style50 \
+        "submit50<4"
 
 
 # Install Ruby 3.0.x
