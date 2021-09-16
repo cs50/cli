@@ -39,6 +39,7 @@ RUN apt update && \
         git \
         git-lfs \
         jq \
+        less \
         make \
         man \
         man-db \
