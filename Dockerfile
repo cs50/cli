@@ -113,7 +113,7 @@ RUN cd /tmp && \
 
 # Install Python packages
 RUN apt update && \
-    apt install --yes sudo libmagic-dev `# For style50` && \
+    apt install --yes libmagic-dev `# For style50` && \
     pip3 install \
         awscli \
         "check50<4" \
