@@ -49,6 +49,7 @@ RUN apt update && \
         unzip \
         valgrind \
         vim \
+        weasyprint `# For render50` \
         wget \
         zip
 ENV EDITOR nano
