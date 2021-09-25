@@ -36,7 +36,6 @@ RUN apt update && \
         dos2unix \
         dnsutils `# For nslookup` \
         gdb \
-        gdbserver \
         git \
         git-lfs \
         jq \
