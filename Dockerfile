@@ -62,24 +62,24 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         libcs50
 
 
-# Install Java 16.x
-# http://jdk.java.net/16/
+# Install Java 17.x
+# http://jdk.java.net/17/
 RUN cd /tmp && \
-    wget https://download.java.net/java/GA/jdk16.0.2/d4a915d82b4c4fbb9bde534da945d746/7/GPL/openjdk-16.0.2_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-16.0.2_linux-x64_bin.tar.gz && \
-    rm --force openjdk-16.0.2_linux-x64_bin.tar.gz && \
-    mv jdk-16.0.2 /opt/ && \
+    wget https://download.java.net/java/GA/jdk17/0d483333a00540d886896bac774ff48b/35/GPL/openjdk-17_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-17_linux-x64_bin.tar.gz && \
+    rm --force openjdk-17_linux-x64_bin.tar.gz && \
+    mv jdk-17 /opt/ && \
     mkdir --parent /opt/bin && \
-    ln --symbolic /opt/jdk-16.0.2/bin/* /opt/bin/ && \
+    ln --symbolic /opt/jdk-17/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
-ENV JAVA_HOME "/opt/jdk-16.0.2"
+ENV JAVA_HOME "/opt/jdk-17"
 
 
 # Install Node.js 16.x
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 16.6.2
+    n 16.11.0
 ENV NODE_ENV "dev"
 
 
@@ -96,18 +96,18 @@ RUN apt update && \
         libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 
 
-# Install Python 3.9.x
+# Install Python 3.10.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.9.7/Python-3.9.7.tgz --output Python-3.9.7.tgz && \
-    tar xzf Python-3.9.7.tgz && \
-    rm --force Python-3.9.7.tgz && \
-    cd Python-3.9.7 && \
+    curl https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz --output Python-3.10.0.tgz && \
+    tar xzf Python-3.10.0.tgz && \
+    rm --force Python-3.10.0.tgz && \
+    cd Python-3.10.0 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.9.7 && \
+    rm --force --recursive Python-3.10.0 && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --upgrade pip
 
@@ -148,7 +148,7 @@ RUN gem install \
     bundler \
     jekyll \
     jekyll-theme-cs50 \
-    minitest `# so that Bundler needn't install` \
+    minitest `# So that Bundler needn't install` \
     pygments.rb
 
 
@@ -185,11 +185,11 @@ RUN useradd --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
 
 
 # Add user to sudoers
-RUN echo "\n# CS50 CLI" >> /etc/sudoers
-RUN echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers
-RUN echo "Defaults umask_override" >> /etc/sudoers
-RUN echo "Defaults umask=0022" >> /etc/sudoers
-RUN sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
+RUN echo "\n# CS50 CLI" >> /etc/sudoers && \
+    echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
+    echo "Defaults umask_override" >> /etc/sudoers && \
+    echo "Defaults umask=0022" >> /etc/sudoers && \
+    sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
 
 
 # Set user
