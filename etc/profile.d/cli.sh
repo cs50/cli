@@ -2,7 +2,7 @@
 if [ "$PS1" ]; then
 
     # Append trailing slashes
-    cwdSlashAtEnd () {
+    _cwdSlashAtEnd () {
         TITLE="$(dirs +0)"
 
         # No argument, full cwd
@@ -27,7 +27,7 @@ if [ "$PS1" ]; then
 
     # Prompt
     if type __git_ps1 > /dev/null 2>&1; then
-        PS1='\[$(printf "\x0f")\033[01;34m\]$(cwdSlashAtEnd)\[\033[00m\]$(__git_ps1 " (%s)") $ '
+        PS1='\[$(printf "\x0f")\033[01;34m\]$(_cwdSlashAtEnd)\[\033[00m\]$(__git_ps1 " (%s)") $ '
     fi
 fi
 
