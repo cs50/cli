@@ -195,3 +195,4 @@ RUN echo "\n# CS50 CLI" >> /etc/sudoers && \
 # Set user
 USER ubuntu
 WORKDIR /home/ubuntu
+ENV WORKDIR=/home/ubuntu
