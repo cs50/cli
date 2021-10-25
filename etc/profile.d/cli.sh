@@ -46,6 +46,7 @@ if [ "$(whoami)" != "root" ]; then
     alias mv="mv -i"
     alias pip="pip --no-cache-dir"
     alias rm="rm -i"
+    alias sqlite3="sqlite3 -table" # Format output like a table
     alias sudo="sudo " # Trailing space enables elevated command to be an alias
 
     # Localization
