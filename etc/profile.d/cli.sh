@@ -46,7 +46,6 @@ if [ "$(whoami)" != "root" ]; then
     alias mv="mv -i"
     alias pip="pip --no-cache-dir"
     alias rm="rm -i"
-    alias sqlite3="sqlite3 -table" # Format output like a table
     alias sudo="sudo " # Trailing space enables elevated command to be an alias
 
     # Localization
@@ -83,6 +82,26 @@ if [ "$(whoami)" != "root" ]; then
 
     # Python
     export PYTHONDONTWRITEBYTECODE="1"
+
+    # SQLite
+    sqlite3() {
+        if [[ $# -eq 1 ]] && [[ ! "$1" =~ ^- ]]; then
+            if [[ ! -f "$1" ]]; then
+                if [[ ! "$1" =~ \.db$ ]]; then
+                    read -p "Are you sure you want to create $(tput bold)$1$(tput sgr0)? SQLite filenames usually end in $(tput bold).db$(tput sgr0). [y/N] " -r
+                    if [[ ! "${REPLY,,}" =~ ^y|yes$ ]]; then
+                        return
+                    fi
+                else
+                    read -p "Are you sure you want to create $(tput bold)$1$(tput sgr0)? [y/N] " -r
+                    if [[ ! "${REPLY,,}" =~ ^y|yes$ ]]; then
+                        return
+                    fi
+                fi
+            fi
+       fi
+       command sqlite3 -table $*
+    }
 
     # Valgrind
     export VALGRIND_OPTS="--memcheck:leak-check=full --memcheck:show-leak-kinds=all --memcheck:track-origins=yes"
