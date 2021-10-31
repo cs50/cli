@@ -7,30 +7,44 @@ cors="--cors"
 i="-i false"
 port="-p 8080"
 options="--no-dotfiles"
+t="-t0"
 
 # Override default options
 while test ${#} -gt 0
 do
-    if [[ "$1" =~ ^-a$ ]]; then
+    if [[ "$1" == "-a" ]]; then
         a="$1 $2"
         shift
         shift
-    elif [[ "$1" =~ ^-c-?[0-9]+$ ]]; then
+    elif [[ "$1" =~ ^-a[0-9]+$ ]]; then
+        a="$1"
+        shift
+    elif [[ "$1" == "-c" ]]; then
+        c="$1 $2"
+        shift
+        shift
+    elif [[ "$1" =~ ^-c[+-]?[0-9]+$ ]]; then
         c="$1"
         shift
     elif [[ "$1" =~ ^--cors(=.*)?$ ]]; then
         cors="$1"
         shift
-    elif [[ "$1" =~ ^-i$ ]]; then
-        i="$1 $2"
+    elif [[ "$1" == "-i" ]]; then
+        i="$1"
         shift
-        shift
-    elif [[ "$1" =~ ^-p[^\s]+ ]]; then
-        port="$1"
-        shift
-    elif [[ "$1" == "-p" ]]; then
+    elif [[ "$1" == "-p" ]] || [[ "$1" == "--port" ]]; then
         port="$1 $2"
         shift
+        shift
+    elif [[ "$1" =~ ^-p[0-9]+$ ]]; then
+        port="$1"
+        shift
+    elif [[ "$1" == "-t" ]]; then
+        t="$1 $2"
+        shift
+        shift
+    elif [[ "$1" =~ ^-t[0-9]+$ ]]; then
+        t="$1"
         shift
     else
         options+=" $1"
@@ -42,5 +56,5 @@ done
 # using regex to handle -pxxxx, -p xxxx, --port xxxx, --port=xxxx
 fuser --kill -INT "${port//[^0-9]}/tcp" &>/dev/null
 
-# Spawn http-server, retaining colorized output using expect's unbuffer
-/usr/local/bin/http-server $a $c $cors $i $port $options
+# Spawn http-server
+/usr/local/bin/http-server $a $c $cors $i $port $t $options
