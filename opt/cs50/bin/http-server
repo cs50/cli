@@ -56,5 +56,6 @@ done
 # using regex to handle -pxxxx, -p xxxx, --port xxxx, --port=xxxx
 fuser --kill -INT "${port//[^0-9]}/tcp" &>/dev/null
 
-# Spawn http-server
-/usr/local/bin/http-server $a $c $cors $i $port $t $options
+# Spawn http-server, suppressing
+# (node:56) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
+NODE_OPTIONS=--no-deprecation /usr/local/bin/http-server $a $c $cors $i $port $t $options
