@@ -17,7 +17,7 @@ if [[ "$1" == "run" ]]; then
 
     # Default options
     host="--host=0.0.0.0"
-    port="--port=8080"
+    port="--port=5000"
     reload="--reload"
 
     # Override default options
