@@ -45,6 +45,7 @@ RUN apt update && \
         man-db \
         nano \
         openssh-client `# For ssh-keygen` \
+        psmisc `# For fuser` \
         sudo \
         unzip \
         valgrind \
