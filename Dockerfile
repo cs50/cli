@@ -182,8 +182,12 @@ RUN echo "\n# CS50 CLI" >> /etc/sudoers && \
     sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
 
 
-# Latest version
+
+# Version the image (and any descendants)
 RUN echo "$VCS_REF" > /etc/issue
+ONBUILD USER root
+ONBUILD RUN echo "$VCS_REF" >> /etc/issue
+ONBUILD USER ubuntu
 
 
 # Set user
