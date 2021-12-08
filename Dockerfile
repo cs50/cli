@@ -4,8 +4,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG VCS_REF
 
 
-# Expose ports (just like Cloud9)
-EXPOSE 8080 8081 8082
+# Expose ports
+EXPOSE 5000 8080 8081 8082
 
 
 # Avoid "delaying package configuration, since apt-utils is not installed"
