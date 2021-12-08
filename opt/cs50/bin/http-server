@@ -54,7 +54,7 @@ done
 
 # Kill any process listing on the specified port
 # using regex to handle -pxxxx, -p xxxx, --port xxxx, --port=xxxx
-fuser --kill -INT "${port//[^0-9]}/tcp" &>/dev/null
+fuser --kill -TERM "${port//[^0-9]}/tcp" &>/dev/null
 
 # Spawn http-server, suppressing
 # (node:56) [DEP0066] DeprecationWarning: OutgoingMessage.prototype._headers is deprecated
