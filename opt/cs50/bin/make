@@ -1,0 +1,18 @@
+#!/bin/bash
+
+# Ensure no targets end with .c
+args=""
+invalid_args=0
+for arg; do
+    case "$arg" in
+        (*.c) arg=${arg%.c}; invalid_args=1;;
+    esac
+    args="$args $arg"
+done
+if [ $invalid_args -eq 1 ]; then
+    echo "Did you mean 'make$args'?"
+    exit 1
+fi
+
+# Run make
+/usr/bin/make -B -s $*

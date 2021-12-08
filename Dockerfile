@@ -169,15 +169,6 @@ COPY ./opt /opt
 RUN chmod a+rx /opt/cs50/bin/*
 
 
-# Update environment
-ENV PATH=/opt/cs50/bin:/opt/bin:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
-RUN sed -i "s|^PATH=.*|PATH=$PATH|" /etc/environment
-
-
-# Ready /opt
-RUN mkdir -p /opt/bin /opt/cs50/bin
-
-
 # Add user
 RUN useradd --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
     umask 0077 && \
