@@ -1,7 +1,7 @@
 default: run
 
 build:
-	docker build -t cs50/cli .
+	docker build --build-arg VCS_REF="$(shell git rev-parse HEAD)" -t cs50/cli .
 
 rebuild:
 	docker build --no-cache -t cs50/cli .

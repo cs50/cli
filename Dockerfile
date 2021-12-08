@@ -1,6 +1,7 @@
 FROM ubuntu:20.04
 LABEL maintainer="sysadmins@cs50.harvard.edu"
 ARG DEBIAN_FRONTEND=noninteractive
+ARG VCS_REF
 
 
 # Expose ports (just like Cloud9)
@@ -179,6 +180,10 @@ RUN echo "\n# CS50 CLI" >> /etc/sudoers && \
     echo "Defaults umask_override" >> /etc/sudoers && \
     echo "Defaults umask=0022" >> /etc/sudoers && \
     sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
+
+
+# Latest version
+RUN echo "$VCS_REF" > /etc/issue
 
 
 # Set user
