@@ -16,9 +16,6 @@ RUN apt update && apt install --yes apt-utils
 RUN apt update && \
     apt install --yes locales && \
     locale-gen "en_US.UTF-8" && dpkg-reconfigure locales
-ENV LANG "C.UTF-8"
-ENV LC_ALL "C.UTF-8"
-ENV LC_CTYPE "C.UTF-8"
 
 
 # Unminimize system
