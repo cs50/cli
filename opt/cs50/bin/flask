@@ -13,6 +13,7 @@ export FLASK_ENV="${FLASK_ENV:-development}"
 # But not debug mode
 export FLASK_DEBUG="${FLASK_DEBUG:-0}"
 
+# If `flask run`
 if [[ "$1" == "run" ]]; then
 
     # Default options
@@ -51,6 +52,8 @@ if [[ "$1" == "run" ]]; then
 
     # Spawn flask
     /usr/local/bin/flask run $host $port $reload $threads $options
+
+# If not `flask run`
 else
     /usr/local/bin/flask "$@"
 fi
