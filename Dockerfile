@@ -186,6 +186,7 @@ RUN echo "\n# CS50 CLI" >> /etc/sudoers && \
 # Version the image (and any descendants)
 RUN echo "$VCS_REF" > /etc/issue
 ONBUILD USER root
+ONBUILD ARG VCS_REF
 ONBUILD RUN echo "$VCS_REF" >> /etc/issue
 ONBUILD USER ubuntu
 
