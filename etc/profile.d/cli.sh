@@ -36,6 +36,9 @@ if [ "$(whoami)" != "root" ]; then
     export HISTCONTROL='ignoreboth' # Ignore duplicates and command lines starting space
     export PROMPT_COMMAND='history -a' # Store Bash History Immediately
 
+    # Java
+    export JAVA_HOME="/opt/jdk-17.0.1"
+
     # Localization
     export LANG="C.UTF-8"
     export LC_ALL="C.UTF-8"
@@ -48,6 +51,9 @@ if [ "$(whoami)" != "root" ]; then
 
     # Manual sections to search
     export MANSECT=3,2,1
+
+    # Node.js
+    export NODE_ENV="dev"
 
     # Python
     export PATH="$HOME"/.local/bin:"$PATH"

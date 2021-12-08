@@ -53,7 +53,6 @@ RUN apt update && \
         weasyprint `# For render50` \
         wget \
         zip
-ENV EDITOR nano
 
 
 # Install CS50 packages
@@ -66,22 +65,20 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
 # Install Java 17.x
 # http://jdk.java.net/17/
 RUN cd /tmp && \
-    wget https://download.java.net/java/GA/jdk17/0d483333a00540d886896bac774ff48b/35/GPL/openjdk-17_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-17_linux-x64_bin.tar.gz && \
-    rm --force openjdk-17_linux-x64_bin.tar.gz && \
-    mv jdk-17 /opt/ && \
+    wget https://download.java.net/java/GA/jdk17.0.1/2a2082e5a09d4267845be086888add4f/12/GPL/openjdk-17.0.1_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-17.0.1_linux-x64_bin.tar.gz && \
+    rm --force openjdk-17.0.1_linux-x64_bin.tar.gz && \
+    mv jdk-17.0.1 /opt/ && \
     mkdir --parent /opt/bin && \
-    ln --symbolic /opt/jdk-17/bin/* /opt/bin/ && \
+    ln --symbolic /opt/jdk-17.0.1/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
-ENV JAVA_HOME "/opt/jdk-17"
 
 
-# Install Node.js 16.x
+# Install Node.js 17.x
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 16.11.0
-ENV NODE_ENV "dev"
+    n 17.2.0
 
 
 # Install Node.js packages
@@ -100,15 +97,15 @@ RUN apt update && \
 # Install Python 3.10.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.10.0/Python-3.10.0.tgz --output Python-3.10.0.tgz && \
-    tar xzf Python-3.10.0.tgz && \
-    rm --force Python-3.10.0.tgz && \
-    cd Python-3.10.0 && \
+    curl https://www.python.org/ftp/python/3.10.1/Python-3.10.1.tgz --output Python-3.10.1.tgz && \
+    tar xzf Python-3.10.1.tgz && \
+    rm --force Python-3.10.1.tgz && \
+    cd Python-3.10.1 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.10.0 && \
+    rm --force --recursive Python-3.10.1 && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --upgrade pip
 
@@ -133,15 +130,15 @@ RUN apt update && \
 # Install Ruby 3.0.x
 # https://www.ruby-lang.org/en/downloads/
 RUN cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.2.tar.gz --output ruby-3.0.2.tar.gz && \
-    tar xzf ruby-3.0.2.tar.gz && \
-    rm --force ruby-3.0.2.tar.gz && \
-    cd ruby-3.0.2 && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.0/ruby-3.0.3.tar.gz --output ruby-3.0.3.tar.gz && \
+    tar xzf ruby-3.0.3.tar.gz && \
+    rm --force ruby-3.0.3.tar.gz && \
+    cd ruby-3.0.3 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.0.2
+    rm --force --recursive ruby-3.0.3
 
 
 # Install Ruby packages
@@ -156,11 +153,11 @@ RUN gem install \
 # Install SQLite 3.x
 # https://www.sqlite.org/download.html
 RUN cd /tmp && \
-    wget https://www.sqlite.org/2021/sqlite-tools-linux-x86-3360000.zip && \
-    unzip sqlite-tools-linux-x86-3360000.zip && \
-    rm --force sqlite-tools-linux-x86-3360000.zip && \
-    mv sqlite-tools-linux-x86-3360000/* /usr/local/bin/ && \
-    rm --force --recursive sqlite-tools-linux-x86-3360000
+    wget https://www.sqlite.org/2021/sqlite-tools-linux-x86-3370000.zip && \
+    unzip sqlite-tools-linux-x86-3370000.zip && \
+    rm --force sqlite-tools-linux-x86-3370000.zip && \
+    mv sqlite-tools-linux-x86-3370000/* /usr/local/bin/ && \
+    rm --force --recursive sqlite-tools-linux-x86-3370000
 
 
 # Copy files to image
