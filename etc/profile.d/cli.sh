@@ -85,7 +85,12 @@ if [ "$(whoami)" != "root" ]; then
 
     # SQLite
     sqlite3() {
-        if [[ $# -eq 1 ]] && [[ ! "$1" =~ ^- ]]; then
+        if [[ $# -eq 0 ]]; then
+            read -p "Are you sure you want to run $(tput bold)sqlite3$(tput sgr0) without a command-line argument (e.g., the filename of a database)? [y/N] " -r
+            if [[ ! "${REPLY,,}" =~ ^y|yes$ ]]; then
+                return
+            fi
+        elif [[ $# -eq 1 ]] && [[ ! "$1" =~ ^- ]]; then
             if [[ ! -f "$1" ]]; then
                 if [[ ! "$1" =~ \.db$ ]]; then
                     read -p "Are you sure you want to create $(tput bold)$1$(tput sgr0)? SQLite filenames usually end in $(tput bold).db$(tput sgr0). [y/N] " -r
