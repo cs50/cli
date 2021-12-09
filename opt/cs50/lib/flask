@@ -1,0 +1,13 @@
+import sys
+
+import flask.cli
+import werkzeug.exceptions
+
+# Monkey-patch InternalServerError
+werkzeug.exceptions.InternalServerError.description = (
+    "The server encountered an internal error and was unable to complete your request."
+    " See terminal window."
+)
+
+# Execute flask, just like /usr/local/bin/flask
+sys.exit(flask.cli.main())

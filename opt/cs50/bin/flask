@@ -48,10 +48,12 @@ if [[ "$1" == "run" ]]; then
     # using regex to handle -pxxxx, -p xxxx, --port xxxx, --port=xxxx
     fuser --kill -TERM "${port//[^0-9]}/tcp" &> /dev/null
 
-    # Spawn flask
-    /usr/local/bin/flask run $host $port $reload $options
+    # Execute monkey-patched flask
+    /usr/local/bin/python /opt/cs50/lib/flask run $host $port $reload $options
 
 # If not `flask run`
 else
+
+    # Execute flask
     /usr/local/bin/flask "$@"
 fi
