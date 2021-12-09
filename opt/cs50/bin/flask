@@ -38,8 +38,6 @@ if [[ "$1" == "run" ]]; then
             shift
         elif [[ "$1" =~ ^--(no-)?reload$ ]]; then
             reload="$1"
-        elif [[ "$1" =~ ^--with(out)?-threads$ ]]; then
-            threads="$1"
         else
             options+=" $1"
         fi
@@ -51,7 +49,7 @@ if [[ "$1" == "run" ]]; then
     fuser --kill -TERM "${port//[^0-9]}/tcp" &> /dev/null
 
     # Spawn flask
-    /usr/local/bin/flask run $host $port $reload $threads $options
+    /usr/local/bin/flask run $host $port $reload $options
 
 # If not `flask run`
 else
