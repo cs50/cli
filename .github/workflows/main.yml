@@ -23,3 +23,22 @@ jobs:
         run: |
           docker push cs50/cli:${{ github.sha }}
           docker push cs50/cli:latest
+
+      - name: Re-deploy depdendents
+        if: ${{ github.ref == 'refs/heads/main' }}
+        uses: actions/github-script@v5
+        with:
+          github-token: ${{ secrets.DEPLOY50_PAT }}
+          script: |
+            const dependents = [
+                'codespace',
+                'server'
+            ];
+            for (let dependent of dependents) {
+                await github.rest.actions.createWorkflowDispatch({
+                  owner: 'cs50',
+                  repo: dependent,
+                  workflow_id: 'main.yml',
+                  ref: 'main'
+                });
+            }
