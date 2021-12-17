@@ -15,29 +15,46 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
       
-      - name: Build for linux/amd64 and push
+      - name: Build for linux/amd64
         uses: docker/build-push-action@v2
         with:
           build-args: |
             VCS_REF=${{ github.sha }}
+          load: true
           platforms: linux/amd64
-          tags: cs50/cli:${{ github.sha }},cs50/cli:latest
+          tags: cs50/cli:${{ github.sha }}-amd64,cs50/cli:latest
           cache-from: type=registry,ref=cs50/cli:buildcache
           cache-to: type=registry,ref=cs50/cli:buildcache,mode=max
-          if: ${{ github.ref == 'refs/heads/main' }}
-          push: true
 
-      - name: Build for linux/arm64 and push
+      - name: Push linux/amd64 build to Docker Hub
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker push cs50/cli:${{ github.sha }}-amd64
+          docker push cs50/cli:latest
+
+      - name: Build for linux/arm64
         uses: docker/build-push-action@v2
         with:
           build-args: |
             VCS_REF=${{ github.sha }}
+          load: true
           platforms: linux/arm64
-          tags: cs50/cli:${{ github.sha }},cs50/cli:latest
+          tags: cs50/cli:${{ github.sha }}-arm64
           cache-from: type=registry,ref=cs50/cli:buildcache
           cache-to: type=registry,ref=cs50/cli:buildcache,mode=max
-          if: ${{ github.ref == 'refs/heads/main' }}
-          push: true
+
+      - name: Push linux/arm64 build to Docker Hub
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker push cs50/cli:${{ github.sha }}-arm64
+
+      - name: Create multi-arch manifest and push to Docker Hub
+        if: ${{ github.ref == 'refs/heads/main' }}
+        run: |
+          docker manifest create cs50/cli:latest \
+          --amend cs50/cli:${{ github.sha }}-amd64 \
+          --amend cs50/cli:${{ github.sha }}-arm64
+          docker manifest push cs50/cli:latest
 
       - name: Re-deploy depdendents
         if: ${{ github.ref == 'refs/heads/main' }}
