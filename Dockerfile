@@ -4,10 +4,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 ARG VCS_REF
 
 
-# Expose ports
-EXPOSE 5000 8080 8081 8082
-
-
 # Avoid "delaying package configuration, since apt-utils is not installed"
 RUN apt update && apt install --yes apt-utils
 
