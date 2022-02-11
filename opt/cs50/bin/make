@@ -15,4 +15,9 @@ if [ $invalid_args -eq 1 ]; then
 fi
 
 # Run make
-/usr/bin/make -B -s $*
+if [[ -d "$1" ]]; then
+    echo "$1 is a directory"
+    exit 1
+else
+    /usr/bin/make -B -s $*
+fi
