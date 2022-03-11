@@ -22,7 +22,7 @@ jobs:
             VCS_REF=${{ github.sha }}
           load: true
           platforms: linux/amd64
-          tags: cs50/cli:amd64,cs50/cli:latest
+          tags: cs50/cli:amd64
           cache-from: type=registry,ref=cs50/cli:buildcache
           cache-to: type=registry,ref=cs50/cli:buildcache,mode=max
 
@@ -30,7 +30,6 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           docker push cs50/cli:amd64
-          docker push cs50/cli:latest
 
       - name: Build for linux/arm64
         uses: docker/build-push-action@v2
