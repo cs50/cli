@@ -72,7 +72,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 17.2.0
+    n 17.4.0
 
 
 # Install Node.js packages
@@ -121,18 +121,18 @@ RUN apt update && \
         "submit50<4"
 
 
-# Install Ruby 3.0.x
+# Install Ruby 3.1.x
 # https://www.ruby-lang.org/en/downloads/
 RUN cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.0.tar.gz --output ruby-3.1.0.tar.gz && \
-    tar xzf ruby-3.1.0.tar.gz && \
-    rm --force ruby-3.1.0.tar.gz && \
-    cd ruby-3.1.0 && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.1.tar.gz --output ruby-3.1.1.tar.gz && \
+    tar xzf ruby-3.1.1.tar.gz && \
+    rm --force ruby-3.1.1.tar.gz && \
+    cd ruby-3.1.1 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.1.0
+    rm --force --recursive ruby-3.1.1
 
 
 # Install Ruby packages
@@ -147,11 +147,11 @@ RUN gem install \
 # Install SQLite 3.x
 # https://www.sqlite.org/download.html
 RUN cd /tmp && \
-    wget https://www.sqlite.org/2022/sqlite-tools-linux-x86-3370200.zip && \
-    unzip sqlite-tools-linux-x86-3370200.zip && \
-    rm --force sqlite-tools-linux-x86-3370200.zip && \
-    mv sqlite-tools-linux-x86-3370200/* /usr/local/bin/ && \
-    rm --force --recursive sqlite-tools-linux-x86-3370200
+    wget https://www.sqlite.org/2022/sqlite-tools-linux-x86-3380000.zip && \
+    unzip sqlite-tools-linux-x86-3380000.zip && \
+    rm --force sqlite-tools-linux-x86-3380000.zip && \
+    mv sqlite-tools-linux-x86-3380000/* /usr/local/bin/ && \
+    rm --force --recursive sqlite-tools-linux-x86-3380000
 
 
 # Copy files to image
