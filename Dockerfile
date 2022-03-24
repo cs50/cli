@@ -91,15 +91,15 @@ RUN apt update && \
 # Install Python 3.10.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.10.2/Python-3.10.2.tgz --output Python-3.10.2.tgz && \
-    tar xzf Python-3.10.2.tgz && \
-    rm --force Python-3.10.2.tgz && \
-    cd Python-3.10.2 && \
+    curl https://www.python.org/ftp/python/3.10.3/Python-3.10.3.tgz --output Python-3.10.3.tgz && \
+    tar xzf Python-3.10.3.tgz && \
+    rm --force Python-3.10.3.tgz && \
+    cd Python-3.10.3 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.10.2 && \
+    rm --force --recursive Python-3.10.3 && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --upgrade pip
 
