@@ -72,7 +72,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 17.4.0
+    n 17.7.1
 
 
 # Install Node.js packages
@@ -91,15 +91,15 @@ RUN apt update && \
 # Install Python 3.10.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.10.3/Python-3.10.3.tgz --output Python-3.10.3.tgz && \
-    tar xzf Python-3.10.3.tgz && \
-    rm --force Python-3.10.3.tgz && \
-    cd Python-3.10.3 && \
+    curl https://www.python.org/ftp/python/3.10.4/Python-3.10.4.tgz --output Python-3.10.4.tgz && \
+    tar xzf Python-3.10.4.tgz && \
+    rm --force Python-3.10.4.tgz && \
+    cd Python-3.10.4 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.10.3 && \
+    rm --force --recursive Python-3.10.4 && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --upgrade pip
 
