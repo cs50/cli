@@ -116,6 +116,7 @@ RUN apt update && \
         Flask \
         Flask-Session \
         help50 \
+        pytest \
         render50 \
         s3cmd \
         style50 \
