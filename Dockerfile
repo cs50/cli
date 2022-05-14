@@ -57,23 +57,23 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         libcs50
 
 
-# Install Java 17.x
-# http://jdk.java.net/17/
+# Install Java 18.x
+# http://jdk.java.net/18/
 RUN cd /tmp && \
-    wget https://download.java.net/java/GA/jdk17.0.2/dfd4a8d0985749f896bed50d7138ee7f/8/GPL/openjdk-17.0.2_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-17.0.2_linux-x64_bin.tar.gz && \
-    rm --force openjdk-17.0.2_linux-x64_bin.tar.gz && \
-    mv jdk-17.0.2 /opt/ && \
+    wget https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-18.0.1.1_linux-x64_bin.tar.gz && \
+    rm --force openjdk-18.0.1.1_linux-x64_bin.tar.gz && \
+    mv jdk-18.0.1.1 /opt/ && \
     mkdir --parent /opt/bin && \
-    ln --symbolic /opt/jdk-17.0.2/bin/* /opt/bin/ && \
+    ln --symbolic /opt/jdk-18.0.1.1/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
 
 
-# Install Node.js 17.x
+# Install Node.js 18.x
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 17.7.1
+    n 18.1.0
 
 
 # Install Node.js packages
@@ -127,15 +127,15 @@ RUN apt update && \
 # Install Ruby 3.1.x
 # https://www.ruby-lang.org/en/downloads/
 RUN cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.1.tar.gz --output ruby-3.1.1.tar.gz && \
-    tar xzf ruby-3.1.1.tar.gz && \
-    rm --force ruby-3.1.1.tar.gz && \
-    cd ruby-3.1.1 && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.2.tar.gz --output ruby-3.1.2.tar.gz && \
+    tar xzf ruby-3.1.2.tar.gz && \
+    rm --force ruby-3.1.2.tar.gz && \
+    cd ruby-3.1.2 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.1.1
+    rm --force --recursive ruby-3.1.2
 
 
 # Install Ruby packages
@@ -150,11 +150,11 @@ RUN gem install \
 # Install SQLite 3.x
 # https://www.sqlite.org/download.html
 RUN cd /tmp && \
-    wget https://www.sqlite.org/2022/sqlite-tools-linux-x86-3380000.zip && \
-    unzip sqlite-tools-linux-x86-3380000.zip && \
-    rm --force sqlite-tools-linux-x86-3380000.zip && \
-    mv sqlite-tools-linux-x86-3380000/* /usr/local/bin/ && \
-    rm --force --recursive sqlite-tools-linux-x86-3380000
+    wget https://www.sqlite.org/2022/sqlite-tools-linux-x86-3380500.zip && \
+    unzip sqlite-tools-linux-x86-3380500.zip && \
+    rm --force sqlite-tools-linux-x86-3380500.zip && \
+    mv sqlite-tools-linux-x86-3380500/* /usr/local/bin/ && \
+    rm --force --recursive sqlite-tools-linux-x86-3380500
 
 
 # Copy files to image
