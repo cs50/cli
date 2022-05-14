@@ -29,6 +29,7 @@ RUN apt update && \
         curl \
         dos2unix \
         dnsutils `# For nslookup` \
+        fonts-noto-color-emoji `# For render50` \
         gdb \
         git \
         git-lfs \
