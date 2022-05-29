@@ -73,11 +73,15 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 18.1.0
+    n 18.2.0
 
 
 # Install Node.js packages
 RUN npm install -g http-server
+
+
+# Patch http-server, until https://github.com/http-party/http-server/pull/816 is merged
+RUN sed -i "s/if (details.family === 'IPv4') {/if (details.family === 4) {/" /usr/local/lib/node_modules/http-server/bin/http-server
 
 
 # Suggested build environment for Python, per pyenv, even though we're building ourselves
@@ -175,7 +179,7 @@ RUN echo "\n# CS50 CLI" >> /etc/sudoers && \
     echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     echo "Defaults umask_override" >> /etc/sudoers && \
     echo "Defaults umask=0022" >> /etc/sudoers && \
-    sed -e "s|^Defaults\tsecure_path=.*|Defaults\t!secure_path|" -i /etc/sudoers
+    sed -e "s/^Defaults\tsecure_path=.*/Defaults\t!secure_path/" -i /etc/sudoers
 
 
 
