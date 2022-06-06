@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM ubuntu:20.04
 LABEL maintainer="sysadmins@cs50.harvard.edu"
 ARG DEBIAN_FRONTEND=noninteractive
 ARG VCS_REF
@@ -70,7 +70,6 @@ RUN cd /tmp && \
 
 
 # Install Node.js 18.x
-# https://nodejs.dev/download
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
@@ -81,7 +80,7 @@ RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output
 RUN npm install -g http-server
 
 
-# Patch http-server, until https://github.com/http-party/http-server/pull/811 is released
+# Patch http-server, until https://github.com/http-party/http-server/pull/816 is merged
 RUN sed -i "s/if (details.family === 'IPv4') {/if (details.family === 4) {/" /usr/local/lib/node_modules/http-server/bin/http-server
 
 
