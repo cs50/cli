@@ -17,7 +17,7 @@ RUN apt update && \
 RUN yes | unminimize
 
 
-# Suggested build environment for Ruby and Python, per pyenv, even though we're building ourselves
+# Suggested build environment for Python, per pyenv, even though we're building ourselves
 # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
 RUN apt update && \
     apt install --no-install-recommends --yes \
@@ -90,6 +90,10 @@ RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output
 RUN npm install -g http-server
 
 
+# Patch http-server, until https://github.com/http-party/http-server/pull/811 is released
+RUN sed -i "s/if (details.family === 'IPv4') {/if (details.family === 4) {/" /usr/local/lib/node_modules/http-server/bin/http-server
+
+
 # Install SQLite 3.x
 # https://www.sqlite.org/download.html
 RUN cd /tmp && \
@@ -151,10 +155,6 @@ RUN apt update && \
         s3cmd \
         style50 \
         "submit50<4"
-
-
-# Patch http-server, until https://github.com/http-party/http-server/pull/811 is released
-RUN sed -i "s/if (details.family === 'IPv4') {/if (details.family === 4) {/" /usr/local/lib/node_modules/http-server/bin/http-server
 
 
 # Copy files to image
