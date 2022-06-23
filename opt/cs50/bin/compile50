@@ -1,0 +1,28 @@
+#!/bin/bash
+
+file="$1"
+make=$(which make)
+makeFile=""
+
+args=("$@")
+
+parameters="${args[*]:1}"
+
+if [ -z "$file" ]; then
+    echo "compile50 /path/to/file.c <cli arguments>"
+    exit
+fi
+
+absolute=$(realpath "$file")
+
+if [[ "$absolute" == *.c ]]
+then
+    if [ -f "$absolute" ]; then
+        makeFile=$(echo "$absolute" | tr --delete .c)
+        $make "$makeFile" && "$makeFile" $parameters && rm -f "$makeFile"
+    else
+        echo "$f was not found :("
+    fi
+else
+    echo "File extension is not .c :/"
+fi
