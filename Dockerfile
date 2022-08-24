@@ -157,6 +157,13 @@ RUN apt update && \
         "submit50<4"
 
 
+# Temporary fix for "libssl.so.1.1: cannot open shared object file: No such file or directory" on Ubuntu 22.04
+# https://stackoverflow.com/questions/72133316/ubuntu-22-04-libssl-so-1-1-cannot-open-shared-object-file-no-such-file-or-di
+RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb -P/tmp && \
+    dpkg -i /tmp/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb && \
+    rm -rf /tmp/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb
+
+
 # Copy files to image
 COPY ./etc /etc
 COPY ./opt /opt
