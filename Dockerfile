@@ -52,15 +52,15 @@ RUN gem install \
 # Install Python 3.10.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.10.5/Python-3.10.5.tgz --output Python-3.10.5.tgz && \
-    tar xzf Python-3.10.5.tgz && \
-    rm --force Python-3.10.5.tgz && \
-    cd Python-3.10.5 && \
+    curl https://www.python.org/ftp/python/3.10.6/Python-3.10.6.tgz --output Python-3.10.6.tgz && \
+    tar xzf Python-3.10.6.tgz && \
+    rm --force Python-3.10.6.tgz && \
+    cd Python-3.10.6 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.10.5 && \
+    rm --force --recursive Python-3.10.6 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --upgrade pip
@@ -69,12 +69,12 @@ RUN cd /tmp && \
 # Install Java 18.x
 # http://jdk.java.net/18/
 RUN cd /tmp && \
-    wget https://download.java.net/java/GA/jdk18.0.1.1/65ae32619e2f40f3a9af3af1851d6e19/2/GPL/openjdk-18.0.1.1_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-18.0.1.1_linux-x64_bin.tar.gz && \
-    rm --force openjdk-18.0.1.1_linux-x64_bin.tar.gz && \
-    mv jdk-18.0.1.1 /opt/ && \
+    wget https://download.java.net/java/GA/jdk18.0.2.1/db379da656dc47308e138f21b33976fa/1/GPL/openjdk-18.0.2.1_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-18.0.2.1_linux-x64_bin.tar.gz && \
+    rm --force openjdk-18.0.2.1_linux-x64_bin.tar.gz && \
+    mv jdk-18.0.2.1 /opt/ && \
     mkdir --parent /opt/bin && \
-    ln --symbolic /opt/jdk-18.0.1.1/bin/* /opt/bin/ && \
+    ln --symbolic /opt/jdk-18.0.2.1/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
 
 
@@ -83,7 +83,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 18.2.0
+    n 18.8.0
 
 
 # Install Node.js packages
