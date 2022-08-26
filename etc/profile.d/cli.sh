@@ -46,7 +46,11 @@ if [ "$(whoami)" != "root" ]; then
 
     # Make
     export CC="clang"
-    export CFLAGS="-ferror-limit=1 -gdwarf-4 -ggdb3 -O0 -std=c11 -Wall -Werror -Wextra -Wno-gnu-folding-constant -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable -Wshadow"
+    CFLAGS="-ferror-limit=1 -gdwarf-4 -ggdb3 -O0 -std=c11 "
+    CFLAGS+="-Wall -Werror -Wextra "
+    CFLAGS+="-Wno-gnu-folding-constant -Wno-sign-compare -Wno-unused-parameter -Wno-unused-variable -Wno-unused-but-set-variable "
+    CFLAGS+="-Wshadow"
+    export CFLAGS
     export LDLIBS="-lcrypt -lcs50 -lm"
 
     # Manual sections to search
