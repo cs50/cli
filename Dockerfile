@@ -114,6 +114,7 @@ RUN apt update && \
         bash-completion \
         clang \
         coreutils `# for fold` \
+        cowsay \
         dos2unix \
         dnsutils `# For nslookup` \
         fonts-noto-color-emoji `# For render50` \
