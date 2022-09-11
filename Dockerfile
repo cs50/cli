@@ -130,6 +130,7 @@ RUN apt update && \
         openssh-client `# For ssh-keygen` \
         psmisc `# For fuser` \
         sudo \
+        tzdata `# For TZ` \
         valgrind \
         vim \
         weasyprint `# For render50` \
