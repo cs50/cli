@@ -38,7 +38,7 @@ if [ "$(whoami)" != "root" ]; then
     export PROMPT_COMMAND='history -a' # Store Bash History Immediately
 
     # Java
-    export JAVA_HOME="/opt/jdk-17.0.1"
+    export JAVA_HOME="/opt/jdk-18.0.2.1"
 
     # Localization
     export LANG="C.UTF-8"
