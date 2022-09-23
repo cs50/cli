@@ -52,15 +52,15 @@ RUN gem install \
 # Install Python 3.10.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.10.6/Python-3.10.6.tgz --output Python-3.10.6.tgz && \
-    tar xzf Python-3.10.6.tgz && \
-    rm --force Python-3.10.6.tgz && \
-    cd Python-3.10.6 && \
+    curl https://www.python.org/ftp/python/3.10.7/Python-3.10.7.tgz --output Python-3.10.7.tgz && \
+    tar xzf Python-3.10.7.tgz && \
+    rm --force Python-3.10.7.tgz && \
+    cd Python-3.10.7 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.10.6 && \
+    rm --force --recursive Python-3.10.7 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --upgrade pip
@@ -79,11 +79,11 @@ RUN cd /tmp && \
 
 
 # Install Node.js 18.x
-# https://nodejs.dev/download
+# https://nodejs.dev/en/download/
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 18.8.0
+    n 18.9.0
 
 
 # Install Node.js packages
@@ -93,11 +93,11 @@ RUN npm install -g http-server
 # Install SQLite 3.x
 # https://www.sqlite.org/download.html
 RUN cd /tmp && \
-    wget https://www.sqlite.org/2022/sqlite-tools-linux-x86-3380500.zip && \
-    unzip sqlite-tools-linux-x86-3380500.zip && \
-    rm --force sqlite-tools-linux-x86-3380500.zip && \
-    mv sqlite-tools-linux-x86-3380500/* /usr/local/bin/ && \
-    rm --force --recursive sqlite-tools-linux-x86-3380500
+    wget https://www.sqlite.org/2022/sqlite-tools-linux-x86-3390300.zip && \
+    unzip sqlite-tools-linux-x86-3390300.zip && \
+    rm --force sqlite-tools-linux-x86-3390300.zip && \
+    mv sqlite-tools-linux-x86-3390300/* /usr/local/bin/ && \
+    rm --force --recursive sqlite-tools-linux-x86-3390300
 
 
 # Install GitHub CLI
