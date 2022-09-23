@@ -92,12 +92,15 @@ RUN npm install -g http-server
 
 # Install SQLite 3.x
 # https://www.sqlite.org/download.html
+# https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 RUN cd /tmp && \
-    wget https://www.sqlite.org/2022/sqlite-tools-linux-x86-3390300.zip && \
-    unzip sqlite-tools-linux-x86-3390300.zip && \
-    rm --force sqlite-tools-linux-x86-3390300.zip && \
-    mv sqlite-tools-linux-x86-3390300/* /usr/local/bin/ && \
-    rm --force --recursive sqlite-tools-linux-x86-3390300
+    wget https://www.sqlite.org/2022/sqlite-amalgamation-3390300.zip && \
+    unzip sqlite-amalgamation-3390300.zip && \
+    rm --force sqlite-amalgamation-3390300.zip && \
+    cd sqlite-amalgamation-3390300 && \
+    gcc shell.c sqlite3.c -lpthread -ldl -lm -o /usr/local/bin/sqlite3 && \
+    cd .. && \
+    rm --force --recursive sqlite-amalgamation-3390300
 
 
 # Install GitHub CLI
