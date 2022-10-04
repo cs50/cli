@@ -98,7 +98,7 @@ RUN cd /tmp && \
     unzip sqlite-amalgamation-3390300.zip && \
     rm --force sqlite-amalgamation-3390300.zip && \
     cd sqlite-amalgamation-3390300 && \
-    gcc shell.c sqlite3.c -lpthread -ldl -lm -o /usr/local/bin/sqlite3 && \
+    gcc -DHAVE_READLINE shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
     rm --force --recursive sqlite-amalgamation-3390300
 
