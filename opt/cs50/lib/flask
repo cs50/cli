@@ -1,7 +1,14 @@
 import sys
 
+import flask
 import flask.cli
+import werkzeug.datastructures
 import werkzeug.exceptions
+
+# Monkey-patch Config
+d = dict(flask.Flask.default_config)
+d["TEMPLATES_AUTO_RELOAD"] = True
+flask.Flask.default_config = werkzeug.datastructures.ImmutableDict(d)
 
 # Monkey-patch InternalServerError
 werkzeug.exceptions.InternalServerError.description = (
