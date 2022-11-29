@@ -29,15 +29,15 @@ RUN apt update && \
 # Install Ruby 3.1.x
 # https://www.ruby-lang.org/en/downloads/
 RUN cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.2.tar.gz --output ruby-3.1.2.tar.gz && \
-    tar xzf ruby-3.1.2.tar.gz && \
-    rm --force ruby-3.1.2.tar.gz && \
-    cd ruby-3.1.2 && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.3.tar.gz --output ruby-3.1.3.tar.gz && \
+    tar xzf ruby-3.1.3.tar.gz && \
+    rm --force ruby-3.1.3.tar.gz && \
+    cd ruby-3.1.3 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.1.2
+    rm --force --recursive ruby-3.1.3
 
 
 # Install Ruby packages
@@ -52,15 +52,15 @@ RUN gem install \
 # Install Python 3.10.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.10.7/Python-3.10.7.tgz --output Python-3.10.7.tgz && \
-    tar xzf Python-3.10.7.tgz && \
-    rm --force Python-3.10.7.tgz && \
-    cd Python-3.10.7 && \
+    curl https://www.python.org/ftp/python/3.11.0/Python-3.11.0.tgz --output Python-3.11.0.tgz && \
+    tar xzf Python-3.11.0.tgz && \
+    rm --force Python-3.11.0.tgz && \
+    cd Python-3.11.0 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.10.7 && \
+    rm --force --recursive Python-3.11.0 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --upgrade pip
@@ -83,7 +83,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 18.9.0
+    n 19.1.0
 
 
 # Install Node.js packages
@@ -94,13 +94,13 @@ RUN npm install -g http-server
 # https://www.sqlite.org/download.html
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 RUN cd /tmp && \
-    wget https://www.sqlite.org/2022/sqlite-amalgamation-3390300.zip && \
-    unzip sqlite-amalgamation-3390300.zip && \
-    rm --force sqlite-amalgamation-3390300.zip && \
-    cd sqlite-amalgamation-3390300 && \
+    wget https://www.sqlite.org/2022/sqlite-amalgamation-3400000.zip && \
+    unzip sqlite-amalgamation-3400000.zip && \
+    rm --force sqlite-amalgamation-3400000.zip && \
+    cd sqlite-amalgamation-3400000 && \
     gcc -DHAVE_READLINE shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3390300
+    rm --force --recursive sqlite-amalgamation-3400000
 
 
 # Install GitHub CLI
