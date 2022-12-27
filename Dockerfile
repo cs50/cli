@@ -26,18 +26,20 @@ RUN apt update && \
         libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
 
 
-# Install Ruby 3.1.x
+# Install Ruby 3.2.x
 # https://www.ruby-lang.org/en/downloads/
-RUN cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.3.tar.gz --output ruby-3.1.3.tar.gz && \
-    tar xzf ruby-3.1.3.tar.gz && \
-    rm --force ruby-3.1.3.tar.gz && \
-    cd ruby-3.1.3 && \
+RUN apt update && \
+    apt install --no-install-recommends --yes libyaml-dev &&
+    cd /tmp && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.0.tar.gz --output ruby-3.2.0.tar.gz && \
+    tar xzf ruby-3.2.0.tar.gz && \
+    rm --force ruby-3.2.0.tar.gz && \
+    cd ruby-3.2.0 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.1.3
+    rm --force --recursive ruby-3.2.0
 
 
 # Install Ruby packages
