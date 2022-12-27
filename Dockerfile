@@ -80,12 +80,12 @@ RUN cd /tmp && \
     chmod a+rx /opt/bin/*
 
 
-# Install Node.js 18.x
+# Install Node.js 19.x
 # https://nodejs.dev/en/download/
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 19.1.0
+    n 19.3.0
 
 
 # Install Node.js packages
