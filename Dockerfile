@@ -54,15 +54,15 @@ RUN gem install \
 # Install Python 3.10.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.11.0/Python-3.11.0.tgz --output Python-3.11.0.tgz && \
-    tar xzf Python-3.11.0.tgz && \
-    rm --force Python-3.11.0.tgz && \
-    cd Python-3.11.0 && \
+    curl https://www.python.org/ftp/python/3.11.1/Python-3.11.1.tgz --output Python-3.11.1.tgz && \
+    tar xzf Python-3.11.1.tgz && \
+    rm --force Python-3.11.1.tgz && \
+    cd Python-3.11.1 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.11.0 && \
+    rm --force --recursive Python-3.11.1 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --upgrade pip
