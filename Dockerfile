@@ -53,7 +53,7 @@ RUN gem install \
     pygments.rb
 
 
-# Install Python 3.10.x
+# Install Python 3.11.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
     curl https://www.python.org/ftp/python/3.11.1/Python-3.11.1.tgz --output Python-3.11.1.tgz && \
