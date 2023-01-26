@@ -17,6 +17,31 @@ RUN apt update && \
 RUN yes | unminimize
 
 
+# Install curl 
+RUN apt update && \
+    apt install --yes curl
+
+
+# Install Java 18.x
+# http://jdk.java.net/18/
+RUN cd /tmp && \
+    curl -O https://download.java.net/java/GA/jdk18.0.2.1/db379da656dc47308e138f21b33976fa/1/GPL/openjdk-18.0.2.1_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-18.0.2.1_linux-x64_bin.tar.gz && \
+    rm --force openjdk-18.0.2.1_linux-x64_bin.tar.gz && \
+    mv jdk-18.0.2.1 /opt/ && \
+    mkdir --parent /opt/bin && \
+    ln --symbolic /opt/jdk-18.0.2.1/bin/* /opt/bin/ && \
+    chmod a+rx /opt/bin/*
+
+
+# Install Node.js 19.x
+# https://nodejs.dev/en/download/
+# https://github.com/tj/n#installation
+RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
+    chmod a+x /usr/local/bin/n && \
+    n 19.3.0
+
+
 # Suggested build environment for Python, per pyenv, even though we're building ourselves
 # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
 RUN apt update && \
@@ -24,33 +49,6 @@ RUN apt update && \
         make build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev llvm ca-certificates curl wget unzip \
         libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
-
-
-# Install Ruby 3.1.x
-# https://www.ruby-lang.org/en/downloads/
-RUN apt update && \
-    apt install --no-install-recommends --yes \
-        autoconf \
-        libyaml-dev && \
-    cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.1/ruby-3.1.3.tar.gz --output ruby-3.1.3.tar.gz && \
-    tar xzf ruby-3.1.3.tar.gz && \
-    rm --force ruby-3.1.3.tar.gz && \
-    cd ruby-3.1.3 && \
-    ./configure && \
-    make && \
-    make install && \
-    cd .. && \
-    rm --force --recursive ruby-3.1.3
-
-
-# Install Ruby packages
-RUN gem install \
-    bundler \
-    jekyll \
-    jekyll-theme-cs50 \
-    minitest `# So that Bundler needn't install` \
-    pygments.rb
 
 
 # Install Python 3.11.x
@@ -70,35 +68,29 @@ RUN cd /tmp && \
     pip3 install --upgrade pip
 
 
-# Install Java 18.x
-# http://jdk.java.net/18/
-RUN cd /tmp && \
-    wget https://download.java.net/java/GA/jdk18.0.2.1/db379da656dc47308e138f21b33976fa/1/GPL/openjdk-18.0.2.1_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-18.0.2.1_linux-x64_bin.tar.gz && \
-    rm --force openjdk-18.0.2.1_linux-x64_bin.tar.gz && \
-    mv jdk-18.0.2.1 /opt/ && \
-    mkdir --parent /opt/bin && \
-    ln --symbolic /opt/jdk-18.0.2.1/bin/* /opt/bin/ && \
-    chmod a+rx /opt/bin/*
-
-
-# Install Node.js 19.x
-# https://nodejs.dev/en/download/
-# https://github.com/tj/n#installation
-RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
-    chmod a+x /usr/local/bin/n && \
-    n 19.3.0
-
-
-# Install Node.js packages
-RUN npm install -g http-server
+# Install Ruby 3.2.x
+# https://www.ruby-lang.org/en/downloads/
+RUN apt update && \
+    apt install --no-install-recommends --yes \
+        autoconf \
+        libyaml-dev && \
+    cd /tmp && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.0.tar.gz --output ruby-3.2.0.tar.gz && \
+    tar xzf ruby-3.2.0.tar.gz && \
+    rm --force ruby-3.2.0.tar.gz && \
+    cd ruby-3.2.0 && \
+    ./configure && \
+    make && \
+    make install && \
+    cd .. && \
+    rm --force --recursive ruby-3.2.0
 
 
 # Install SQLite 3.x
 # https://www.sqlite.org/download.html
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 RUN cd /tmp && \
-    wget https://www.sqlite.org/2022/sqlite-amalgamation-3400000.zip && \
+    curl -O https://www.sqlite.org/2022/sqlite-amalgamation-3400000.zip && \
     unzip sqlite-amalgamation-3400000.zip && \
     rm --force sqlite-amalgamation-3400000.zip && \
     cd sqlite-amalgamation-3400000 && \
@@ -153,6 +145,10 @@ RUN apt update && \
         zip
 
 
+# Install Node.js packages
+RUN npm install -g http-server
+
+
 # Install Python packages
 RUN apt update && \
     apt install --yes libmagic-dev `# For style50` && \
@@ -171,12 +167,23 @@ RUN apt update && \
         "submit50<4"
 
 
+# Install Ruby packages
+RUN gem install \
+        bundler \
+        jekyll \
+        minitest `# So that Bundler needn't install` \
+        pygments.rb \
+        specific_install && \
+    gem specific_install https://github.com/cs50/jekyll-theme-cs50 develop
+
+
 # Temporary fix for "libssl.so.1.1: cannot open shared object file: No such file or directory" on Ubuntu 22.04
 # https://stackoverflow.com/questions/72133316/ubuntu-22-04-libssl-so-1-1-cannot-open-shared-object-file-no-such-file-or-di
-RUN wget http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb -P/tmp && \
-    wget http://ports.ubuntu.com/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_arm64.deb -P/tmp && \
-    (dpkg -i /tmp/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb || dpkg -i /tmp/libssl1.1_1.1.1f-1ubuntu2.16_arm64.deb) && \
-    rm -rf /tmp/libssl1.1_1.1.1f-1ubuntu2.16*
+RUN cd /tmp && \
+    curl -O http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb && \
+    curl -O http://ports.ubuntu.com/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.16_arm64.deb && \
+    (dpkg -i libssl1.1_1.1.1f-1ubuntu2.16_amd64.deb || dpkg -i libssl1.1_1.1.1f-1ubuntu2.16_arm64.deb) && \
+    rm -rf libssl1.1_1.1.1f-1ubuntu2.16*
 
 
 # Copy files to image
