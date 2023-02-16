@@ -24,4 +24,4 @@ elif [[ $# -eq 1 ]] && [[ ! "$1" =~ ^- ]]; then
     fi
 fi
 
-/usr/local/bin/sqlite3 -table $*
+/usr/local/bin/sqlite3 -table "$@"
