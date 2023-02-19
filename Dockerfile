@@ -192,6 +192,13 @@ COPY ./opt /opt
 RUN chmod a+rx /opt/cs50/bin/*
 
 
+# Disable bracketed paste
+# https://bugs.launchpad.net/ubuntu/+source/bash/+bug/1926256
+RUN echo >> /etc/inputrc && \
+    echo "# Disable bracketed paste" >> /etc/inputrc && \
+    echo "set enable-bracketed-paste off" >> /etc/inputrc
+
+
 # Add user
 RUN useradd --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
     umask 0077 && \
