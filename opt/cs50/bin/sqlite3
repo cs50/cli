@@ -24,4 +24,4 @@ elif [[ $# -eq 1 ]] && [[ ! "$1" =~ ^- ]]; then
     fi
 fi
 
-/usr/local/bin/sqlite3 -batch -table -interactive -init /opt/cs50/etc/.sqliterc "$@"
+/usr/local/bin/sqlite3 -batch -table -interactive -init /opt/cs50/etc/sqliterc "$@"
