@@ -1,4 +1,4 @@
-# diff shell.c shell_modified.c > .patch
+# diff shell.c shell_modified.c > shell.c.patch
 26384,26388c26384,26388
 <       printf(
 <         "SQLite version %s %.19s\n" /*extra-version-info*/
