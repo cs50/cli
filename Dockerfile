@@ -17,7 +17,7 @@ RUN apt update && \
 RUN yes | unminimize
 
 
-# Install curl 
+# Install curl
 RUN apt update && \
     apt install --yes curl
 
@@ -89,14 +89,17 @@ RUN apt update && \
 # Install SQLite 3.x
 # https://www.sqlite.org/download.html
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
+ADD .patch /tmp
 RUN cd /tmp && \
     curl -O https://www.sqlite.org/2022/sqlite-amalgamation-3400100.zip && \
     unzip sqlite-amalgamation-3400100.zip && \
     rm --force sqlite-amalgamation-3400100.zip && \
     cd sqlite-amalgamation-3400100 && \
+    patch shell.c < /tmp/.patch && \
     gcc -DHAVE_READLINE shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3400100
+    rm --force --recursive sqlite-amalgamation-3400100 && \
+    rm --force /tmp/.patch
 
 
 # Install GitHub CLI
