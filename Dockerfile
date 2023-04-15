@@ -90,13 +90,13 @@ RUN apt update && \
 # https://www.sqlite.org/download.html
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 RUN cd /tmp && \
-    curl -O https://www.sqlite.org/2022/sqlite-amalgamation-3400100.zip && \
-    unzip sqlite-amalgamation-3400100.zip && \
-    rm --force sqlite-amalgamation-3400100.zip && \
-    cd sqlite-amalgamation-3400100 && \
+    curl -O https://www.sqlite.org/2023/sqlite-amalgamation-3410200.zip && \
+    unzip sqlite-amalgamation-3410200.zip && \
+    rm --force sqlite-amalgamation-3410200.zip && \
+    cd sqlite-amalgamation-3410200 && \
     gcc -DHAVE_READLINE shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3400100
+    rm --force --recursive sqlite-amalgamation-3410200
 
 
 # Install GitHub CLI
