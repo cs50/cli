@@ -23,6 +23,7 @@ if [ "$(whoami)" != "root" ]; then
     alias ls="ls --color -F --ignore=lost+found" # Add trailing slashes
     alias mv="mv -i"
     alias pip="pip --no-cache-dir"
+    alias python="python -q"
     alias rm="rm -i"
     alias sudo="sudo " # Trailing space enables elevated command to be an alias
 
