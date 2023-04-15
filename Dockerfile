@@ -39,7 +39,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 19.6.1
+    n 19.8.1
 
 
 # Suggested build environment for Python, per pyenv, even though we're building ourselves
@@ -54,15 +54,15 @@ RUN apt update && \
 # Install Python 3.11.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.11.2/Python-3.11.2.tgz --output Python-3.11.2.tgz && \
-    tar xzf Python-3.11.2.tgz && \
-    rm --force Python-3.11.2.tgz && \
-    cd Python-3.11.2 && \
+    curl https://www.python.org/ftp/python/3.11.3/Python-3.11.3.tgz --output Python-3.11.3.tgz && \
+    tar xzf Python-3.11.3.tgz && \
+    rm --force Python-3.11.3.tgz && \
+    cd Python-3.11.3 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.11.2 && \
+    rm --force --recursive Python-3.11.3 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --upgrade pip
@@ -75,15 +75,15 @@ RUN apt update && \
         autoconf \
         libyaml-dev && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.1.tar.gz --output ruby-3.2.1.tar.gz && \
-    tar xzf ruby-3.2.1.tar.gz && \
-    rm --force ruby-3.2.1.tar.gz && \
-    cd ruby-3.2.1 && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz --output ruby-3.2.2.tar.gz && \
+    tar xzf ruby-3.2.2.tar.gz && \
+    rm --force ruby-3.2.2.tar.gz && \
+    cd ruby-3.2.2 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.2.1
+    rm --force --recursive ruby-3.2.2
 
 
 # Install SQLite 3.x
