@@ -91,7 +91,7 @@ RUN apt update && \
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl -O https://www.sqlite.org/2022/sqlite-amalgamation-3410200.zip && \
+    curl -O https://www.sqlite.org/2023/sqlite-amalgamation-3410200.zip && \
     unzip sqlite-amalgamation-3410200.zip && \
     rm --force sqlite-amalgamation-3410200.zip && \
     cd sqlite-amalgamation-3410200 && \
