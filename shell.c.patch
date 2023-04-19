@@ -1,0 +1,13 @@
+# diff shell.c shell_modified.c > shell.c.patch
+26384,26388c26384,26388
+<       printf(
+<         "SQLite version %s %.19s\n" /*extra-version-info*/
+<         "Enter \".help\" for usage hints.\n",
+<         sqlite3_libversion(), sqlite3_sourceid()
+<       );
+---
+>     //   printf(
+>     //     "SQLite version %s %.19s\n" /*extra-version-info*/
+>     //     "Enter \".help\" for usage hints.\n",
+>     //     sqlite3_libversion(), sqlite3_sourceid()
+>     //   );
