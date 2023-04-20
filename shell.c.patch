@@ -1,5 +1,4 @@
-520a521
-> # define SQLITE_OMIT_DYNAPROMPT 1
+# diff shell.c shell_modified.c > shell.c.patch
 27472,27482c27473,27483
 <       printf(
 <         "SQLite version %s %.19s\n" /*extra-version-info*/
