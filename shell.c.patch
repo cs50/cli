@@ -1,4 +1,4 @@
-27472,27482c27472,27482
+26384,26394c26384,26394
 <       printf(
 <         "SQLite version %s %.19s\n" /*extra-version-info*/
 <         "Enter \".help\" for usage hints.\n",
