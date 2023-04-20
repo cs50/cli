@@ -96,7 +96,7 @@ RUN cd /tmp && \
     rm --force sqlite-amalgamation-3410200.zip && \
     cd sqlite-amalgamation-3410200 && \
     patch shell.c < /tmp/shell.c.patch && \
-    gcc -DHAVE_READLINE -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
+    gcc -DHAVE_READLINE -D SQLITE_DEFAULT_FOREIGN_KEYS=1 -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
     rm --force --recursive sqlite-amalgamation-3410200 && \
     rm --force /tmp/shell.c.patch
