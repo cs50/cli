@@ -25,4 +25,4 @@ elif [[ $# -eq 1 ]] && [[ ! "$1" =~ ^- ]]; then
     fi
 fi
 
-/usr/local/bin/sqlite3 -batch -init /opt/cs50/etc/sqliterc -interactive -nullvalue NULL -table "$@"
+/usr/local/bin/sqlite3 -nullvalue NULL -table "$@"
