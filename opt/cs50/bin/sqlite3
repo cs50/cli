@@ -21,6 +21,7 @@ elif [[ $# -eq 1 ]] && [[ ! "$1" =~ ^- ]]; then
                 exit 1
             fi
         fi
+        /usr/local/bin/sqlite3 "$@" "VACUUM;" # https://stackoverflow.com/a/51455470
     fi
 fi
 
