@@ -25,7 +25,7 @@ RUN apt update && \
 # Install Java 19.x
 # http://jdk.java.net/19/
 RUN cd /tmp && \
-    curl -O https://download.java.net/java/GA/jdk19.0.2/fdb695a9d9064ad6b064dc6df578380c/7/GPL/openjdk-19.0.2_linux-x64_bin.tar.gz && \
+    curl --remote-name https://download.java.net/java/GA/jdk19.0.2/fdb695a9d9064ad6b064dc6df578380c/7/GPL/openjdk-19.0.2_linux-x64_bin.tar.gz && \
     tar xzf openjdk-19.0.2_linux-x64_bin.tar.gz && \
     rm --force openjdk-19.0.2_linux-x64_bin.tar.gz && \
     mv jdk-19.0.2 /opt/ && \
@@ -91,14 +91,14 @@ RUN apt update && \
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl -O https://www.sqlite.org/2023/sqlite-amalgamation-3410200.zip && \
-    unzip sqlite-amalgamation-3410200.zip && \
-    rm --force sqlite-amalgamation-3410200.zip && \
-    cd sqlite-amalgamation-3410200 && \
+    curl --remote-name https://www.sqlite.org/2023/sqlite-amalgamation-3420000.zip && \
+    unzip sqlite-amalgamation-3420000.zip && \
+    rm --force sqlite-amalgamation-3420000.zip && \
+    cd sqlite-amalgamation-3420000 && \
     patch shell.c < /tmp/shell.c.patch && \
     gcc -D HAVE_READLINE -D SQLITE_DEFAULT_FOREIGN_KEYS=1 -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3410200 && \
+    rm --force --recursive sqlite-amalgamation-3420000 && \
     rm --force /tmp/shell.c.patch
 
 
@@ -149,7 +149,7 @@ RUN apt update && \
 
 
 # Install Node.js packages
-RUN npm install -g http-server
+RUN npm install --global http-server
 
 
 # Install Python packages
@@ -183,10 +183,10 @@ RUN gem install \
 # Temporary fix for "libssl.so.1.1: cannot open shared object file: No such file or directory" on Ubuntu 22.04
 # https://stackoverflow.com/questions/72133316/ubuntu-22-04-libssl-so-1-1-cannot-open-shared-object-file-no-such-file-or-di
 RUN cd /tmp && \
-    curl -O http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.17_amd64.deb && \
-    curl -O http://ports.ubuntu.com/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.17_arm64.deb && \
-    (dpkg -i libssl1.1_1.1.1f-1ubuntu2.17_amd64.deb || dpkg -i libssl1.1_1.1.1f-1ubuntu2.17_arm64.deb) && \
-    rm -rf libssl1.1_1.1.1f-1ubuntu2.17*
+    curl --remote-name http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.18_amd64.deb && \
+    curl --remote-name http://ports.ubuntu.com/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.18_arm64.deb && \
+    (dpkg --install libssl1.1_1.1.1f-1ubuntu2.18_amd64.deb || dpkg --install libssl1.1_1.1.1f-1ubuntu2.18_arm64.deb) && \
+    rm --force --recursive libssl1.1_1.1.1f-1ubuntu2.18*
 
 
 # Copy files to image
@@ -205,8 +205,8 @@ RUN echo >> /etc/inputrc && \
 # Add user
 RUN useradd --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
     umask 0077 && \
-    mkdir -p /home/ubuntu && \
-    chown -R ubuntu:ubuntu /home/ubuntu
+    mkdir --parents /home/ubuntu && \
+    chown --recursive ubuntu:ubuntu /home/ubuntu
 
 
 # Add user to sudoers
@@ -214,7 +214,7 @@ RUN echo "\n# CS50 CLI" >> /etc/sudoers && \
     echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     echo "Defaults umask_override" >> /etc/sudoers && \
     echo "Defaults umask=0022" >> /etc/sudoers && \
-    sed -e "s/^Defaults\tsecure_path=.*/Defaults\t!secure_path/" -i /etc/sudoers
+    sed --expression="s/^Defaults\tsecure_path=.*/Defaults\t!secure_path/" --in-place /etc/sudoers
 
 
 # Version the image (and any descendants)
