@@ -1,5 +1,5 @@
 # diff shell.c shell_modified.c > shell.c.patch
-27472,27482c27473,27483
+27832,27842c27832,27842
 <       printf(
 <         "SQLite version %s %.19s\n" /*extra-version-info*/
 <         "Enter \".help\" for usage hints.\n",
