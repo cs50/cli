@@ -7,10 +7,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN apt update && apt install --yes apt-utils
 
 
-# Environment
+# Install locales
 RUN apt update && \
-    apt install --yes locales && \
-    locale-gen "en_US.UTF-8" && dpkg-reconfigure locales
+    apt install --yes locales-all
+ENV LANG=C.UTF-8
 
 
 # Unminimize system
