@@ -7,4 +7,4 @@ rebuild:
 	docker build --no-cache -t cs50/cli .
 
 run:
-	docker run -it -P --rm --security-opt seccomp=unconfined -v "$(PWD)":/home/ubuntu cs50/cli bash --login || true
+	docker run --env LANG="$(LANG)" -it -P --rm --security-opt seccomp=unconfined -v "$(PWD)":/home/ubuntu cs50/cli bash --login || true
