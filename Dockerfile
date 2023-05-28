@@ -9,7 +9,23 @@ RUN apt update && apt install --yes apt-utils
 
 # Install locales
 RUN apt update && \
-    apt install --yes locales-all
+    apt install --yes locales && \
+    locale-gen \
+        en_US.utf8 \
+        zh_CN.utf8 \
+        zh_TW.utf8 \
+        fr_FR.utf8 \
+        de_DE.utf8 \
+        it_IT.utf8 \
+        es_ES.utf8 \
+        ja_JP.utf8 \
+        ko_KR.utf8 \
+        ru_RU.utf8 \
+        pt_BR.utf8 \
+        tr_TR.utf8 \
+        pl_PL.utf8 \
+        cs_CZ.utf8 \
+        hu_HU.utf8
 ENV LANG=C.UTF-8
 
 
