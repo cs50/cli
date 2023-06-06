@@ -27,6 +27,7 @@ RUN yes | unminimize && \
         pl_PL.utf8 \
         cs_CZ.utf8 \
         hu_HU.utf8 && \
+    apt clean && \
     rm -rf /var/lib/apt/lists/*
 
 
@@ -61,6 +62,7 @@ RUN apt update && \
         make build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev llvm ca-certificates wget unzip \
         libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev && \
+        apt clean && \
         rm -rf /var/lib/apt/lists/*
 
 
@@ -87,6 +89,7 @@ RUN apt update && \
     apt install --no-install-recommends --yes \
         autoconf \
         libyaml-dev && \
+    apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     cd /tmp && \
     curl https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz --output ruby-3.2.2.tar.gz && \
@@ -122,7 +125,8 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
     chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
     apt update && \
-    apt install gh --yes
+    apt install gh --yes && \
+    apt clean
 
 
 # Install CS50 packages and Ubuntu packages
@@ -155,6 +159,7 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         vim \
         weasyprint `# For render50` \
         zip && \
+        apt clean && \
         rm -rf /var/lib/apt/lists/*
 
 
@@ -207,11 +212,8 @@ RUN echo >> /etc/inputrc && \
 RUN useradd --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
     umask 0077 && \
     mkdir --parents /home/ubuntu && \
-    chown --recursive ubuntu:ubuntu /home/ubuntu
-
-
-# Add user to sudoers
-RUN echo "\n# CS50 CLI" >> /etc/sudoers && \
+    chown --recursive ubuntu:ubuntu /home/ubuntu && \
+    echo "\n# CS50 CLI" >> /etc/sudoers && \
     echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     echo "Defaults umask_override" >> /etc/sudoers && \
     echo "Defaults umask=0022" >> /etc/sudoers && \
