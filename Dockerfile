@@ -1,3 +1,4 @@
+# Build statge
 FROM ubuntu:22.04 as builder
 ARG DEBIAN_FRONTEND=noninteractive
 
@@ -103,6 +104,7 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
     apt install gh --no-install-recommends --yes
 
 
+# final stage
 FROM ubuntu:22.04
 LABEL maintainer="sysadmins@cs50.harvard.edu"
 ARG DEBIAN_FRONTEND=noninteractive
@@ -146,6 +148,7 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         libcs50 \
         astyle \
         bash-completion \
+        build-essential \
         clang \
         coreutils `# for fold` \
         cowsay \
