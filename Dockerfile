@@ -2,18 +2,16 @@ FROM ubuntu:22.04
 LABEL maintainer="sysadmins@cs50.harvard.edu"
 ARG DEBIAN_FRONTEND=noninteractive
 
-
+# Unminimize system
 # Avoid "delaying package configuration, since apt-utils is not installed"
-RUN apt update && \
-    apt install --yes \
-    apt-utils && \
-    rm -rf /var/lib/apt/lists/*
-
-
 # Install locales
-RUN apt update && \
-    apt install --yes locales && \
-    locale-gen \
+RUN yes | unminimize && \
+    apt update && \
+    apt install --yes \
+    apt-utils \
+    curl \
+    locales && \
+        locale-gen \
         en_US.utf8 \
         zh_CN.utf8 \
         zh_TW.utf8 \
@@ -29,18 +27,11 @@ RUN apt update && \
         pl_PL.utf8 \
         cs_CZ.utf8 \
         hu_HU.utf8 && \
-        rm -rf /var/lib/apt/lists/*
-ENV LANG=C.UTF-8
-
-
-# Unminimize system
-RUN yes | unminimize
-
-
-# Install curl
-RUN apt update && \
-    apt install --yes curl && \
     rm -rf /var/lib/apt/lists/*
+
+
+# Set locale
+ENV LANG=C.UTF-8
 
 
 # Install Java 19.x
@@ -68,7 +59,7 @@ RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output
 RUN apt update && \
     apt install --no-install-recommends --yes \
         make build-essential libssl-dev zlib1g-dev \
-        libbz2-dev libreadline-dev libsqlite3-dev llvm ca-certificates curl wget unzip \
+        libbz2-dev libreadline-dev libsqlite3-dev llvm ca-certificates wget unzip \
         libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev && \
         rm -rf /var/lib/apt/lists/*
 
@@ -134,17 +125,11 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
     apt install gh --yes
 
 
-# Install CS50 packages
+# Install CS50 packages and Ubuntu packages
 RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
     apt update && \
-    apt install --yes \
-        libcs50 && \
-        rm -rf /var/lib/apt/lists/*
-
-
-# Install Ubuntu packages
-RUN apt update && \
     apt install --no-install-recommends --yes \
+        libcs50 \
         astyle \
         bash-completion \
         clang \
