@@ -1,60 +1,5 @@
-FROM ubuntu:22.04
-LABEL maintainer="sysadmins@cs50.harvard.edu"
+FROM ubuntu:22.04 as builder
 ARG DEBIAN_FRONTEND=noninteractive
-
-
-# Avoid "delaying package configuration, since apt-utils is not installed"
-RUN apt update && \
-    apt install --no-install-recommends --yes apt-utils
-
-
-# Install locales
-RUN apt update && \
-    apt install --yes locales && \
-    locale-gen \
-        en_US.utf8 \
-        zh_CN.utf8 \
-        zh_TW.utf8 \
-        fr_FR.utf8 \
-        de_DE.utf8 \
-        it_IT.utf8 \
-        es_ES.utf8 \
-        ja_JP.utf8 \
-        ko_KR.utf8 \
-        ru_RU.utf8 \
-        pt_BR.utf8 \
-        tr_TR.utf8 \
-        pl_PL.utf8 \
-        cs_CZ.utf8 \
-        hu_HU.utf8
-ENV LANG=C.UTF-8
-
-
-# Install curl
-RUN apt update && \
-    apt install --no-install-recommends --yes \
-        ca-certificates \
-        curl
-
-
-# Install Java 19.x
-# http://jdk.java.net/19/
-RUN cd /tmp && \
-    curl --remote-name https://download.java.net/java/GA/jdk19.0.2/fdb695a9d9064ad6b064dc6df578380c/7/GPL/openjdk-19.0.2_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-19.0.2_linux-x64_bin.tar.gz && \
-    rm --force openjdk-19.0.2_linux-x64_bin.tar.gz && \
-    mv jdk-19.0.2 /opt/ && \
-    mkdir --parent /opt/bin && \
-    ln --symbolic /opt/jdk-19.0.2/bin/* /opt/bin/ && \
-    chmod a+rx /opt/bin/*
-
-
-# Install Node.js 19.x
-# https://nodejs.dev/en/download/
-# https://github.com/tj/n#installation
-RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
-    chmod a+x /usr/local/bin/n && \
-    n 19.8.1
 
 
 # Suggested build environment for Python, per pyenv, even though we're building ourselves
@@ -101,6 +46,17 @@ RUN apt update && \
     rm --force --recursive ruby-3.2.2
 
 
+# Install Ruby packages
+RUN apt install --yes git
+RUN gem install \
+        bundler \
+        jekyll \
+        minitest `# So that Bundler needn't install` \
+        pygments.rb \
+        specific_install && \
+    gem specific_install https://github.com/cs50/jekyll-theme-cs50 develop
+
+
 # Install SQLite 3.x
 # https://www.sqlite.org/download.html
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
@@ -117,6 +73,27 @@ RUN cd /tmp && \
     rm --force /tmp/shell.c.patch
 
 
+# Install Java 19.x
+# http://jdk.java.net/19/
+RUN cd /tmp && \
+    curl --remote-name https://download.java.net/java/GA/jdk19.0.2/fdb695a9d9064ad6b064dc6df578380c/7/GPL/openjdk-19.0.2_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-19.0.2_linux-x64_bin.tar.gz && \
+    rm --force openjdk-19.0.2_linux-x64_bin.tar.gz && \
+    mv jdk-19.0.2 /opt/ && \
+    mkdir --parent /opt/bin && \
+    ln --symbolic /opt/jdk-19.0.2/bin/* /opt/bin/ && \
+    chmod a+rx /opt/bin/*
+
+
+# Install Node.js 19.x
+# https://nodejs.dev/en/download/
+# https://github.com/tj/n#installation
+RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
+    chmod a+x /usr/local/bin/n && \
+    n 19.8.1 && \
+    npm install --global http-server
+
+
 # Install GitHub CLI
 # https://github.com/cli/cli/blob/trunk/docs/install_linux.md#debian-ubuntu-linux-raspberry-pi-os-apt
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
@@ -126,16 +103,47 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
     apt install gh --no-install-recommends --yes
 
 
-# Install CS50 packages
+FROM ubuntu:22.04
+LABEL maintainer="sysadmins@cs50.harvard.edu"
+ARG DEBIAN_FRONTEND=noninteractive
+
+COPY --from=builder /usr/bin/ /usr/bin/
+COPY --from=builder /usr/local/ /usr/local/
+COPY --from=builder /opt/ /opt/
+
+# Avoid "delaying package configuration, since apt-utils is not installed"
+RUN apt update && \
+    apt install --no-install-recommends --yes \
+    apt-utils \
+    ca-certificates \
+    curl \
+    unzip \
+    locales && \
+    locale-gen \
+        en_US.utf8 \
+        zh_CN.utf8 \
+        zh_TW.utf8 \
+        fr_FR.utf8 \
+        de_DE.utf8 \
+        it_IT.utf8 \
+        es_ES.utf8 \
+        ja_JP.utf8 \
+        ko_KR.utf8 \
+        ru_RU.utf8 \
+        pt_BR.utf8 \
+        tr_TR.utf8 \
+        pl_PL.utf8 \
+        cs_CZ.utf8 \
+        hu_HU.utf8 && \
+    apt clean
+ENV LANG=C.UTF-8
+
+
+# Install CS50 and Ubuntu packages
 RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
     apt update && \
     apt install --no-install-recommends --yes \
-        libcs50
-
-
-# Install Ubuntu packages
-RUN apt update && \
-    apt install --no-install-recommends --yes \
+        libcs50 \
         astyle \
         bash-completion \
         clang \
@@ -149,6 +157,7 @@ RUN apt update && \
         git-lfs \
         jq \
         less \
+        libyaml-0-2 `# runtime package for gem` \
         make \
         man \
         man-db \
@@ -160,17 +169,14 @@ RUN apt update && \
         valgrind \
         vim \
         weasyprint `# For render50` \
-        zip
-
-
-# Install Node.js packages
-RUN npm install --global http-server
+        zip && \
+    apt clean
 
 
 # Install Python packages
 RUN apt update && \
     apt install --no-install-recommends --yes libmagic-dev `# For style50` && \
-    pip3 install \
+    pip3 install --no-cache-dir \
         awscli \
         "check50<4" \
         compare50 \
@@ -183,16 +189,6 @@ RUN apt update && \
         s3cmd \
         style50 \
         "submit50<4"
-
-
-# Install Ruby packages
-RUN gem install \
-        bundler \
-        jekyll \
-        minitest `# So that Bundler needn't install` \
-        pygments.rb \
-        specific_install && \
-    gem specific_install https://github.com/cs50/jekyll-theme-cs50 develop
 
 
 # Copy files to image
@@ -208,15 +204,12 @@ RUN echo >> /etc/inputrc && \
     echo "set enable-bracketed-paste off" >> /etc/inputrc
 
 
-# Add user
+# Add user to sudoers
 RUN useradd --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
     umask 0077 && \
     mkdir --parents /home/ubuntu && \
-    chown --recursive ubuntu:ubuntu /home/ubuntu
-
-
-# Add user to sudoers
-RUN echo "\n# CS50 CLI" >> /etc/sudoers && \
+    chown --recursive ubuntu:ubuntu /home/ubuntu && \
+    echo "\n# CS50 CLI" >> /etc/sudoers && \
     echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     echo "Defaults umask_override" >> /etc/sudoers && \
     echo "Defaults umask=0022" >> /etc/sudoers && \
