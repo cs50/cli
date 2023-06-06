@@ -4,7 +4,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 
 # Avoid "delaying package configuration, since apt-utils is not installed"
-RUN apt update && apt install --yes apt-utils
+RUN apt update && \
+    apt install --yes \
+    apt-utils && \
+    rm -rf /var/lib/apt/lists/*
 
 
 # Install locales
@@ -25,7 +28,8 @@ RUN apt update && \
         tr_TR.utf8 \
         pl_PL.utf8 \
         cs_CZ.utf8 \
-        hu_HU.utf8
+        hu_HU.utf8 && \
+        rm -rf /var/lib/apt/lists/*
 ENV LANG=C.UTF-8
 
 
@@ -35,7 +39,8 @@ RUN yes | unminimize
 
 # Install curl
 RUN apt update && \
-    apt install --yes curl
+    apt install --yes curl && \
+    rm -rf /var/lib/apt/lists/*
 
 
 # Install Java 19.x
@@ -64,7 +69,8 @@ RUN apt update && \
     apt install --no-install-recommends --yes \
         make build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev llvm ca-certificates curl wget unzip \
-        libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
+        libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev && \
+        rm -rf /var/lib/apt/lists/*
 
 
 # Install Python 3.11.x
@@ -81,7 +87,7 @@ RUN cd /tmp && \
     rm --force --recursive Python-3.11.3 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
-    pip3 install --upgrade pip
+    pip3 install --no-cache-dir --upgrade pip
 
 
 # Install Ruby 3.2.x
@@ -90,6 +96,7 @@ RUN apt update && \
     apt install --no-install-recommends --yes \
         autoconf \
         libyaml-dev && \
+    rm -rf /var/lib/apt/lists/* && \
     cd /tmp && \
     curl https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz --output ruby-3.2.2.tar.gz && \
     tar xzf ruby-3.2.2.tar.gz && \
@@ -131,7 +138,8 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
 RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
     apt update && \
     apt install --yes \
-        libcs50
+        libcs50 && \
+        rm -rf /var/lib/apt/lists/*
 
 
 # Install Ubuntu packages
@@ -161,7 +169,8 @@ RUN apt update && \
         valgrind \
         vim \
         weasyprint `# For render50` \
-        zip
+        zip && \
+        rm -rf /var/lib/apt/lists/*
 
 
 # Install Node.js packages
@@ -171,7 +180,7 @@ RUN npm install --global http-server
 # Install Python packages
 RUN apt update && \
     apt install --yes libmagic-dev `# For style50` && \
-    pip3 install \
+    pip3 install --no-cache-dir \
         awscli \
         "check50<4" \
         compare50 \
