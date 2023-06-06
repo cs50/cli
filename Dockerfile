@@ -141,7 +141,7 @@ RUN apt update && \
 ENV LANG=C.UTF-8
 
 
-# Install CS50 and Ubuntu packages
+# Install CS50, Ubuntu, and Python packages
 RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
     apt update && \
     apt install --no-install-recommends --yes \
@@ -160,6 +160,7 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         git-lfs \
         jq \
         less \
+        libmagic-dev `# For style50` \
         libyaml-0-2 `# runtime package for gem` \
         make \
         man \
@@ -167,18 +168,14 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         nano \
         openssh-client `# For ssh-keygen` \
         psmisc `# For fuser` \
+        ruby-dev `# Ruby development headers` \
         sudo \
         tzdata `# For TZ` \
         valgrind \
         vim \
         weasyprint `# For render50` \
         zip && \
-    apt clean
-
-
-# Install Python packages
-RUN apt update && \
-    apt install --no-install-recommends --yes libmagic-dev `# For style50` && \
+    apt clean && \
     pip3 install --no-cache-dir \
         awscli \
         "check50<4" \
