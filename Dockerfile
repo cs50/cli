@@ -4,7 +4,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 
 # Avoid "delaying package configuration, since apt-utils is not installed"
-RUN apt update && apt install --yes apt-utils
+RUN apt update && \
+    apt install --no-install-recommends --yes apt-utils
 
 
 # Install locales
@@ -29,13 +30,11 @@ RUN apt update && \
 ENV LANG=C.UTF-8
 
 
-# Unminimize system
-RUN yes | unminimize
-
-
 # Install curl
 RUN apt update && \
-    apt install --yes curl
+    apt install --no-install-recommends --yes \
+        ca-certificates \
+        curl
 
 
 # Install Java 19.x
@@ -124,13 +123,13 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
     chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
     apt update && \
-    apt install gh --yes
+    apt install gh --no-install-recommends --yes
 
 
 # Install CS50 packages
 RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
     apt update && \
-    apt install --yes \
+    apt install --no-install-recommends --yes \
         libcs50
 
 
@@ -170,7 +169,7 @@ RUN npm install --global http-server
 
 # Install Python packages
 RUN apt update && \
-    apt install --yes libmagic-dev `# For style50` && \
+    apt install --no-install-recommends --yes libmagic-dev `# For style50` && \
     pip3 install \
         awscli \
         "check50<4" \
@@ -199,10 +198,10 @@ RUN gem install \
 # Temporary fix for "libssl.so.1.1: cannot open shared object file: No such file or directory" on Ubuntu 22.04
 # https://stackoverflow.com/questions/72133316/ubuntu-22-04-libssl-so-1-1-cannot-open-shared-object-file-no-such-file-or-di
 RUN cd /tmp && \
-    curl --remote-name http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.18_amd64.deb && \
-    curl --remote-name http://ports.ubuntu.com/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.18_arm64.deb && \
-    (dpkg --install libssl1.1_1.1.1f-1ubuntu2.18_amd64.deb || dpkg --install libssl1.1_1.1.1f-1ubuntu2.18_arm64.deb) && \
-    rm --force --recursive libssl1.1_1.1.1f-1ubuntu2.18*
+    curl --remote-name http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.19_amd64.deb && \
+    curl --remote-name http://ports.ubuntu.com/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.19_arm64.deb && \
+    (dpkg --install libssl1.1_1.1.1f-1ubuntu2.19_amd64.deb || dpkg --install libssl1.1_1.1.1f-1ubuntu2.19_arm64.deb) && \
+    rm --force --recursive libssl1.1_1.1.1f-1ubuntu2.19*
 
 
 # Copy files to image
