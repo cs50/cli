@@ -195,15 +195,6 @@ RUN gem install \
     gem specific_install https://github.com/cs50/jekyll-theme-cs50 develop
 
 
-# Temporary fix for "libssl.so.1.1: cannot open shared object file: No such file or directory" on Ubuntu 22.04
-# https://stackoverflow.com/questions/72133316/ubuntu-22-04-libssl-so-1-1-cannot-open-shared-object-file-no-such-file-or-di
-RUN cd /tmp && \
-    curl --remote-name http://archive.ubuntu.com/ubuntu/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.19_amd64.deb && \
-    curl --remote-name http://ports.ubuntu.com/pool/main/o/openssl/libssl1.1_1.1.1f-1ubuntu2.19_arm64.deb && \
-    (dpkg --install libssl1.1_1.1.1f-1ubuntu2.19_amd64.deb || dpkg --install libssl1.1_1.1.1f-1ubuntu2.19_arm64.deb) && \
-    rm --force --recursive libssl1.1_1.1.1f-1ubuntu2.19*
-
-
 # Copy files to image
 COPY ./etc /etc
 COPY ./opt /opt
