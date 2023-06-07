@@ -104,7 +104,7 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
     apt install gh --no-install-recommends --yes
 
 
-# final stage
+# Final stage
 FROM ubuntu:22.04
 LABEL maintainer="sysadmins@cs50.harvard.edu"
 ARG DEBIAN_FRONTEND=noninteractive
@@ -119,7 +119,6 @@ RUN apt update && \
     apt-utils \
     ca-certificates \
     curl \
-    unzip \
     locales && \
     locale-gen \
         en_US.utf8 \
@@ -145,12 +144,11 @@ ENV LANG=C.UTF-8
 RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
     apt update && \
     apt install --no-install-recommends --yes \
-        libcs50 \
         astyle \
         bash-completion \
-        build-essential \
+        build-essential `# libc, gcc, g++, make, dpkg-dev etc.`\
         clang \
-        coreutils `# for fold` \
+        coreutils `# For fold` \
         cowsay \
         dos2unix \
         dnsutils `# For nslookup` \
@@ -160,9 +158,9 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         git-lfs \
         jq \
         less \
+        libcs50 `# CS50 library` \
         libmagic-dev `# For style50` \
-        libyaml-0-2 `# runtime package for gem` \
-        make \
+        libyaml-0-2 `# Runtime package for gem` \
         man \
         man-db \
         nano \
@@ -171,11 +169,12 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         ruby-dev `# Ruby development headers` \
         sudo \
         tzdata `# For TZ` \
+        unzip \
         valgrind \
         vim \
         weasyprint `# For render50` \
         zip && \
-    apt clean && \
+        apt clean && \
     pip3 install --no-cache-dir \
         awscli \
         "check50<4" \
