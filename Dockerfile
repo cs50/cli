@@ -15,15 +15,15 @@ RUN apt update && \
 # Install Python 3.11.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.11.3/Python-3.11.3.tgz --output Python-3.11.3.tgz && \
-    tar xzf Python-3.11.3.tgz && \
-    rm --force Python-3.11.3.tgz && \
-    cd Python-3.11.3 && \
+    curl https://www.python.org/ftp/python/3.11.4/Python-3.11.4.tgz --output Python-3.11.4.tgz && \
+    tar xzf Python-3.11.4.tgz && \
+    rm --force Python-3.11.4.tgz && \
+    cd Python-3.11.4 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.11.3 && \
+    rm --force --recursive Python-3.11.4 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --upgrade pip
@@ -86,12 +86,12 @@ RUN cd /tmp && \
     chmod a+rx /opt/bin/*
 
 
-# Install Node.js 19.x
+# Install Node.js 20.x
 # https://nodejs.dev/en/download/
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 19.8.1 && \
+    n 20.3.1 && \
     npm install --global http-server
 
 
