@@ -116,10 +116,10 @@ COPY --from=builder /opt/ /opt/
 # Avoid "delaying package configuration, since apt-utils is not installed"
 RUN apt update && \
     apt install --no-install-recommends --yes \
-    apt-utils \
-    ca-certificates \
-    curl \
-    locales && \
+        apt-utils \
+        ca-certificates \
+        curl \
+        locales && \
     locale-gen \
         en_US.utf8 \
         zh_CN.utf8 \
@@ -135,7 +135,8 @@ RUN apt update && \
         tr_TR.utf8 \
         pl_PL.utf8 \
         cs_CZ.utf8 \
-        hu_HU.utf8 && \
+        hu_HU.utf8 \
+        bg_BG.UTF-8 && \
     apt clean
 ENV LANG=C.UTF-8
 
