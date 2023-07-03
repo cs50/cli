@@ -8,10 +8,10 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN yes | unminimize && \
     apt update && \
     apt install --yes \
-    apt-utils \
-    curl \
-    locales && \
-        locale-gen \
+        apt-utils \
+        curl \
+        locales && \
+    locale-gen \
         en_US.utf8 \
         zh_CN.utf8 \
         zh_TW.utf8 \
@@ -26,7 +26,8 @@ RUN yes | unminimize && \
         tr_TR.utf8 \
         pl_PL.utf8 \
         cs_CZ.utf8 \
-        hu_HU.utf8 && \
+        hu_HU.utf8 \
+        bg_BG.UTF-8 && \
     apt clean && \
     rm -rf /var/lib/apt/lists/*
 
