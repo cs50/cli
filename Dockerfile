@@ -180,6 +180,7 @@ RUN apt update && \
         Flask-Session \
         help50 \
         pytest \
+        "pydantic<2" \
         render50 \
         s3cmd \
         style50 \
