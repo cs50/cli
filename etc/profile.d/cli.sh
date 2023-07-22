@@ -35,7 +35,7 @@ if [ "$(whoami)" != "root" ]; then
 
     # History
     # https://www.shellhacks.com/tune-command-line-history-bash/
-    export HISTCONTROL='ignoreboth' # Ignore duplicates and command lines starting space
+    export HISTCONTROL='ignoredupes' # Ignore duplicates
     export PROMPT_COMMAND='history -a' # Store Bash History Immediately
 
     # Java
