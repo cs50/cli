@@ -74,15 +74,15 @@ RUN cd /tmp && \
     rm --force /tmp/shell.c.patch
 
 
-# Install Java 19.x
-# http://jdk.java.net/19/
+# Install Java 20.x
+# http://jdk.java.net/20/
 RUN cd /tmp && \
-    curl --remote-name https://download.java.net/java/GA/jdk19.0.2/fdb695a9d9064ad6b064dc6df578380c/7/GPL/openjdk-19.0.2_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-19.0.2_linux-x64_bin.tar.gz && \
-    rm --force openjdk-19.0.2_linux-x64_bin.tar.gz && \
-    mv jdk-19.0.2 /opt/ && \
+    curl --remote-name https://download.java.net/java/GA/jdk20.0.2/6e380f22cbe7469fa75fb448bd903d8e/9/GPL/openjdk-20.0.2_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-20.0.2_linux-x64_bin.tar.gz && \
+    rm --force openjdk-20.0.2_linux-x64_bin.tar.gz && \
+    mv jdk-20.0.2 /opt/ && \
     mkdir --parent /opt/bin && \
-    ln --symbolic /opt/jdk-19.0.2/bin/* /opt/bin/ && \
+    ln --symbolic /opt/jdk-20.0.2/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
 
 
