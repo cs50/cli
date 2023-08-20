@@ -142,6 +142,7 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         cowsay \
         dos2unix \
         dnsutils `# For nslookup` \
+        entr `# For automatically running commands on file change` \
         fonts-noto-color-emoji `# For render50` \
         gdb \
         git \
