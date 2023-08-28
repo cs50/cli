@@ -1,5 +1,11 @@
 #!/bin/bash
 
+# If data is coming from stdin (pipe or redirection)
+if [[ -p /dev/stdin || ! -t 0 ]]; then
+    /usr/local/bin/sqlite3 -nullvalue NULL -table "$@" < /dev/stdin
+    exit $?
+fi
+
 # If no command-line argument
 if [[ $# -eq 0 ]]; then
     read -p "Are you sure you want to run $(tput bold)sqlite3$(tput sgr0) without a command-line argument (e.g., the filename of a database)? [y/N] " -r
