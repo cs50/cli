@@ -7,7 +7,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Install locales
 RUN yes | unminimize && \
     apt update && \
-    apt install --yes \
+    apt install --no-install-recommends --yes \
         apt-utils \
         curl \
         locales && \
@@ -170,7 +170,7 @@ RUN npm install --global http-server
 
 # Install Python packages
 RUN apt update && \
-    apt install --yes libmagic-dev `# For style50` && \
+    apt install --no-install-recommends --yes libmagic-dev `# For style50` && \
     pip3 install --no-cache-dir \
         awscli \
         "check50<4" \
