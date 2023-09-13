@@ -139,6 +139,7 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         astyle \
         bash-completion \
         clang \
+        clang-format \
         coreutils `# for fold` \
         cowsay \
         dos2unix \
