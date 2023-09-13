@@ -10,6 +10,7 @@ RUN yes | unminimize && \
     apt install --no-install-recommends --yes \
         apt-utils \
         curl \
+        ca-certificates \
         locales && \
     locale-gen \
         en_US.utf8 \
@@ -61,7 +62,7 @@ RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output
 RUN apt update && \
     apt install --no-install-recommends --yes \
         make build-essential libssl-dev zlib1g-dev \
-        libbz2-dev libreadline-dev libsqlite3-dev llvm ca-certificates wget unzip \
+        libbz2-dev libreadline-dev libsqlite3-dev llvm wget unzip \
         libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev && \
         apt clean && \
         rm -rf /var/lib/apt/lists/*
