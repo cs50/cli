@@ -68,18 +68,18 @@ RUN apt update && \
         rm -rf /var/lib/apt/lists/*
 
 
-# Install Python 3.11.x
+# Install Python 3.12.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.11.4/Python-3.11.4.tgz --output Python-3.11.4.tgz && \
-    tar xzf Python-3.11.4.tgz && \
-    rm --force Python-3.11.4.tgz && \
-    cd Python-3.11.4 && \
+    curl https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz --output Python-3.12.0.tgz && \
+    tar xzf Python-3.12.0.tgz && \
+    rm --force Python-3.12.0.tgz && \
+    cd Python-3.12.0 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.11.4 && \
+    rm --force --recursive Python-3.12.0 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade pip
