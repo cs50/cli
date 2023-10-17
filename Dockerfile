@@ -185,6 +185,7 @@ RUN apt update && \
         "pydantic<2" \
         render50 \
         s3cmd \
+        setuptools \
         style50 \
         "submit50<4"
 
