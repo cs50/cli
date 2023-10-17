@@ -187,6 +187,7 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         pytest \
         render50 \
         s3cmd \
+        setuptools \
         style50 \
         "submit50<4"
 
