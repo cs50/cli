@@ -18,6 +18,7 @@ if [ "$(whoami)" != "root" ]; then
     alias cd="HOME=\"$WORKDIR\" cd"
     alias cowsay="/usr/games/cowsay"
     alias cp="cp -i"
+    alias curl="curl --http2"
     alias gdb="gdb -q" # Suppress gdb's startup output
     alias grep="grep --color" # Suppress gdb's startup output
     alias ls="ls --color -F --ignore=lost+found" # Add trailing slashes
