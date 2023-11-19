@@ -19,7 +19,7 @@ RUN cd /tmp && \
     tar xzf Python-3.12.0.tgz && \
     rm --force Python-3.12.0.tgz && \
     cd Python-3.12.0 && \
-    ./configure && \
+    ./configure --enable-optimizations --without-tests && \
     make && \
     make install && \
     cd .. && \
@@ -74,15 +74,15 @@ RUN cd /tmp && \
     rm --force /tmp/shell.c.patch
 
 
-# Install Java 20.x
-# http://jdk.java.net/20/
+# Install Java 21.x
+# http://jdk.java.net/21/
 RUN cd /tmp && \
-    curl --remote-name https://download.java.net/java/GA/jdk20.0.2/6e380f22cbe7469fa75fb448bd903d8e/9/GPL/openjdk-20.0.2_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-20.0.2_linux-x64_bin.tar.gz && \
-    rm --force openjdk-20.0.2_linux-x64_bin.tar.gz && \
-    mv jdk-20.0.2 /opt/ && \
+    curl --remote-name https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-21.0.1_linux-x64_bin.tar.gz && \
+    rm --force openjdk-21.0.1_linux-x64_bin.tar.gz && \
+    mv jdk-21.0.1 /opt/ && \
     mkdir --parent /opt/bin && \
-    ln --symbolic /opt/jdk-20.0.2/bin/* /opt/bin/ && \
+    ln --symbolic /opt/jdk-21.0.1/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
 
 
@@ -113,6 +113,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 COPY --from=builder /usr/bin/ /usr/bin/
 COPY --from=builder /usr/local/ /usr/local/
 COPY --from=builder /opt/ /opt/
+
 
 # Avoid "delaying package configuration, since apt-utils is not installed"
 RUN apt update && \
