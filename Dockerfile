@@ -19,7 +19,7 @@ RUN cd /tmp && \
     tar xzf Python-3.12.0.tgz && \
     rm --force Python-3.12.0.tgz && \
     cd Python-3.12.0 && \
-    ./configure --enable-optimizations --without-tests && \
+    CFLAGS="-Os" ./configure --enable-optimizations --without-tests && \
     make && \
     make install && \
     cd .. && \
@@ -40,7 +40,7 @@ RUN apt update && \
     tar xzf ruby-3.2.2.tar.gz && \
     rm --force ruby-3.2.2.tar.gz && \
     cd ruby-3.2.2 && \
-    ./configure && \
+    CFLAGS="-Os" ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
@@ -49,13 +49,13 @@ RUN apt update && \
 
 # Install Ruby packages
 RUN apt install --yes git
-RUN gem install \
-        bundler \
+RUN gem install --no-document \
         jekyll \
-        minitest `# So that Bundler needn't install` \
+        minitest  `# So that Bundler needn't install` \
         pygments.rb \
         specific_install && \
-    gem specific_install https://github.com/cs50/jekyll-theme-cs50 develop
+    gem specific_install https://github.com/cs50/jekyll-theme-cs50 develop && \
+    gem cleanup
 
 
 # Install SQLite 3.4x
