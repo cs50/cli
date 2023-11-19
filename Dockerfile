@@ -6,7 +6,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Suggested build environment for Python, per pyenv, even though we're building ourselves
 # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
 RUN apt update && \
-    apt install --no-install-recommends --yes \
+    apt install --no-install-recommends --no-install-suggests --yes \
         make build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev llvm ca-certificates curl wget unzip \
         libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev
@@ -32,7 +32,7 @@ RUN cd /tmp && \
 # Install Ruby 3.2.x
 # https://www.ruby-lang.org/en/downloads/
 RUN apt update && \
-    apt install --no-install-recommends --yes \
+    apt install --no-install-recommends --no-install-suggests --yes \
         autoconf \
         libyaml-dev && \
     cd /tmp && \
@@ -101,7 +101,7 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
     chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
     apt update && \
-    apt install gh --no-install-recommends --yes
+    apt install gh --no-install-recommends --no-install-suggests --yes
 
 
 # Final stage
@@ -115,7 +115,7 @@ COPY --from=builder /opt/ /opt/
 
 # Avoid "delaying package configuration, since apt-utils is not installed"
 RUN apt update && \
-    apt install --no-install-recommends --yes \
+    apt install --no-install-recommends --no-install-suggests --yes \
         apt-utils \
         ca-certificates \
         curl \
@@ -144,7 +144,7 @@ ENV LANG=C.UTF-8
 # Install CS50, Ubuntu, and Python packages
 RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
     apt update && \
-    apt install --no-install-recommends --yes \
+    apt install --no-install-recommends --no-install-suggests --yes \
         astyle \
         bash-completion \
         build-essential `# libc, gcc, g++, make, dpkg-dev etc.`\
