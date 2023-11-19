@@ -15,7 +15,7 @@ RUN apt update && \
 # Install Python 3.12.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz --output Python-3.12.0.tgz && \
+    curl --remote-name https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz && \
     tar xzf Python-3.12.0.tgz && \
     rm --force Python-3.12.0.tgz && \
     cd Python-3.12.0 && \
@@ -36,7 +36,7 @@ RUN apt update && \
         autoconf \
         libyaml-dev && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz --output ruby-3.2.2.tar.gz && \
+    curl --remote-name https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz && \
     tar xzf ruby-3.2.2.tar.gz && \
     rm --force ruby-3.2.2.tar.gz && \
     cd ruby-3.2.2 && \
@@ -89,9 +89,10 @@ RUN cd /tmp && \
 # Install Node.js 21.x
 # https://nodejs.dev/en/download/
 # https://github.com/tj/n#installation
-RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
-    chmod a+x /usr/local/bin/n && \
-    n 21.2.0 && \
+RUN cd /usr/local/bin && \
+    curl --remote-name https://raw.githubusercontent.com/tj/n/master/bin/n && \
+    chmod a+x n && \
+    ./n 21.2.0 && \
     npm install --global http-server
 
 
