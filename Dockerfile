@@ -54,7 +54,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 20.5.1
+    n 21.2.0
 
 
 # Suggested build environment for Python, per pyenv, even though we're building ourselves
@@ -71,15 +71,15 @@ RUN apt update && \
 # Install Python 3.11.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.11.4/Python-3.11.4.tgz --output Python-3.11.4.tgz && \
-    tar xzf Python-3.11.4.tgz && \
-    rm --force Python-3.11.4.tgz && \
-    cd Python-3.11.4 && \
+    curl https://www.python.org/ftp/python/3.11.6/Python-3.11.6.tgz --output Python-3.11.6.tgz && \
+    tar xzf Python-3.11.6.tgz && \
+    rm --force Python-3.11.6.tgz && \
+    cd Python-3.11.6 && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.11.4 && \
+    rm --force --recursive Python-3.11.6 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade pip
