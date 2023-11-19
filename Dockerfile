@@ -7,7 +7,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # Install locales
 RUN yes | unminimize && \
     apt update && \
-    apt install --no-install-recommends --yes \
+    apt install --no-install-recommends --no-install-suggests --yes \
         apt-utils \
         curl \
         ca-certificates \
@@ -60,7 +60,7 @@ RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output
 # Suggested build environment for Python, per pyenv, even though we're building ourselves
 # https://github.com/pyenv/pyenv/wiki#suggested-build-environment
 RUN apt update && \
-    apt install --no-install-recommends --yes \
+    apt install --no-install-recommends --no-install-suggests --yes \
         make build-essential libssl-dev zlib1g-dev \
         libbz2-dev libreadline-dev libsqlite3-dev llvm wget unzip \
         libncursesw5-dev xz-utils tk-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev && \
@@ -88,7 +88,7 @@ RUN cd /tmp && \
 # Install Ruby 3.2.x
 # https://www.ruby-lang.org/en/downloads/
 RUN apt update && \
-    apt install --no-install-recommends --yes \
+    apt install --no-install-recommends --no-install-suggests --yes \
         autoconf \
         libyaml-dev && \
     apt clean && \
@@ -134,7 +134,7 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
 # Install CS50 packages and Ubuntu packages
 RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
     apt update && \
-    apt install --no-install-recommends --yes \
+    apt install --no-install-recommends --no-install-suggests --yes \
         libcs50 \
         astyle \
         bash-completion \
@@ -172,7 +172,7 @@ RUN npm install --global http-server
 
 # Install Python packages
 RUN apt update && \
-    apt install --no-install-recommends --yes libmagic-dev `# For style50` && \
+    apt install --no-install-recommends --no-install-suggests --yes libmagic-dev `# For style50` && \
     pip3 install --no-cache-dir \
         awscli \
         "check50<4" \
