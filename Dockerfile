@@ -86,12 +86,12 @@ RUN cd /tmp && \
     chmod a+rx /opt/bin/*
 
 
-# Install Node.js 20.x
+# Install Node.js 21.x
 # https://nodejs.dev/en/download/
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 20.3.1 && \
+    n 21.2.0 && \
     npm install --global http-server
 
 
