@@ -15,11 +15,11 @@ RUN apt update && \
 # Install Python 3.12.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz --output Python-3.12.0.tgz && \
+    curl --remote-name https://www.python.org/ftp/python/3.12.0/Python-3.12.0.tgz && \
     tar xzf Python-3.12.0.tgz && \
     rm --force Python-3.12.0.tgz && \
     cd Python-3.12.0 && \
-    ./configure && \
+    CFLAGS="-Os" ./configure --enable-optimizations --without-tests && \
     make && \
     make install && \
     cd .. && \
@@ -36,11 +36,11 @@ RUN apt update && \
         autoconf \
         libyaml-dev && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz --output ruby-3.2.2.tar.gz && \
+    curl --remote-name https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz && \
     tar xzf ruby-3.2.2.tar.gz && \
     rm --force ruby-3.2.2.tar.gz && \
     cd ruby-3.2.2 && \
-    ./configure && \
+    CFLAGS="-Os" ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
@@ -49,13 +49,13 @@ RUN apt update && \
 
 # Install Ruby packages
 RUN apt install --yes git
-RUN gem install \
-        bundler \
+RUN gem install --no-document \
         jekyll \
-        minitest `# So that Bundler needn't install` \
+        minitest  `# So that Bundler needn't install` \
         pygments.rb \
         specific_install && \
-    gem specific_install https://github.com/cs50/jekyll-theme-cs50 develop
+    gem specific_install https://github.com/cs50/jekyll-theme-cs50 develop && \
+    gem cleanup
 
 
 # Install SQLite 3.4x
@@ -74,24 +74,25 @@ RUN cd /tmp && \
     rm --force /tmp/shell.c.patch
 
 
-# Install Java 20.x
-# http://jdk.java.net/20/
+# Install Java 21.x
+# http://jdk.java.net/21/
 RUN cd /tmp && \
-    curl --remote-name https://download.java.net/java/GA/jdk20.0.2/6e380f22cbe7469fa75fb448bd903d8e/9/GPL/openjdk-20.0.2_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-20.0.2_linux-x64_bin.tar.gz && \
-    rm --force openjdk-20.0.2_linux-x64_bin.tar.gz && \
-    mv jdk-20.0.2 /opt/ && \
+    curl --remote-name https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-21.0.1_linux-x64_bin.tar.gz && \
+    rm --force openjdk-21.0.1_linux-x64_bin.tar.gz && \
+    mv jdk-21.0.1 /opt/ && \
     mkdir --parent /opt/bin && \
-    ln --symbolic /opt/jdk-20.0.2/bin/* /opt/bin/ && \
+    ln --symbolic /opt/jdk-21.0.1/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
 
 
 # Install Node.js 21.x
 # https://nodejs.dev/en/download/
 # https://github.com/tj/n#installation
-RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
-    chmod a+x /usr/local/bin/n && \
-    n 21.2.0 && \
+RUN cd /usr/local/bin && \
+    curl --remote-name https://raw.githubusercontent.com/tj/n/master/bin/n && \
+    chmod a+x n && \
+    ./n 21.2.0 && \
     npm install --global http-server
 
 
@@ -112,6 +113,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 COPY --from=builder /usr/bin/ /usr/bin/
 COPY --from=builder /usr/local/ /usr/local/
 COPY --from=builder /opt/ /opt/
+
 
 # Avoid "delaying package configuration, since apt-utils is not installed"
 RUN apt update && \
