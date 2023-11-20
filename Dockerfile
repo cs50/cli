@@ -110,9 +110,8 @@ FROM ubuntu:22.04
 LABEL maintainer="sysadmins@cs50.harvard.edu"
 ARG DEBIAN_FRONTEND=noninteractive
 
-COPY --from=builder /usr/bin/ /usr/bin/
-COPY --from=builder /usr/local/ /usr/local/
-COPY --from=builder /opt/ /opt/
+COPY --from=builder /usr /usr
+COPY --from=builder /opt /opt
 
 
 # Avoid "delaying package configuration, since apt-utils is not installed"
@@ -149,7 +148,7 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
     apt install --no-install-recommends --no-install-suggests --yes \
         astyle \
         bash-completion \
-        build-essential `# libc, gcc, g++, make, dpkg-dev etc.`\
+        build-essential `# dpkg-dev, libc, gcc, g++, make, etc.`\
         clang \
         coreutils `# For fold` \
         cowsay \
@@ -161,8 +160,9 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         git-lfs \
         jq \
         less \
-        libcs50 `# CS50 library` \
+        libcs50 \
         libmagic-dev `# For style50` \
+        libpango-1.0-0 libharfbuzz0b libpangoft2-1.0-0 `# For render50` \
         libyaml-0-2 `# Runtime package for gem` \
         man \
         man-db \
@@ -175,7 +175,6 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         unzip \
         valgrind \
         vim \
-        weasyprint `# For render50` \
         zip && \
         apt clean && \
     pip3 install --no-cache-dir \
