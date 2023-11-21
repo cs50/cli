@@ -1,23 +1,50 @@
 #!/bin/bash
 
-# Ensure no targets end with .c
-args=""
-invalid_args=0
-for arg; do
-    case "$arg" in
-        (*.c) arg=${arg%.c}; invalid_args=1;;
-    esac
-    args="$args $arg"
-done
-if [ $invalid_args -eq 1 ]; then
-    echo "Did you mean 'make$args'?"
-    exit 1
+# Formatting
+bold=$(tput bold)
+normal=$(tput sgr0)
+
+# If a single target and no command-line arguments
+if [[ $# -eq 1 ]] && [[ $1 != -* ]]; then
+
+    # If no Makefile
+    if [[ ! -f Makefile ]] && [[ ! -f makefile ]]; then
+
+        # If target is a directory
+        if [[ -d $1 ]]; then
+            echo "Cannot run ${bold}make${normal} on a directory. Did you mean to ${bold}cd${normal} into it first?"
+            exit 1
+        fi
+
+        # If target ends with .c
+        if [[ $1 == *?.c ]]; then
+
+            # If base is non-empty and not a directory
+            base="${1%.c}"
+            if [[ -n "$base" ]] && [[ ! -d "$base" ]]; then
+                echo "Did you mean ${bold}make ${base}${normal}?"
+                exit 1
+            fi
+        fi
+
+        # If no .c file for target
+        c="$1.c"
+        if [[ ! -f "$c" ]]; then
+
+            # Search recursively for .c file
+            paths=$(find * -name "$c")
+            lines=$(echo "$paths" | wc -l)
+            echo -n "There isn't a file called ${bold}${c}${normal} in your current directory."
+            if [[ "$lines" -eq 1 ]]; then # If unambiguous
+                d=$(dirname "$paths")
+                echo " Did you mean to ${bold}cd ${d}${normal} first?"
+            else
+                echo
+            fi
+            exit 1
+        fi
+    fi
 fi
 
-# Run make
-if [[ -d "$1" ]]; then
-    echo "$1 is a directory"
-    exit 1
-else
-    /usr/bin/make -B -s $*
-fi
+# Else run make
+/usr/bin/make -B -s $*
