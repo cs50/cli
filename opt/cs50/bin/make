@@ -12,7 +12,7 @@ if [[ $# -eq 1 ]] && [[ $1 != -* ]]; then
 
         # If target is a directory
         if [[ -d $1 ]]; then
-            echo "Cannot run ${bold}make${normal} on a directory. Did you mean to ${bold}cd${normal} into it first?"
+            echo "Quack. Cannot run ${bold}make${normal} on a directory. Did you mean to ${bold}cd${normal} into it first?"
             exit 1
         fi
 
@@ -22,7 +22,7 @@ if [[ $# -eq 1 ]] && [[ $1 != -* ]]; then
             # If base is non-empty and not a directory
             base="${1%.c}"
             if [[ -n "$base" ]] && [[ ! -d "$base" ]]; then
-                echo "Did you mean ${bold}make ${base}${normal}?"
+                echo "Quack. Did you mean ${bold}make ${base}${normal}?"
                 exit 1
             fi
         fi
@@ -34,7 +34,7 @@ if [[ $# -eq 1 ]] && [[ $1 != -* ]]; then
             # Search recursively for .c file
             paths=$(find * -name "$c")
             lines=$(echo "$paths" | wc -l)
-            echo -n "There isn't a file called ${bold}${c}${normal} in your current directory."
+            echo -n "Quack. There isn't a file called ${bold}${c}${normal} in your current directory."
             if [[ "$lines" -eq 1 ]]; then # If unambiguous
                 d=$(dirname "$paths")
                 echo " Did you mean to ${bold}cd ${d}${normal} first?"
