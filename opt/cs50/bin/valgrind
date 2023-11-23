@@ -3,7 +3,7 @@
 # Don't run on Python programs
 for arg; do
     if echo "$arg" | grep -Eq "(^python|\.py$)"; then
-        echo "Afraid valgrind does not support Python programs!"
+        echo "Quack. Afraid valgrind does not support Python programs!"
         exit 1
     fi
 done
