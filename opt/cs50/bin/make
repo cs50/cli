@@ -32,7 +32,7 @@ if [[ $# -eq 1 ]] && [[ $1 != -* ]]; then
         if [[ ! -f "$c" ]]; then
 
             # Search recursively for .c file
-            paths=$(find * -name "$c")
+            paths=$(find * -name "$c" 2> /dev/null)
             lines=$(echo -n "$paths" | wc -l)
             echo -n "Quack. There isn't a file called ${bold}${c}${normal} in your current directory."
             if [[ "$lines" -eq 1 ]]; then # If unambiguous
