@@ -33,7 +33,7 @@ if [[ $# -eq 1 ]] && [[ $1 != -* ]]; then
 
             # Search recursively for .c file
             paths=$(find * -name "$c")
-            lines=$(echo "$paths" | wc -l)
+            lines=$(echo -n "$paths" | wc -l)
             echo -n "Quack. There isn't a file called ${bold}${c}${normal} in your current directory."
             if [[ "$lines" -eq 1 ]]; then # If unambiguous
                 d=$(dirname "$paths")
