@@ -8,4 +8,4 @@ for arg; do
     fi
 done
 
-/usr/bin/valgrind $*
+/usr/bin/valgrind "$@"
