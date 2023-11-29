@@ -37,15 +37,15 @@ RUN yes | unminimize && \
 ENV LANG=C.UTF-8
 
 
-# Install Java 20.x
-# http://jdk.java.net/20/
+# Install Java 21.x
+# http://jdk.java.net/21/
 RUN cd /tmp && \
-    curl --remote-name https://download.java.net/java/GA/jdk20.0.2/6e380f22cbe7469fa75fb448bd903d8e/9/GPL/openjdk-20.0.2_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-20.0.2_linux-x64_bin.tar.gz && \
-    rm --force openjdk-20.0.2_linux-x64_bin.tar.gz && \
-    mv jdk-20.0.2 /opt/ && \
+    curl --remote-name https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-21.0.1_linux-x64_bin.tar.gz && \
+    rm --force openjdk-21.0.1_linux-x64_bin.tar.gz && \
+    mv jdk-21.0.1 /opt/ && \
     mkdir --parent /opt/bin && \
-    ln --symbolic /opt/jdk-20.0.2/bin/* /opt/bin/ && \
+    ln --symbolic /opt/jdk-21.0.1/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
 
 
