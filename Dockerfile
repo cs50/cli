@@ -182,6 +182,8 @@ RUN cd /usr/local/lib/node_modules/http-server/lib/core/show-dir && \
 RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes libmagic-dev `# For style50` && \
     pip3 install --no-cache-dir \
+        autopep8 \
+        black \
         "check50<4" \
         compare50 \
         cs50 \
