@@ -1,8 +1,8 @@
 #!/bin/bash
 
 # Formatting
-bold=${bold}
-normal=${normal}
+bold=$(tput bold)
+normal=$(tput sgr0)
 
 # If data is coming from stdin (pipe or redirection)
 if [[ -p /dev/stdin || ! -t 0 ]]; then

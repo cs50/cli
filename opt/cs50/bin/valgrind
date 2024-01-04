@@ -1,8 +1,12 @@
 #!/bin/bash
 
+# Formatting
+bold=$(tput bold)
+normal=$(tput sgr0)
+
 # If run on Python program
 if [[ "$1" == "python" || "$1" == *.py ]]; then
-    echo "Afraid valgrind does not support Python programs!"
+    echo "Afraid ${bold}valgrind${normal} does not support Python programs!"
     exit 1
 fi
 
