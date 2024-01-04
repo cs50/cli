@@ -167,7 +167,15 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
 
 
 # Install Node.js packages
-RUN npm install --global http-server
+RUN npm install --global \
+    http-server
+
+
+# Patch index.js in http-server
+COPY index.js.patch /tmp
+RUN cd /usr/local/lib/node_modules/http-server/lib/core/show-dir && \
+    patch index.js < /tmp/index.js.patch && \
+    rm --force /tmp/index.js.patch
 
 
 # Install Python packages
