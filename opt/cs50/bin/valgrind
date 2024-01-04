@@ -1,11 +1,9 @@
 #!/bin/bash
 
-# Don't run on Python programs
-for arg; do
-    if echo "$arg" | grep -Eq "(^python|\.py$)"; then
-        echo "Afraid valgrind does not support Python programs!"
-        exit 1
-    fi
-done
+# If run on Python program
+if [[ "$1" == "python" || "$1" == *.py ]]; then
+    echo "Afraid valgrind does not support Python programs!"
+    exit 1
+fi
 
-/usr/bin/valgrind $*
+/usr/bin/valgrind "$@"
