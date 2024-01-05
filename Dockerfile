@@ -153,10 +153,12 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         bash-completion \
         build-essential `# dpkg-dev, libc, gcc, g++, make, etc.`\
         clang \
+        colorized-logs `# For help50` \
         coreutils `# For fold` \
         cowsay \
         dos2unix \
         dnsutils `# For nslookup` \
+        expect `# For help50` \
         fonts-noto-color-emoji `# For render50` \
         gdb \
         git \
@@ -188,7 +190,6 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         cs50 \
         Flask \
         Flask-Session \
-        help50 \
         pytest \
         render50 \
         setuptools \
