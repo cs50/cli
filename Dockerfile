@@ -31,7 +31,7 @@ RUN cd /tmp && \
     pip3 install --no-cache-dir --upgrade pip
 
 
-# Install Ruby 3.2.x
+# Install Ruby 3.3.x
 # https://www.ruby-lang.org/en/downloads/
 RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
@@ -40,15 +40,15 @@ RUN apt update && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz --output ruby-3.2.2.tar.gz && \
-    tar xzf ruby-3.2.2.tar.gz && \
-    rm --force ruby-3.2.2.tar.gz && \
-    cd ruby-3.2.2 && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.0.tar.gz --output ruby-3.3.0.tar.gz && \
+    tar xzf ruby-3.3.0.tar.gz && \
+    rm --force ruby-3.3.0.tar.gz && \
+    cd ruby-3.3.0 && \
     CFLAGS="-Os" ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.2.2
+    rm --force --recursive ruby-3.3.0
 
 
 # Install Ruby packages
@@ -66,14 +66,14 @@ RUN gem install --no-document \
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl --remote-name https://www.sqlite.org/2023/sqlite-amalgamation-3440000.zip && \
-    unzip sqlite-amalgamation-3440000.zip && \
-    rm --force sqlite-amalgamation-3440000.zip && \
-    cd sqlite-amalgamation-3440000 && \
+    curl --remote-name https://www.sqlite.org/2023/sqlite-amalgamation-3442000.zip && \
+    unzip sqlite-amalgamation-3442000.zip && \
+    rm --force sqlite-amalgamation-3442000.zip && \
+    cd sqlite-amalgamation-3442000 && \
     patch shell.c < /tmp/shell.c.patch && \
     gcc -D HAVE_READLINE -D SQLITE_DEFAULT_FOREIGN_KEYS=1 -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3440000 && \
+    rm --force --recursive sqlite-amalgamation-3442000 && \
     rm --force /tmp/shell.c.patch
 
 
@@ -94,7 +94,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 21.2.0
+    n 21.5.0
 
 
 # Install GitHub CLI
