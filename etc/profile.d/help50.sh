@@ -1,13 +1,20 @@
 # Directory with helpers
 HELPERS="/opt/cs50/lib/help50"
 
-# TEMP
-alias make="help50 make"
+# Temporary files
+FILE="/tmp/help50.$$" # Use PID to support multiple terminals
+HELP="${FILE}.help"
+OUTPUT="${FILE}.output"
+
+# Supported helpers
+#for helper in "$HELPERS"/*.sh; do
+#    command=$(basename "$helper" .sh)
+#    echo "$command"="help50 $command"
+#done
 
 # Formatting
 bold=$(tput bold)
 normal=$(tput sgr0)
-
 
 help50() {
 
@@ -21,8 +28,7 @@ help50() {
     exec 3>&1 4>&2
 
     # Redirect output to a file too
-    local file="/tmp/help50.$$" # Use PID to support multiple terminals
-    exec > >(tee -a "$file") 2>&1
+    exec > >(tee -a "$FILE") 2>&1
 
     # Execute command
     if [[ "$(type -P -t "$1")" == "file" ]]; then
@@ -31,17 +37,15 @@ help50() {
         "$@" # Can't unbuffer builtins (e.g., cd)
     fi
 
-    # Remember status
+    # Remember these
     local status=$?
-
-    # Remember command
     local command="$1"
 
     # Remove command from $@
     shift
 
-    # Get redirected output
-    local output=$(cat "$file")
+    # Get tee'd output
+    local output=$(cat "$FILE")
 
     # Remove any ANSI codes
     output=$(echo "$output" | ansi2txt | col -b)
@@ -52,15 +56,37 @@ help50() {
     # Close file descriptors
     exec 3>&- 4>&-
 
-    # Remove file
+    # Remove tee'd output
     rm --force "$file"
 
-    # Preserve command's status for helpers
+    # Restore $? to that of original command
     (exit $status)
 
     # Try to get help
     local help=$( . "${HELPERS}/${command}.sh" <<< "$output" )
     if [[ -n "$help" ]]; then
-        echo "🦆 $help"
+        echo "$help" > "$HELP"
+    elif [[ $status -ne 0 ]]; then
+        echo "$output" > "$OUTPUT"
     fi
 }
+
+_help50() {
+    #history -a
+    if [[ -f "$HELP" ]]; then
+        echo -n "🦆 "
+        cat "$HELP"
+        rm --force "$HELP"
+    elif [[ -f "$OUTPUT" ]]; then
+        echo non-zero but no helper
+        rm --force "$OUTPUT"
+    else
+        echo zero
+    fi
+}
+
+_help50() {
+    echo 222
+}
+
+export PROMPT_COMMAND=_help50

@@ -1,6 +1,6 @@
-local output=$(cat)
+output=$(cat)
 
-local regex="make: Nothing to be done for '(.*)'"
+regex="make: Nothing to be done for '(.*)'"
 if [[ "$output" =~ $regex ]]; then
 
     # If target is a directory
@@ -20,7 +20,7 @@ if [[ "$output" =~ $regex ]]; then
 
 fi
 
-local regex="No rule to make target '(.*)'"
+regex="No rule to make target '(.*)'"
 if [[ "$output" =~ $regex ]]; then
 
     # If no .c file for target
