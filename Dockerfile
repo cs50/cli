@@ -198,7 +198,7 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
 
 # Install Node.js packages
 RUN npm install --global \
-    http-server
+    http-server@14.1.1
 
 
 # Patch index.js in http-server
