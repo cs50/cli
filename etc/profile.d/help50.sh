@@ -6,11 +6,13 @@ FILE="/tmp/help50.$$" # Use PID to support multiple terminals
 HELP="${FILE}.help"
 OUTPUT="${FILE}.output"
 
+alias cd="HOME=/tmp cd"
+
 # Supported helpers
-#for helper in "$HELPERS"/*.sh; do
-#    command=$(basename "$helper" .sh)
-#    echo "$command"="help50 $command"
-#done
+for helper in "$HELPERS"/*; do
+    name=$(basename "$helper")
+    eval "function ${name}() { help50 "$name" \"\$@\"; }"
+done
 
 # Formatting
 bold=$(tput bold)
@@ -19,7 +21,7 @@ normal=$(tput sgr0)
 help50() {
 
     # Check for helper
-    if [[ $# -gt 0 && ! -f "${HELPERS}/${1}.sh" ]]; then
+    if [[ $# -gt 0 && ! -f "${HELPERS}/${1}" ]]; then
         echo "Sorry, ${bold}help50${normal} does not yet know how to help with this!"
         return 1
     fi
@@ -34,7 +36,7 @@ help50() {
     if [[ "$(type -P -t "$1")" == "file" ]]; then
         unbuffer "$@" # Else, e.g., ls isn't colorized
     else
-        "$@" # Can't unbuffer builtins (e.g., cd)
+        command "$@" # Can't unbuffer builtins (e.g., cd)
     fi
 
     # Remember these
@@ -63,7 +65,7 @@ help50() {
     (exit $status)
 
     # Try to get help
-    local help=$( . "${HELPERS}/${command}.sh" <<< "$output" )
+    local help=$( . "${HELPERS}/${command}" <<< "$output" )
     if [[ -n "$help" ]]; then
         echo "$help" > "$HELP"
     elif [[ $status -ne 0 ]]; then
@@ -83,10 +85,6 @@ _help50() {
     else
         echo zero
     fi
-}
-
-_help50() {
-    echo 222
 }
 
 export PROMPT_COMMAND=_help50

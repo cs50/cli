@@ -1,3 +1,5 @@
+#!/bin/bash
+
 output=$(cat)
 
 regex="make: Nothing to be done for '(.*)'"
