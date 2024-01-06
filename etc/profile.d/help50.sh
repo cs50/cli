@@ -56,7 +56,7 @@ help50() {
     # Try to get help
     local helper="${HELPERS}/${command}"
     if [[ -f "$helper" && -x "$helper" ]]; then
-        local help=$(PIPESTATUS=($status) "$helper" "$@" <<< "$output")
+        local help=$("$helper" "$@" <<< "$output")
     fi
     if [[ -n "$help" ]]; then
         echo "$help" > "$HELP"
