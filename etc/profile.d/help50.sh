@@ -18,12 +18,6 @@ normal=$(tput sgr0)
 
 help50() {
 
-    # Check for helper
-    if [[ $# -gt 0 && ! -f "${HELPERS}/${1}" ]]; then
-        echo "Sorry, ${bold}help50${normal} does not yet know how to help with this!"
-        return 1
-    fi
-
     # Duplicate file descriptors
     exec 3>&1 4>&2
 
@@ -60,7 +54,10 @@ help50() {
     rm --force "$file"
 
     # Try to get help
-    local help=$("${HELPERS}/${command}" "$@" <<< "$output")
+    local helper="${HELPERS}/${command}"
+    if [[ -f "$helper" && -x "$helper" ]]; then
+        local help=$(PIPESTATUS=($status) "$helper" "$@" <<< "$output")
+    fi
     if [[ -n "$help" ]]; then
         echo "$help" > "$HELP"
     elif [[ $status -ne 0 ]]; then
