@@ -6,8 +6,6 @@ FILE="/tmp/help50.$$" # Use PID to support multiple terminals
 HELP="${FILE}.help"
 OUTPUT="${FILE}.output"
 
-alias cd="HOME=/tmp cd"
-
 # Supported helpers
 for helper in "$HELPERS"/*; do
     name=$(basename "$helper")
@@ -61,11 +59,8 @@ help50() {
     # Remove tee'd output
     rm --force "$file"
 
-    # Restore $? to that of original command
-    (exit $status)
-
     # Try to get help
-    local help=$( . "${HELPERS}/${command}" <<< "$output" )
+    local help=$("${HELPERS}/${command}" "$@" <<< "$output")
     if [[ -n "$help" ]]; then
         echo "$help" > "$HELP"
     elif [[ $status -ne 0 ]]; then

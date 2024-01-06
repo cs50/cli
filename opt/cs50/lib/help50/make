@@ -8,7 +8,7 @@ if [[ "$output" =~ $regex ]]; then
     # If target is a directory
     if [[ -d "$1" ]]; then
         echo "Cannot run ${bold}make${normal} on a directory. Did you mean to ${bold}cd ${1}${normal} first?"
-        return
+        exit
     fi
 
     # If target ends with .c
@@ -16,7 +16,7 @@ if [[ "$output" =~ $regex ]]; then
         base="${1%.c}"
         if [[ -n "$base" && ! -d "$base" ]]; then
             echo "Did you mean to ${bold}make ${base}${normal}?"
-            return
+            exit
         fi
     fi
 
@@ -39,6 +39,6 @@ if [[ "$output" =~ $regex ]]; then
         else
             echo
         fi
-        return
+        exit 
     fi
 fi
