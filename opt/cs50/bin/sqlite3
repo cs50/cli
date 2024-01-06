@@ -1,9 +1,5 @@
 #!/bin/bash
 
-# Formatting
-smso=$(tput smso)
-rmso=$(tput sgr0)
-
 # If data is coming from stdin (pipe or redirection)
 if [[ -p /dev/stdin || ! -t 0 ]]; then
     /usr/local/bin/sqlite3 -nullvalue NULL -table "$@" < /dev/stdin
@@ -12,7 +8,7 @@ fi
 
 # If no command-line argument
 if [[ $# -eq 0 ]]; then
-    read -p "Are you sure you want to run ${smso}sqlite3${rmso} without a command-line argument (e.g., the filename of a database)? [y/N] " -r
+    read -p "$(_help "Are you sure you want to run \`sqlite3\` without a command-line argument (e.g., the filename of a database)? [y/N] ")" -r
     if [[ ! "${REPLY,,}" =~ ^y|yes$ ]]; then
         exit 1
     fi
@@ -21,12 +17,12 @@ if [[ $# -eq 0 ]]; then
 elif [[ $# -eq 1 ]] && [[ ! "$1" =~ ^- ]]; then
     if [[ ! -f "$1" ]]; then
         if [[ ! "$1" =~ \.db$ ]]; then
-            read -p "Are you sure you want to create ${smso}$1${rmso}? SQLite filenames usually end in ${smso}.db${rmso}. [y/N] " -r
+            read -p "$(_help "Are you sure you want to create \`$1\`? SQLite filenames usually end in \`.db\`. [y/N] ")" -r
             if [[ ! "${REPLY,,}" =~ ^y|yes$ ]]; then
                 exit 1
             fi
         else
-            read -p "Are you sure you want to create ${smso}$1${rmso}? [y/N] " -r
+            read -p "$(_help "Are you sure you want to create \`$1\`? [y/N] ")" -r
             if [[ ! "${REPLY,,}" =~ ^y|yes$ ]]; then
                 exit 1
             fi

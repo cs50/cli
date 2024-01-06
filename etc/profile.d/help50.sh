@@ -72,8 +72,7 @@ _help50() {
 
 _helpful() {
     echo -n "🦆 "
-    # https://www.gnu.org/software/termutils/manual/termutils-2.0/html_chapter/tput_1.html#SEC8
-    cat "$1" | sed "s/\`\([^\`]*\)\`/$(tput smso)\1$(tput rmso)/g"
+    cat "$1" | _help
 }
 
 _helpless() { :; }

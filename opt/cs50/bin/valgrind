@@ -1,12 +1,8 @@
 #!/bin/bash
 
-# Formatting
-smso=$(tput smso)
-rmso=$(tput sgr0)
-
 # If run on Python program
 if [[ "$1" == "python" || "$1" == *.py ]]; then
-    echo "Afraid ${smso}valgrind${rmso} does not support Python programs!"
+    echo "$(_help "Afraid \`valgrind\` does not support Python programs!")"
     exit 1
 fi
 
