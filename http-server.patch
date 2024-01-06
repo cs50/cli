@@ -1,0 +1,5 @@
+# diff /usr/local/lib/node_modules/http-server/bin/http-server http-server > http-server.patch
+208c208
+<     logger.info([chalk.yellow('\nhttp-server version: '), chalk.cyan(require('../package.json').version)].join(''));
+---
+>     //logger.info([chalk.yellow('\nhttp-server version: '), chalk.cyan(require('../package.json').version)].join(''));

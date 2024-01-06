@@ -198,14 +198,16 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
 
 # Install Node.js packages
 RUN npm install --global \
-    http-server@14.1.1
+    http-server@14.1.1 `# Fixate for patch`
 
 
 # Patch index.js in http-server
-COPY index.js.patch /tmp
+COPY http-server.patch index.js.patch /tmp
 RUN cd /usr/local/lib/node_modules/http-server/lib/core/show-dir && \
     patch index.js < /tmp/index.js.patch && \
-    rm --force /tmp/index.js.patch
+    cd /usr/local/lib/node_modules/http-server/bin && \
+    patch http-server < /tmp/http-server.patch && \
+    rm --force /tmp/http-server.patch /tmp/index.js.patch
 
 
 # Copy files to image
