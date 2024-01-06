@@ -3,18 +3,14 @@ HELPERS="/opt/cs50/lib/help50"
 
 # Temporary files
 FILE="/tmp/help50.$$" # Use PID to support multiple terminals
-HELP="${FILE}.help"
-OUTPUT="${FILE}.output"
+HELPFUL="${FILE}.help"
+HELPLESS="${FILE}.output"
 
 # Supported helpers
 for helper in "$HELPERS"/*; do
     name=$(basename "$helper")
     eval "function ${name}() { help50 "$name" \"\$@\"; }"
 done
-
-# Formatting
-bold=$(tput bold)
-normal=$(tput sgr0)
 
 help50() {
 
@@ -58,25 +54,28 @@ help50() {
     if [[ -f "$helper" && -x "$helper" ]]; then
         local help=$("$helper" "$@" <<< "$output")
     fi
-    if [[ -n "$help" ]]; then
-        echo "$help" > "$HELP"
-    elif [[ $status -ne 0 ]]; then
-        echo "$output" > "$OUTPUT"
+    if [[ -n "$help" ]]; then # If helpful
+        echo "$help" > "$HELPFUL"
+    elif [[ $status -ne 0 ]]; then # If helpless
+        echo "$output" > "$HELPLESS"
     fi
 }
 
 _help50() {
-    #history -a
-    if [[ -f "$HELP" ]]; then
-        echo -n "🦆 "
-        cat "$HELP"
-        rm --force "$HELP"
-    elif [[ -f "$OUTPUT" ]]; then
-        echo non-zero but no helper
-        rm --force "$OUTPUT"
-    else
-        echo zero
+    if [[ -f "$HELPFUL" ]]; then
+        _helpful "$HELPFUL"
+    elif [[ -f "$HELPLESS" ]]; then
+        _helpless "$HELPLESS"
     fi
+    rm --force "$HELPFUL" "$HELPLESS"
 }
 
-export PROMPT_COMMAND=_help50
+_helpful() {
+    echo -n "🦆 "
+    # https://www.gnu.org/software/termutils/manual/termutils-2.0/html_chapter/tput_1.html#SEC8
+    cat "$1" | sed "s/\`\([^\`]*\)\`/$(tput smso)\1$(tput rmso)/g"
+}
+
+_helpless() { :; }
+
+export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }_help50"
