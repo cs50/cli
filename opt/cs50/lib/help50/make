@@ -7,7 +7,7 @@ if [[ "$output" =~ $regex ]]; then
 
     # If target is a directory
     if [[ -d "$1" ]]; then
-        echo "Cannot run ${bold}make${normal} on a directory. Did you mean to ${bold}cd ${1}${normal} first?"
+        echo "Cannot run \`make\` on a directory. Did you mean to \`cd ${1}\` first?"
         exit
     fi
 
@@ -15,7 +15,7 @@ if [[ "$output" =~ $regex ]]; then
     if [[ "$1" == *?.c ]]; then
         base="${1%.c}"
         if [[ -n "$base" && ! -d "$base" ]]; then
-            echo "Did you mean to ${bold}make ${base}${normal}?"
+            echo "Did you mean to \`make ${base}\`?"
             exit
         fi
     fi
@@ -32,10 +32,10 @@ if [[ "$output" =~ $regex ]]; then
         # Search recursively for .c file
         paths=$(find * -name "$c" 2> /dev/null)
         lines=$(echo "$paths" | grep -c .)
-        echo -n "There isn't a file called ${bold}${c}${normal} in your current directory."
+        echo -n "There isn't a file called \`${c}\` in your current directory."
         if [[ "$lines" -eq 1 ]]; then # If unambiguous
             d=$(dirname "$paths")
-            echo " Did you mean to ${bold}cd ${d}${normal} first?"
+            echo " Did you mean to \`cd ${d}\` first?"
         else
             echo
         fi
