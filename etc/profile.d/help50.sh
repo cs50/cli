@@ -62,10 +62,12 @@ help50() {
 }
 
 _help50() {
-    if [[ -f "$HELPFUL" ]]; then
-        _helpful "$HELPFUL"
-    elif [[ -f "$HELPLESS" ]]; then
-        _helpless "$HELPLESS"
+    if [[ "$RUBBERDUCKING" != "0" ]]; then
+        if [[ -f "$HELPFUL" ]]; then
+            _helpful "$HELPFUL"
+        elif [[ -f "$HELPLESS" ]]; then
+            _helpless "$HELPLESS"
+        fi
     fi
     rm --force "$HELPFUL" "$HELPLESS"
 }
@@ -77,4 +79,19 @@ _helpful() {
 
 _helpless() { :; }
 
+duck() {
+    if [[ "$1" == "off" ]]; then
+        export RUBBERDUCKING=0
+    elif [[ "$1" == "on" ]]; then
+        unset RUBBERDUCKING
+    elif [[ "$1" == "status" ]]; then
+        if [[ "$RUBBERDUCKING" == "0" ]]; then
+            echo "off"
+        else
+            echo "on"
+        fi
+    fi
+}
+
 export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }_help50"
+duck on
