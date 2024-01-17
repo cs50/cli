@@ -31,7 +31,7 @@ RUN cd /tmp && \
     pip3 install --no-cache-dir --upgrade pip
 
 
-# Install Ruby 3.2.x
+# Install Ruby 3.3.x
 # https://www.ruby-lang.org/en/downloads/
 RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
@@ -40,19 +40,20 @@ RUN apt update && \
     apt clean && \
     rm -rf /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz --output ruby-3.2.2.tar.gz && \
-    tar xzf ruby-3.2.2.tar.gz && \
-    rm --force ruby-3.2.2.tar.gz && \
-    cd ruby-3.2.2 && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.0.tar.gz --output ruby-3.3.0.tar.gz && \
+    tar xzf ruby-3.3.0.tar.gz && \
+    rm --force ruby-3.3.0.tar.gz && \
+    cd ruby-3.3.0 && \
     CFLAGS="-Os" ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.2.2
+    rm --force --recursive ruby-3.3.0
 
 
 # Install Ruby packages
-RUN gem install --no-document \
+RUN echo "gem: --no-document" > /etc/gemrc && \
+    gem install \
         jekyll \
         minitest `# So that Bundler needn't install` \
         pygments.rb \
