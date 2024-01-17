@@ -1,6 +1,11 @@
 # Directory with helpers
 HELPERS="/opt/cs50/lib/help50"
 
+# Disable yes, lest students type it at prompt
+if command -v yes &> /dev/null; then
+    alias yes=":"
+fi
+
 # Temporary files
 FILE="/tmp/help50.$$" # Use PID to support multiple terminals
 HELPFUL="${FILE}.help"
@@ -51,6 +56,7 @@ help50() {
 
     # Try to get help
     local helper="${HELPERS}/${command}"
+    echo "HELPER: $helper"
     if [[ -f "$helper" && -x "$helper" ]]; then
         local help=$("$helper" "$@" <<< "$output")
     fi
@@ -64,17 +70,16 @@ help50() {
 _help50() {
     if [[ "$RUBBERDUCKING" != "0" ]]; then
         if [[ -f "$HELPFUL" ]]; then
-            _helpful "$HELPFUL"
+            _helpful "$(cat "$HELPFUL")"
         elif [[ -f "$HELPLESS" ]]; then
-            _helpless "$HELPLESS"
+            _helpless "$(cat "$HELPLESS")"
         fi
     fi
     rm --force "$HELPFUL" "$HELPLESS"
 }
 
 _helpful() {
-    echo -n "🦆 "
-    cat "$1" | _help
+    echo "$1"
 }
 
 _helpless() { :; }

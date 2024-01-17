@@ -10,4 +10,4 @@ else
 fi
 
 # https://www.gnu.org/software/termutils/manual/termutils-2.0/html_chapter/tput_1.html#SEC8
-echo "⚠️  $input" | sed "s/\`\([^\`]*\)\`/$(tput smso)\1$(tput rmso)/g"
+echo "$input" | sed "s/\`\([^\`]*\)\`/$(tput smso)\1$(tput rmso)/g"

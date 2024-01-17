@@ -11,16 +11,14 @@ t="-t0"
 
 # Check for app.py or wsgi.py
 if [[ -f app.py ]] || [[ -f wsgi.py ]]; then
-    read -p "$(_help "Are you sure you want to run \`http-server\` and not \`flask\`? [y/N] ")" -r
-    if [[ ! "${REPLY,,}" =~ ^y|yes$ ]]; then
+    if ! _sure "Are you sure you want to run \`http-server\` and not \`flask\`?"; then
         exit 1
     fi
 fi
 
 # Check for path
 if [[ $# -eq 1 ]] && [[ $1 != -* ]] && [[ ! $1 =~ ^\./?$ ]]; then
-    read -p "$(_help "Are you sure you want to serve \`${1}\` and not your current directory? [y/N] ")" -r
-    if [[ ! "${REPLY,,}" =~ ^y|yes$ ]]; then
+    if ! _sure "Are you sure you want to serve \`${1}\` and not your current directory?"; then
         exit 1
     fi
 fi
