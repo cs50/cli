@@ -14,6 +14,36 @@ if [ "$(whoami)" != "root" ]; then
         PS1='\[$(printf "\x0f")\033[01;34m\]$(_cwdSlashAtEnd)\[\033[00m\]$(__git_ps1 " (%s)") $ '
     fi
 
+    # Are you sures
+    function _ansi() {
+
+        # If command-line arguments
+        if [[ $# -ne 0 ]]; then
+            input="$*"
+
+        # If standard input
+        else
+            input=$(cat)
+        fi
+
+        # https://www.gnu.org/software/termutils/manual/termutils-2.0/html_chapter/tput_1.html#SEC8
+        echo "$input" | sed "s/\`\([^\`]*\)\`/$(tput smso)\1$(tput rmso)/g"
+    }
+    function _sure() {
+        if [[ $# -ne 1 ]]; then
+            return 1
+        fi
+        prompt=$(echo "$1" | _ansi)
+        while true; do
+            read -p "$prompt [y/N] " -r
+            if [[ "${REPLY,,}" =~ ^(y|yes)$ ]]; then
+                return 0
+            elif [[ "${REPLY,,}" =~ ^(n|no)$ ]]; then
+                return 1
+            fi
+        done
+    }
+
     # Aliases
     alias cd="HOME=\"$WORKDIR\" cd"
     alias cowsay="/usr/games/cowsay"

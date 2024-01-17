@@ -1,23 +1,20 @@
 #!/bin/bash
 
-# Ensure no targets end with .c
-args=""
-invalid_args=0
-for arg; do
-    case "$arg" in
-        (*.c) arg=${arg%.c}; invalid_args=1;;
-    esac
-    args="$args $arg"
-done
-if [ $invalid_args -eq 1 ]; then
-    echo "Did you mean 'make$args'?"
-    exit 1
+# If a single target and not an option
+if [[ $# -eq 1 ]] && [[ "$1" != -* ]]; then
+
+    # If no Makefile
+    if [[ ! -f Makefile && ! -f makefile ]]; then
+
+        # If target ends with .c or is a directory
+        if [[ "$1" == *?.c || -d "$1" ]]; then
+
+            # Don't suppress "Nothing to be done" with --silent
+            /usr/bin/make "$1"
+            exit $?
+        fi
+    fi
 fi
 
-# Run make
-if [[ -d "$1" ]]; then
-    echo "$1 is a directory"
-    exit 1
-else
-    /usr/bin/make -B -s $*
-fi
+# Don't echo recipes
+/usr/bin/make --always-make --silent "$@"

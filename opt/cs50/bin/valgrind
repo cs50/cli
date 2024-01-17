@@ -1,13 +1,33 @@
-#!/bin/bash
+#!/bin/bash -l
 
-# Formatting
-bold=$(tput bold)
-normal=$(tput sgr0)
+# If one command-line argument and not an option
+if [[ $# -eq 1 ]] && [[ "$1" != -* ]]; then
 
-# If run on Python program
-if [[ "$1" == "python" || "$1" == *.py ]]; then
-    echo "Afraid ${bold}valgrind${normal} does not support Python programs!"
-    exit 1
+    # If run on Python program
+    if [[ "$1" =~ ^(python|python3)$ ]]; then
+        if ! _sure "Are you sure you want to run \`valgrind\` on \`$1\`? Valgrind does not support Python programs."; then
+            exit 1
+        fi
+    fi
+
+    # If not run on ./*
+    if [[ ! "$1" =~ ^./ ]]; then
+
+        # If $1 is in $PATH
+        if command -v "$1" &> /dev/null; then
+
+            # Discourage user from debugging $1
+            if [[ -f "$1" ]]; then
+                if ! _sure "Are you sure you want to run \`valgrind $1\` and not, e.g., \`valgrind ./$1\`?"; then
+                    exit 1
+                fi
+            else
+                if ! _sure "Are you sure you want to run \`valgrind\` on \`$1\`, which isn't in your current directory?"; then
+                    exit 1
+                fi
+            fi
+        fi
+    fi
 fi
 
 /usr/bin/valgrind "$@"
