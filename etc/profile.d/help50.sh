@@ -90,23 +90,45 @@ function _help50() {
     truncate -s 0 "$SCRIPT"
 }
 
-function _find() {
+function _search() {
 
     # In $1 is path to find
     if [[ $# -ne 1 ]]; then
         return
     fi
 
-    # Find absolute paths of any $1 relative to `cd`
-    pushd "$(cd && pwd)" > /dev/null
+    # Find any $1 in descendants
     paths=$(find $(pwd) -name "$1" 2> /dev/null)
-    popd > /dev/null
+    if [[ -z "$paths" ]]; then
 
-    # Resolve absolute paths to relative paths
-    local line
-    while IFS= read -r path; do
-        realpath --relative-to=. "$(dirname "$path")"
-    done <<< "$paths"
+        # Find any $1 in ancestors
+        local dir="$(dirname "$(pwd)")"
+        while [[ "$dir" != "/" ]]; do
+            paths=$(find "$dir" -maxdepth 1 -name "$1")
+            if [[ -z "$paths" ]]; then
+                dir=$(dirname "$dir")
+            else
+                break
+            fi
+        done
+        if [[ -z "$paths" ]]; then
+
+            # Find any $1 relative to `cd`
+            pushd "$(cd && pwd)" > /dev/null
+            paths=$(find $(pwd) -name "$1" 2> /dev/null)
+            popd > /dev/null
+        fi
+    fi
+
+    # Count paths
+    count=$(echo "$paths" | grep -c .)
+
+    # If just one
+    if [[ "$count" -eq 1 ]]; then
+
+        # Resolve absolute path to relative path
+        realpath --relative-to=. "$(dirname "$paths")"
+    fi
 }
 
 if ! type _helpful >/dev/null 2>&1; then
