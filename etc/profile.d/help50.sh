@@ -17,7 +17,7 @@ function _help50 () {
     # Append to history right away
     history -a
 
-    # Parse command
+    # Parse command line in case we want ${argv[0]}
     read -a argv <<< $(history 1 | cut -c 8-)
 
     # If no typescript yet
@@ -83,10 +83,6 @@ function _help50 () {
         elif [[ $status -ne 0 ]]; then # If helpless
             _helpless "$text"
         fi
-
-        # TEMP
-        echo "TEXT: $typescript" >> "$SCRIPT.log"
-        echo "---" >> "$SCRIPT.log"
     fi
 
     # Truncate typescript

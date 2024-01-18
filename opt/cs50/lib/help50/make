@@ -7,7 +7,7 @@ if [[ "$output" =~ $regex ]]; then
 
     # If target is a directory
     if [[ -d "${BASH_REMATCH[1]}" ]]; then
-        echo "Cannot run \`make\` on a directory. Did you mean to \`cd ${1}\` first?"
+        echo "Cannot run \`make\` on a directory. Did you mean to \`cd ${BASH_REMATCH[1]}\` first?"
         exit
     fi
 
