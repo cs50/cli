@@ -6,14 +6,19 @@ if command -v yes &> /dev/null; then
     alias yes=":"
 fi
 
+# Ignore duplicates (but not commands that begin with spaces)
+export HISTCONTROL="ignoredups"
+
 function _help50 () {
 
     # Exit status of last command
     local status=$?
 
-    # Last command
-    local argv=$(fc -ln -1 | sed 's/^[[:space:]]*//')
-    # TODO: extract argv0 to determine if ./ command
+    # Append to history right away
+    history -a
+
+    # Parse command
+    read -a argv <<< $(history 1 | cut -c 8-)
 
     # If no typescript yet
     if [[ -z "$SCRIPT" ]]; then
