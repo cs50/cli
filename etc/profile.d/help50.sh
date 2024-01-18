@@ -1,102 +1,101 @@
 # Directory with helpers
 HELPERS="/opt/cs50/lib/help50"
 
-# Disable yes, lest students type it at prompt
+# Disable yes, lest users type it at prompt
 if command -v yes &> /dev/null; then
     alias yes=":"
 fi
 
-# Temporary files
-FILE="/tmp/help50.$$" # Use PID to support multiple terminals
-HELPFUL="${FILE}.help"
-HELPLESS="${FILE}.output"
+function _help50 () {
 
-# Supported helpers
-for helper in "$HELPERS"/*; do
-    name=$(basename "$helper")
-    eval "function ${name}() { help50 "$name" \"\$@\"; }"
-done
-
-help50() {
-
-    # Duplicate file descriptors
-    exec 3>&1 4>&2
-
-    # Redirect output to a file too
-    exec > >(tee -a "$FILE") 2>&1
-
-    # Execute command
-    if [[ "$(type -P -t "$1")" == "file" ]]; then
-        unbuffer "$@" # Else, e.g., ls isn't colorized
-    else
-        command "$@" # Can't unbuffer builtins (e.g., cd)
-    fi
-
-    # Remember these
+    # Exit status of last command
     local status=$?
-    local command="$1"
 
-    # Remove command from $@
-    shift
+    # Last command
+    local argv=$(fc -ln -1 | sed 's/^[[:space:]]*//')
+    # TODO: extract argv0 to determine if ./ command
 
-    # Get tee'd output
-    local output=$(cat "$FILE")
+    # If no typescript yet
+    if [[ -z "$SCRIPT" ]]; then
 
-    # Remove any ANSI codes
-    output=$(echo "$output" | ansi2txt | col -b)
+        # Use this shell's PID as typescript's name, exporting so that subshells know script is already running
+        export SCRIPT="/tmp/help50.$$"
 
-    # Restore file descriptors
-    exec 1>&3 2>&4
+        # Make a typescript of everything displayed in terminal (without using exec, which breaks sudo);
+        # --append avoids `bash: warning: command substitution: ignored null byte in input`;
+        # --quiet suppresses `Script started...`
+        script --append --command "bash --login" --flush --quiet "$SCRIPT"
 
-    # Close file descriptors
-    exec 3>&- 4>&-
+        # Remove typescript before exiting this shell
+        rm --force "$SCRIPT"
 
-    # Remove tee'd output
-    rm --force "$file"
-
-    # Try to get help
-    local helper="${HELPERS}/${command}"
-    echo "HELPER: $helper"
-    if [[ -f "$helper" && -x "$helper" ]]; then
-        local help=$("$helper" "$@" <<< "$output")
+        # Now exit this shell too
+        exit
     fi
-    if [[ -n "$help" ]]; then # If helpful
-        echo "$help" > "$HELPFUL"
-    elif [[ $status -ne 0 ]]; then # If helpless
-        echo "$output" > "$HELPLESS"
-    fi
-}
 
-_help50() {
-    if [[ "$RUBBERDUCKING" != "0" ]]; then
-        if [[ -f "$HELPFUL" ]]; then
-            _helpful "$(cat "$HELPFUL")"
-        elif [[ -f "$HELPLESS" ]]; then
-            _helpless "$(cat "$HELPLESS")"
+    # If last command erred
+    if [[ $status -ne 0 ]]; then
+
+        # Read typescript from disk
+        local typescript=$(cat "$SCRIPT")
+
+        # Remove script's own output (if this is user's first command)
+        typescript=$(echo "$typescript" | sed '1{/^Script started on .*/d}')
+
+        # Remove any line continuations from command line
+        local lines=""
+        while IFS= read -r line || [[ -n "$line" ]]; do
+            if [[ -z $done && $line =~ \\$ ]]; then
+                lines+="${line%\\}"
+            else
+                lines+="$line"$'\n'
+                local done=1
+            fi
+        done <<< "$typescript"
+        typescript="$lines"
+
+        # Remove command line from typescript
+        typescript=$(echo "$typescript" | sed '1d')
+
+        # Remove ANSI characters
+        typescript=$(echo "$typescript" | ansi2txt)
+
+        # Remove control characters
+        # https://superuser.com/a/237154
+        typescript=$(echo "$typescript" | col -bp)
+
+        # Try to get help
+        for helper in "$HELPERS"/*; do
+            if [[ -f "$helper" && -x "$helper" ]]; then
+                local help=$("$helper" <<< "$typescript")
+                if [[ -n "$help" ]]; then
+                    break
+                fi
+            fi
+        done
+        if [[ -n "$help" ]]; then # If helpful
+            _helpful "$help"
+        elif [[ $status -ne 0 ]]; then # If helpless
+            _helpless "$text"
         fi
+
+        # TEMP
+        echo "TEXT: $typescript" >> "$SCRIPT.log"
+        echo "---" >> "$SCRIPT.log"
     fi
-    rm --force "$HELPFUL" "$HELPLESS"
+
+    # Truncate typescript
+    truncate -s 0 "$SCRIPT"
 }
 
-_helpful() {
-    echo "$1"
-}
+if ! type _helpful >/dev/null 2>&1; then
+    function _helpful() {
+        echo "$1"
+    }
+fi
 
-_helpless() { :; }
+if ! type _helpless >/dev/null 2>&1; then
+    function _helpless() { :; }
+fi
 
-duck() {
-    if [[ "$1" == "off" ]]; then
-        export RUBBERDUCKING=0
-    elif [[ "$1" == "on" ]]; then
-        unset RUBBERDUCKING
-    elif [[ "$1" == "status" ]]; then
-        if [[ "$RUBBERDUCKING" == "0" ]]; then
-            echo "off"
-        else
-            echo "on"
-        fi
-    fi
-}
-
-export PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND; }_help50"
-duck on
+export PROMPT_COMMAND="_help50${PROMPT_COMMAND:+; $PROMPT_COMMAND}"

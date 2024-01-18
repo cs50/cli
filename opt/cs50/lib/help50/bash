@@ -6,8 +6,8 @@ regex="bash: (.*).py: command not found"
 if [[ "$output" =~ $regex ]]; then
 
     # If target is a directory
-    if [[ -f "$1" ]]; then
-        echo "Did you mean to run \`python ${1}`?"
+    if [[ -f "${BASH_REMATCH[1]}" ]]; then
+        echo "Did you mean to run \`python ${BASH_REMATCH[1]}\`?"
         exit
     fi
 fi
