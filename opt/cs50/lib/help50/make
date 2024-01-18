@@ -30,11 +30,13 @@ if [[ "$output" =~ $regex ]]; then
     if [[ ! -f "$c" ]]; then
 
         # Search recursively for .c file
-        paths=$(find * -name "$c" 2> /dev/null)
+        pushd "$(cd && pwd)" > /dev/null
+        paths=$(find $(pwd) -name "$c" 2> /dev/null)
         lines=$(echo "$paths" | grep -c .)
+        popd > /dev/null
         echo -n "There isn't a file called \`${c}\` in your current directory."
         if [[ "$lines" -eq 1 ]]; then # If unambiguous
-            d=$(dirname "$paths")
+            d=$(realpath --relative-to=. "$(dirname "$paths")")
             echo " Did you mean to \`cd ${d}\` first?"
         else
             echo
