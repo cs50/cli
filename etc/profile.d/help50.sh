@@ -38,8 +38,9 @@ function _help50 () {
         exit
     fi
 
-    # If last command erred
-    if [[ $status -ne 0 ]]; then
+    # If last command erred (and not ctl-z)
+    # https://tldp.org/LDP/abs/html/exitcodes.html
+    if [[ $status -ne 0 && $status -ne 148 ]]; then
 
         # Read typescript from disk
         local typescript=$(cat "$SCRIPT")
