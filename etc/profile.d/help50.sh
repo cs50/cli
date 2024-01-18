@@ -9,7 +9,7 @@ fi
 # Ignore duplicates (but not commands that begin with spaces)
 export HISTCONTROL="ignoredups"
 
-function _help50 () {
+function _help50() {
 
     # Exit status of last command
     local status=$?
@@ -73,7 +73,7 @@ function _help50 () {
         # Try to get help
         for helper in "$HELPERS"/*; do
             if [[ -f "$helper" && -x "$helper" ]]; then
-                local help=$("$helper" <<< "$typescript")
+                local help=$(. $helper <<< "$typescript")
                 if [[ -n "$help" ]]; then
                     break
                 fi
@@ -88,6 +88,25 @@ function _help50 () {
 
     # Truncate typescript
     truncate -s 0 "$SCRIPT"
+}
+
+function _find() {
+
+    # In $1 is path to find
+    if [[ $# -ne 1 ]]; then
+        return
+    fi
+
+    # Find absolute paths of any $1 relative to `cd`
+    pushd "$(cd && pwd)" > /dev/null
+    paths=$(find $(pwd) -name "$1" 2> /dev/null)
+    popd > /dev/null
+
+    # Resolve absolute paths to relative paths
+    local line
+    while IFS= read -r path; do
+        realpath --relative-to=. "$(dirname "$path")"
+    done <<< "$paths"
 }
 
 if ! type _helpful >/dev/null 2>&1; then
