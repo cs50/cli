@@ -66,14 +66,14 @@ RUN gem install --no-document \
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl --remote-name https://www.sqlite.org/2023/sqlite-amalgamation-3440000.zip && \
-    unzip sqlite-amalgamation-3440000.zip && \
-    rm --force sqlite-amalgamation-3440000.zip && \
-    cd sqlite-amalgamation-3440000 && \
+    curl --remote-name https://www.sqlite.org/2023/sqlite-amalgamation-3440200.zip && \
+    unzip sqlite-amalgamation-3440200.zip && \
+    rm --force sqlite-amalgamation-3440200.zip && \
+    cd sqlite-amalgamation-3440200 && \
     patch shell.c < /tmp/shell.c.patch && \
     gcc -D HAVE_READLINE -D SQLITE_DEFAULT_FOREIGN_KEYS=1 -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3440000 && \
+    rm --force --recursive sqlite-amalgamation-3440200 && \
     rm --force /tmp/shell.c.patch
 
 
@@ -94,7 +94,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 21.2.0
+    n 21.5.0
 
 
 # Install GitHub CLI
@@ -198,14 +198,16 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
 
 # Install Node.js packages
 RUN npm install --global \
-    http-server
+    http-server@14.1.1 `# Fixate for patch`
 
 
 # Patch index.js in http-server
-COPY index.js.patch /tmp
+COPY http-server.patch index.js.patch /tmp
 RUN cd /usr/local/lib/node_modules/http-server/lib/core/show-dir && \
     patch index.js < /tmp/index.js.patch && \
-    rm --force /tmp/index.js.patch
+    cd /usr/local/lib/node_modules/http-server/bin && \
+    patch http-server < /tmp/http-server.patch && \
+    rm --force /tmp/http-server.patch /tmp/index.js.patch
 
 
 # Copy files to image
