@@ -42,11 +42,9 @@ RUN sed -i "/^#.*deb-src.*universe$/s/^# //g" /etc/apt/sources.list && \
     tar xzf R-4.3.2.tar.gz && \
     rm -f R-4.3.2.tar.gz && \
     cd R-4.3.2 && \
-    ./configure --prefix=/opt/R --enable-memory-profiling --enable-R-shlib --with-blas --with-lapack && \
+    ./configure --enable-memory-profiling --enable-R-shlib --with-blas --with-lapack && \
     make && \
     make install && \
-    ln --symbolic /opt/R/bin/* /opt/bin/ && \
-    chmod a+rx /opt/bin/* && \
     add-apt-repository --yes ppa:c2d4u.team/c2d4u4.0+ && \
     apt update
 
