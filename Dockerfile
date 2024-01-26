@@ -192,6 +192,7 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         unzip \
         valgrind \
         vim \
+        wget \
         zip && \
         apt clean && \
     pip3 install --no-cache-dir \
