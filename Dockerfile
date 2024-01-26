@@ -34,19 +34,19 @@ RUN cd /tmp && \
 # Install R
 # https://docs.posit.co/resources/install-r-source/
 # https://cran.rstudio.com/src/base/R-4/
-RUN sed -i "/^#.*deb-src.*universe$/s/^# //g" /etc/apt/sources.list && \
+RUN sed --in-place "/^#.*deb-src.*universe$/s/^# //g" /etc/apt/sources.list && \
     apt update && \
     apt build-dep --yes r-base && \
     cd /tmp && \
     wget https://cran.rstudio.com/src/base/R-4/R-4.3.2.tar.gz && \
     tar xzf R-4.3.2.tar.gz && \
-    rm -f R-4.3.2.tar.gz && \
+    rm --force R-4.3.2.tar.gz && \
     cd R-4.3.2 && \
     ./configure --enable-memory-profiling --enable-R-shlib --with-blas --with-lapack && \
     make && \
     make install && \
-    add-apt-repository --yes ppa:c2d4u.team/c2d4u4.0+ && \
-    apt update
+    cd .. && \
+    rm --force --recursive R-4.3.2
 
 
 # Install Ruby 3.2.x
@@ -56,7 +56,7 @@ RUN apt update && \
         autoconf \
         libyaml-dev && \
     apt clean && \
-    rm -rf /var/lib/apt/lists/* && \
+    rm --force --recursive /var/lib/apt/lists/* && \
     cd /tmp && \
     curl https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz --output ruby-3.2.2.tar.gz && \
     tar xzf ruby-3.2.2.tar.gz && \
