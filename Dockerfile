@@ -74,7 +74,7 @@ RUN sed --in-place "/^#.*deb-src.*universe$/s/^# //g" /etc/apt/sources.list && \
     tar xzf R-4.3.2.tar.gz && \
     rm --force R-4.3.2.tar.gz && \
     cd R-4.3.2 && \
-    ./configure --enable-memory-profiling --enable-R-shlib && \
+    ./configure --enable-memory-profiling --enable-R-shlib --with-blas --with-lapack && \
     make && \
     make install && \
     cd .. && \
@@ -127,15 +127,6 @@ RUN cd /tmp && \
     rm --force /tmp/shell.c.patch
 
 
-# Install GitHub CLI
-# https://github.com/cli/cli/blob/trunk/docs/install_linux.md#debian-ubuntu-linux-raspberry-pi-os-apt
-RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
-    chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
-    apt update && \
-    apt install gh --no-install-recommends --no-install-suggests --yes
-
-
 # Final stage
 FROM ubuntu:22.04
 LABEL maintainer="sysadmins@cs50.harvard.edu"
@@ -143,7 +134,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 
 # Copy files from builder
-COPY --from=builder /etc /etc
+#COPY --from=builder /etc /etc
 COPY --from=builder /opt /opt
 COPY --from=builder /usr/local /usr/local
 
@@ -194,7 +185,9 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         git-lfs \
         jq \
         less \
+        libblas3 `# For R` \
         libcs50 \
+        liblapack3 `# For R` \
         libmagic-dev `# For style50` \
         libpango-1.0-0 libharfbuzz0b libpangoft2-1.0-0 `# For render50` \
         libyaml-0-2 `# Runtime package for gem` \
@@ -225,6 +218,15 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         setuptools \
         style50 \
         "submit50<4"
+
+
+# Install GitHub CLI (after builder stage, because writes to /usr/share)
+# https://github.com/cli/cli/blob/trunk/docs/install_linux.md#debian-ubuntu-linux-raspberry-pi-os-apt
+RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
+    chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
+    apt update && \
+    apt install gh --no-install-recommends --no-install-suggests --yes
 
 
 # Copy files to image
