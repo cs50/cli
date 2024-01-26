@@ -83,9 +83,9 @@ RUN cd /tmp && \
     curl --remote-name https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-x64_bin.tar.gz && \
     tar xzf openjdk-21.0.1_linux-x64_bin.tar.gz && \
     rm --force openjdk-21.0.1_linux-x64_bin.tar.gz && \
-    mv jdk-21.0.1 /opt/ && \
+    mv jdk-21.0.1 /opt/jdk && \
     mkdir --parent /opt/bin && \
-    ln --symbolic /opt/jdk-21.0.1/bin/* /opt/bin/ && \
+    ln --symbolic /opt/jdk/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
 
 
@@ -95,6 +95,20 @@ RUN cd /tmp && \
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
     n 21.5.0
+
+
+# Install Node.js packages
+RUN npm install --global \
+    http-server@14.1.1 `# Fixate for patch`
+
+
+# Patch index.js in http-server
+COPY http-server.patch index.js.patch /tmp
+RUN cd /usr/local/lib/node_modules/http-server/lib/core/show-dir && \
+    patch index.js < /tmp/index.js.patch && \
+    cd /usr/local/lib/node_modules/http-server/bin && \
+    patch http-server < /tmp/http-server.patch && \
+    rm --force /tmp/http-server.patch /tmp/index.js.patch
 
 
 # Install GitHub CLI
@@ -113,8 +127,8 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 
 # Copy files from builder
-COPY --from=builder /usr /usr
 COPY --from=builder /opt /opt
+COPY --from=builder /usr/local /usr/local
 
 
 # Avoid "delaying package configuration, since apt-utils is not installed"
@@ -194,20 +208,6 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         setuptools \
         style50 \
         "submit50<4"
-
-
-# Install Node.js packages
-RUN npm install --global \
-    http-server@14.1.1 `# Fixate for patch`
-
-
-# Patch index.js in http-server
-COPY http-server.patch index.js.patch /tmp
-RUN cd /usr/local/lib/node_modules/http-server/lib/core/show-dir && \
-    patch index.js < /tmp/index.js.patch && \
-    cd /usr/local/lib/node_modules/http-server/bin && \
-    patch http-server < /tmp/http-server.patch && \
-    rm --force /tmp/http-server.patch /tmp/index.js.patch
 
 
 # Copy files to image
