@@ -31,6 +31,18 @@ RUN cd /tmp && \
     pip3 install --no-cache-dir --upgrade pip
 
 
+# Install R
+# https://cran.rstudio.com/bin/linux/ubuntu/
+RUN apt update && \
+    apt install --no-install-recommends --yes \
+        dirmngr \
+        software-properties-common \ &&
+    wget -qO- https://cloud.r-project.org/bin/linux/ubuntu/marutter_pubkey.asc | sudo tee -a /etc/apt/trusted.gpg.d/cran_ubuntu_key.asc && \
+    add-apt-repository --yes "deb https://cloud.r-project.org/bin/linux/ubuntu $(lsb_release -cs)-cran40/" && \
+    apt install --no-install-recommends --no-install-suggests --yes r-base 
+    # add-apt-repository --yes ppa:c2d4u.team/c2d4u4.0+
+
+
 # Install Ruby 3.2.x
 # https://www.ruby-lang.org/en/downloads/
 RUN apt update && \
@@ -104,6 +116,29 @@ RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | d
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
     apt update && \
     apt install gh --no-install-recommends --no-install-suggests --yes
+
+
+# Install RStudio
+# https://posit.co/download/rstudio-server/
+# https://github.com/rstudio/rstudio/tags
+# https://cran.rstudio.com/bin/linux/ubuntu/
+RUN apt update && \
+    apt install --no-install-recommends --yes \
+        cmake \
+        lsb-release && \
+    cd /tmp && \
+    wget https://github.com/rstudio/rstudio/archive/refs/tags/v2023.12.0+369.tar.gz && \
+    tar xzf v2023.12.0+369.tar.gz && \
+    cd rstudio-2023.12.0-369/dependencies/linux && \
+    ./install-dependencies-jammy && \
+    cd ../.. && \
+    mkdir build && \
+    cd build && \
+    cmake .. -DCMAKE_INSTALL_PREFIX=/opt/rstudio -DCMAKE_BUILD_TYPE=RelMinSize -DRSTUDIO_TARGET=Server && \
+    make install && \
+    add-apt-repository --yes ppa:c2d4u.team/c2d4u4.0+ && \
+    apt update && \
+    apt install --no-install-recommends --yes r-cran-tidyverse
 
 
 # Final stage
