@@ -103,12 +103,10 @@ RUN npm install --global \
 
 
 # Patch index.js in http-server
-COPY http-server.patch index.js.patch /tmp
+COPY index.js.patch /tmp
 RUN cd /usr/local/lib/node_modules/http-server/lib/core/show-dir && \
     patch index.js < /tmp/index.js.patch && \
-    cd /usr/local/lib/node_modules/http-server/bin && \
-    patch http-server < /tmp/http-server.patch && \
-    rm --force /tmp/http-server.patch /tmp/index.js.patch
+    rm --force /tmp/index.js.patch
 
 
 # Install GitHub CLI
