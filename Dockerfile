@@ -13,6 +13,38 @@ RUN apt update && \
         make tk-dev unzip wget xz-utils zlib1g-dev
 
 
+# Install Java 21.x
+# http://jdk.java.net/21/
+RUN cd /tmp && \
+    curl --remote-name https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-x64_bin.tar.gz && \
+    tar xzf openjdk-21.0.1_linux-x64_bin.tar.gz && \
+    rm --force openjdk-21.0.1_linux-x64_bin.tar.gz && \
+    mv jdk-21.0.1 /opt/ && \
+    mkdir --parent /opt/bin && \
+    ln --symbolic /opt/jdk-21.0.1/bin/* /opt/bin/ && \
+    chmod a+rx /opt/bin/*
+
+
+# Install Node.js 21.x
+# https://nodejs.dev/en/download/
+# https://github.com/tj/n#installation
+RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
+    chmod a+x /usr/local/bin/n && \
+    n 21.6.1
+
+
+# Install Node.js packages
+RUN npm install --global \
+    http-server
+
+
+# Patch index.js in http-server
+COPY index.js.patch /tmp
+RUN cd /usr/local/lib/node_modules/http-server/lib/core/show-dir && \
+    patch index.js < /tmp/index.js.patch && \
+    rm --force /tmp/index.js.patch
+
+
 # Install Python 3.11.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
@@ -32,18 +64,17 @@ RUN cd /tmp && \
 
 
 # Install R
-# https://docs.posit.co/resources/install-r-source/
+# https://docs.posit.co/resources/install-r-source/#build-and-install-r
 # https://cran.rstudio.com/src/base/R-4/
 RUN sed --in-place "/^#.*deb-src.*universe$/s/^# //g" /etc/apt/sources.list && \
     apt update && \
-    #apt install --yes libblas3 && `# TODO: necessary even with prefix?` \
     apt build-dep --yes r-base && \
     cd /tmp && \
     wget https://cran.rstudio.com/src/base/R-4/R-4.3.2.tar.gz && \
     tar xzf R-4.3.2.tar.gz && \
     rm --force R-4.3.2.tar.gz && \
     cd R-4.3.2 && \
-    ./configure --enable-memory-profiling --enable-R-shlib --prefix=/usr/local --with-blas --with-lapack && \
+    ./configure --enable-memory-profiling --enable-R-shlib && \
     make && \
     make install && \
     cd .. && \
@@ -96,26 +127,6 @@ RUN cd /tmp && \
     rm --force /tmp/shell.c.patch
 
 
-# Install Java 21.x
-# http://jdk.java.net/21/
-RUN cd /tmp && \
-    curl --remote-name https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-21.0.1_linux-x64_bin.tar.gz && \
-    rm --force openjdk-21.0.1_linux-x64_bin.tar.gz && \
-    mv jdk-21.0.1 /opt/ && \
-    mkdir --parent /opt/bin && \
-    ln --symbolic /opt/jdk-21.0.1/bin/* /opt/bin/ && \
-    chmod a+rx /opt/bin/*
-
-
-# Install Node.js 21.x
-# https://nodejs.dev/en/download/
-# https://github.com/tj/n#installation
-RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
-    chmod a+x /usr/local/bin/n && \
-    n 21.2.0
-
-
 # Install GitHub CLI
 # https://github.com/cli/cli/blob/trunk/docs/install_linux.md#debian-ubuntu-linux-raspberry-pi-os-apt
 RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
@@ -132,8 +143,9 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 
 # Copy files from builder
-COPY --from=builder /usr /usr
+COPY --from=builder /etc /etc
 COPY --from=builder /opt /opt
+COPY --from=builder /usr/local /usr/local
 
 
 # Avoid "delaying package configuration, since apt-utils is not installed"
@@ -213,18 +225,6 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         setuptools \
         style50 \
         "submit50<4"
-
-
-# Install Node.js packages
-RUN npm install --global \
-    http-server
-
-
-# Patch index.js in http-server
-COPY index.js.patch /tmp
-RUN cd /usr/local/lib/node_modules/http-server/lib/core/show-dir && \
-    patch index.js < /tmp/index.js.patch && \
-    rm --force /tmp/index.js.patch
 
 
 # Copy files to image
