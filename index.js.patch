@@ -1,3 +1,4 @@
+# diff /usr/local/lib/node_modules/http-server/lib/core/show-dir/index.js index.js > index.js.patch
 129,131c129
 <           html += `<br><address>Node.js ${
 <             process.version
