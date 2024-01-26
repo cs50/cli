@@ -42,7 +42,7 @@ RUN sed --in-place "/^#.*deb-src.*universe$/s/^# //g" /etc/apt/sources.list && \
     tar xzf R-4.3.2.tar.gz && \
     rm --force R-4.3.2.tar.gz && \
     cd R-4.3.2 && \
-    ./configure --enable-memory-profiling --enable-R-shlib --with-blas --with-lapack && \
+    ./configure --enable-memory-profiling --enable-R-shlib --prefix=/usr/local --with-blas --with-lapack && \
     make && \
     make install && \
     cd .. && \
