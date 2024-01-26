@@ -36,6 +36,7 @@ RUN cd /tmp && \
 # https://cran.rstudio.com/src/base/R-4/
 RUN sed --in-place "/^#.*deb-src.*universe$/s/^# //g" /etc/apt/sources.list && \
     apt update && \
+    #apt install --yes libblas3 && `# TODO: necessary even with prefix?` \
     apt build-dep --yes r-base && \
     cd /tmp && \
     wget https://cran.rstudio.com/src/base/R-4/R-4.3.2.tar.gz && \
