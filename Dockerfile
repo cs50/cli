@@ -5,6 +5,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 # Install cURL
 RUN apt update && \
+    apt upgrade --yes && \
     apt install --no-install-recommends --no-install-suggests --yes \
         ca-certificates \
         curl \
@@ -14,12 +15,13 @@ RUN apt update && \
 # Install Java 21.x
 # http://jdk.java.net/21/
 RUN cd /tmp && \
-    curl --remote-name https://download.java.net/java/GA/jdk21.0.1/415e3f918a1f4062a0074a2794853d0d/12/GPL/openjdk-21.0.1_linux-x64_bin.tar.gz && \
-    tar xzf openjdk-21.0.1_linux-x64_bin.tar.gz && \
-    rm --force openjdk-21.0.1_linux-x64_bin.tar.gz && \
-    mv jdk-21.0.1 /opt/ && \
+    if [ $(uname -m) = "x86_64" ]; then ARCH="x64"; else ARCH="aarch64"; fi && \
+    curl --remote-name https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-${ARCH}_bin.tar.gz && \
+    tar xzf openjdk-21.0.2_linux-${ARCH}_bin.tar.gz && \
+    rm --force openjdk-21.0.2_linux-${ARCH}_bin.tar.gz && \
+    mv jdk-21.0.2 /opt/jdk && \
     mkdir --parent /opt/bin && \
-    ln --symbolic /opt/jdk-21.0.1/bin/* /opt/bin/ && \
+    ln --symbolic /opt/jdk/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
 
 
