@@ -3,14 +3,12 @@ FROM ubuntu:22.04 as builder
 ARG DEBIAN_FRONTEND=noninteractive
 
 
-# Suggested build environment for Python, per pyenv, even though we're building ourselves
-# https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+# Install cURL
 RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
-        curl ca-certificates build-essential git \
-        libssl-dev libbz2-dev libreadline-dev libsqlite3-dev \
-        llvm libncursesw5-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
-        make tk-dev unzip wget xz-utils zlib1g-dev
+        ca-certificates \
+        curl \
+        patch
 
 
 # Install Java 21.x
@@ -45,6 +43,16 @@ RUN cd /usr/local/lib/node_modules/http-server/lib/core/show-dir && \
     rm --force /tmp/index.js.patch
 
 
+# Suggested build environment for Python, per pyenv, even though we're building ourselves
+# https://github.com/pyenv/pyenv/wiki#suggested-build-environment
+RUN apt update && \
+    apt install --no-install-recommends --no-install-suggests --yes \
+        build-essential ca-certificates curl git \
+        libssl-dev libbz2-dev libreadline-dev libsqlite3-dev \
+        llvm libncursesw5-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
+        make tk-dev unzip wget xz-utils zlib1g-dev
+
+
 # Install Python 3.11.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
@@ -74,7 +82,7 @@ RUN sed --in-place "/^#.*deb-src.*universe$/s/^# //g" /etc/apt/sources.list && \
     tar xzf R-4.3.2.tar.gz && \
     rm --force R-4.3.2.tar.gz && \
     cd R-4.3.2 && \
-    ./configure --enable-memory-profiling --enable-R-shlib --with-blas --with-lapack && \
+    ./configure --enable-memory-profiling --enable-R-shlib && \
     make && \
     make install && \
     cd .. && \
@@ -185,7 +193,6 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         git-lfs \
         jq \
         less \
-        libblas3 `# For R` \
         libcs50 \
         liblapack3 `# For R` \
         libmagic-dev `# For style50` \
