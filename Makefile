@@ -16,6 +16,6 @@ run:
 	docker run --env LANG="$(LANG)" --interactive --publish-all --rm --security-opt seccomp=unconfined --tty --volume "$(PWD)":/home/ubuntu cs50/cli bash --login || true
 
 squash: depends
-	docker images cs50/codespace
+	docker images cs50/cli
 	docker-squash --tag cs50/cli cs50/cli
-	docker images cs50/codespace
+	docker images cs50/cli
