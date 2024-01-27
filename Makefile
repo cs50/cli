@@ -1,10 +1,19 @@
+.PHONY: default
 default: run
 
 build:
-	docker build --build-arg VCS_REF="$(shell git rev-parse HEAD)" -t cs50/cli .
+	docker build --build-arg VCS_REF="$(shell git rev-parse HEAD)" --tag cs50/cli .
+	$(MAKE) squash
+
+depends:
+	pip3 install docker-squash
 
 rebuild:
-	docker build --no-cache -t cs50/cli .
+	docker build --no-cache --tag cs50/cli .
+	$(MAKE) squash
 
 run:
-	docker run --env LANG="$(LANG)" -it -P --rm --security-opt seccomp=unconfined -v "$(PWD)":/home/ubuntu cs50/cli bash --login || true
+	docker run --env LANG="$(LANG)" --interactive --publish-all --rm --security-opt seccomp=unconfined --tty --volume "$(PWD)":/home/ubuntu cs50/cli bash --login || true
+
+squash: depends
+	docker-squash --tag cs50/cli cs50/cli

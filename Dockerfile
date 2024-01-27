@@ -61,7 +61,7 @@ RUN cd /tmp && \
     tar xzf Python-3.11.7.tgz && \
     rm --force Python-3.11.7.tgz && \
     cd Python-3.11.7 && \
-    CFLAGS="-Os" ./configure --enable-optimizations --without-tests && \
+    CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
     ./configure && \
     make && \
     make install && \
@@ -205,7 +205,6 @@ RUN apt update && \
         nano \
         openssh-client `# For ssh-keygen` \
         psmisc `# For fuser` \
-        ruby-dev `# Ruby development headers` \
         sudo \
         tzdata `# For TZ` \
         unzip \
@@ -237,15 +236,6 @@ RUN pip3 install --no-cache-dir \
         setuptools \
         style50 \
         "submit50<4"
-
-
-# Install GitHub CLI (after builder stage, because writes to /usr/share)
-# https://github.com/cli/cli/blob/trunk/docs/install_linux.md#debian-ubuntu-linux-raspberry-pi-os-apt
-RUN curl --fail --location --show-error --silent https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
-    chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
-    apt update && \
-    apt install --no-install-recommends --no-install-suggests --yes gh
 
 
 # Copy files to image
