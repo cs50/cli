@@ -30,7 +30,7 @@ jobs:
         if: ${{ github.ref == 'refs/heads/develop' }}
         run: |
           pip3 install docker-squash
-          docker-squash --cleanup --tag cs50/cli:amd64 cs50/cli:amd64
+          docker-squash --tag cs50/cli:amd64 cs50/cli:amd64
 
       - name: Push linux/amd64 build to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
