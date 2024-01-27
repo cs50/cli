@@ -208,6 +208,7 @@ RUN apt update && \
         unzip \
         valgrind \
         vim \
+        wget \
         zip && \
         apt clean
 
