@@ -1,15 +1,14 @@
-# Build statge
+# Build stage
 FROM ubuntu:22.04 as builder
 ARG DEBIAN_FRONTEND=noninteractive
 
 
-# Install cURL
+# Stage-wide dependencies
 RUN apt update && \
-    apt upgrade --yes && \
     apt install --no-install-recommends --no-install-suggests --yes \
+        build-essential \
         ca-certificates \
-        curl \
-        patch
+        curl
 
 
 # Install Java 21.x
@@ -58,7 +57,7 @@ RUN apt update && \
 # Install Python 3.11.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl https://www.python.org/ftp/python/3.11.7/Python-3.11.7.tgz --output Python-3.11.7.tgz && \
+    curl --remote-name https://www.python.org/ftp/python/3.11.7/Python-3.11.7.tgz && \
     tar xzf Python-3.11.7.tgz && \
     rm --force Python-3.11.7.tgz && \
     cd Python-3.11.7 && \
@@ -80,7 +79,7 @@ RUN sed --in-place "/^#.*deb-src.*universe$/s/^# //g" /etc/apt/sources.list && \
     apt update && \
     apt build-dep --yes r-base && \
     cd /tmp && \
-    wget https://cran.rstudio.com/src/base/R-4/R-4.3.2.tar.gz && \
+    curl --remote-name https://cran.rstudio.com/src/base/R-4/R-4.3.2.tar.gz && \
     tar xzf R-4.3.2.tar.gz && \
     rm --force R-4.3.2.tar.gz && \
     cd R-4.3.2 && \
@@ -144,7 +143,6 @@ ARG DEBIAN_FRONTEND=noninteractive
 
 
 # Copy files from builder
-#COPY --from=builder /etc /etc
 COPY --from=builder /opt /opt
 COPY --from=builder /usr/local /usr/local
 
@@ -154,8 +152,6 @@ COPY --from=builder /usr/local /usr/local
 RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
         apt-utils \
-        curl \
-        ca-certificates \
         locales && \
     locale-gen \
         en_US.utf8 \
@@ -177,16 +173,18 @@ RUN apt update && \
 ENV LANG=C.UTF-8
 
 
-# Install CS50, Ubuntu, and Python packages
-RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
-    apt update && \
+# Install Ubuntu packages
+RUN apt update && \
+    apt upgrade --yes && \
     apt install --no-install-recommends --no-install-suggests --yes \
         astyle \
         bash-completion \
         build-essential `# dpkg-dev, libc, gcc, g++, make, etc.`\
+        ca-certificates \
         clang \
         coreutils `# For fold` \
         cowsay \
+        curl \
         dos2unix \
         dnsutils `# For nslookup` \
         fonts-noto-color-emoji `# For render50` \
@@ -195,7 +193,6 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         git-lfs \
         jq \
         less \
-        libcs50 \
         liblapack3 `# For R` \
         libmagic-dev `# For style50` \
         libpango-1.0-0 libharfbuzz0b libpangoft2-1.0-0 `# For render50` \
@@ -212,8 +209,17 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         valgrind \
         vim \
         zip && \
-        apt clean && \
-    pip3 install --no-cache-dir \
+        apt clean
+
+
+# Install CS50 library
+RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
+    apt update && \
+    apt install --yes libcs50
+
+
+# Install Python packages
+RUN pip3 install --no-cache-dir \
         autopep8 \
         black \
         "check50<4" \
@@ -231,11 +237,11 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
 
 # Install GitHub CLI (after builder stage, because writes to /usr/share)
 # https://github.com/cli/cli/blob/trunk/docs/install_linux.md#debian-ubuntu-linux-raspberry-pi-os-apt
-RUN curl -fsSL https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
+RUN curl --fail --location --show-error --silent https://cli.github.com/packages/githubcli-archive-keyring.gpg | dd of=/usr/share/keyrings/githubcli-archive-keyring.gpg && \
     chmod go+r /usr/share/keyrings/githubcli-archive-keyring.gpg && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/usr/share/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
     apt update && \
-    apt install gh --no-install-recommends --no-install-suggests --yes
+    apt install --no-install-recommends --no-install-suggests --yes gh
 
 
 # Copy files to image
