@@ -13,7 +13,7 @@ rebuild:
 	$(MAKE) squash
 
 run:
-	docker run --env LANG="$(LANG)" --interactive --publish-all --rm --security-opt seccomp=unconfined --tty --volume "$(PWD)":/home/ubuntu cs50/cli bash --login || true
+	docker run --env LANG="$(LANG)" --interactive --privileged --publish-all --rm --security-opt seccomp=unconfined --tty --volume "$(PWD)":/home/ubuntu cs50/cli bash --login || true
 
 squash: depends
 	docker images cs50/cli
