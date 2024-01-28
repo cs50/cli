@@ -227,19 +227,16 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
 RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
         ca-certificates \
-        curl && \
+        curl \
+        socat && \
     install -d /etc/apt/keyrings -m 0755 && \
     curl --fail --location --show-error --silent https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc && \
     chmod a+r /etc/apt/keyrings/docker.asc && \
     echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
     apt update && \
     sudo apt install --no-install-recommends --no-install-suggests --yes \
-        containerd.io \
-        docker-buildx-plugin \
-        docker-ce \
-        docker-ce-cli \
-        docker-compose-plugin && \
-    groupadd --force docker
+        docker-ce-cli && \
+    groupadd docker
 
 
 # Install Python packages
@@ -292,7 +289,6 @@ ONBUILD USER root
 ONBUILD ARG VCS_REF
 ONBUILD RUN echo "$VCS_REF" >> /etc/issue
 ONBUILD USER ubuntu
-
 
 # Set user
 USER ubuntu

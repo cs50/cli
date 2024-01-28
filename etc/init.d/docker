@@ -1,0 +1,41 @@
+#!/bin/bash
+
+# Adapted from https://github.com/devcontainers/features/blob/main/src/docker-outside-of-docker/install.sh. 
+# If docker-ce is installed, shadows its own.
+
+set -e
+
+SOURCE_SOCKET=/var/run/docker-host.sock
+TARGET_SOCKET=/var/run/docker.sock
+SOCAT_PID=/tmp/docker.pid
+
+case "$1" in
+  start)
+    echo "Starting Docker"
+    socat UNIX-LISTEN:${TARGET_SOCKET},fork,mode=660,group=docker UNIX-CONNECT:${SOURCE_SOCKET} & echo "$!" > "$SOCAT_PID"
+    ;;
+  stop)
+    echo "Stopping Docker"
+    kill -9 $(cat "$SOCAT_PID") 2> /dev/null
+    rm --force "$SOCAT_PID" "$TARGET_SOCKET"
+    ;;
+  restart)
+    $0 stop
+    $0 start
+    ;;
+  status)
+    if [[ ! -f "${SOCAT_PID}" ]] || ! ps -p $(cat "$SOCAT_PID") > /dev/null; then
+      echo "Docker is not running"
+      exit 1
+    else
+      echo "Docker is running"
+      exit 0
+    fi
+    ;;
+  *)
+    echo "Usage: $0 {start|stop|restart|status}"
+    exit 1
+    ;;
+esac
+
+exit 0
