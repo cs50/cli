@@ -3,8 +3,6 @@
 # Adapted from https://github.com/devcontainers/features/blob/main/src/docker-outside-of-docker/install.sh. 
 # If docker-ce is installed, shadows its own.
 
-set -e
-
 SOURCE_SOCKET=/var/run/docker-host.sock
 TARGET_SOCKET=/var/run/docker.sock
 SOCAT_PID=/tmp/docker.pid
@@ -12,7 +10,7 @@ SOCAT_PID=/tmp/docker.pid
 case "$1" in
   start)
     echo "Starting Docker"
-    socat UNIX-LISTEN:${TARGET_SOCKET},fork,mode=660,group=docker UNIX-CONNECT:${SOURCE_SOCKET} & echo "$!" > "$SOCAT_PID"
+    socat UNIX-LISTEN:${TARGET_SOCKET},fork,group=docker,mode=660 UNIX-CONNECT:${SOURCE_SOCKET} & echo "$!" > "$SOCAT_PID"
     ;;
   stop)
     echo "Stopping Docker"
