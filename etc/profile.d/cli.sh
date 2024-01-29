@@ -25,7 +25,6 @@ if [ "$(whoami)" != "root" ]; then
     alias mv="mv -i"
     alias pip="pip --no-cache-dir"
     alias python="python -q"
-    alias R="R --vanilla"
     alias rm="rm -i"
     alias sudo="sudo " # Trailing space enables elevated command to be an alias
 
