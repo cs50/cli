@@ -14,7 +14,7 @@ case "$1" in
     ;;
   stop)
     echo "Stopping Docker"
-    kill -9 $(cat "$SOCAT_PID") 2> /dev/null
+    kill -9 $(cat "$SOCAT_PID" 2> /dev/null) 2> /dev/null
     rm --force "$SOCAT_PID" "$TARGET_SOCKET"
     ;;
   restart)
@@ -22,7 +22,7 @@ case "$1" in
     $0 start
     ;;
   status)
-    if [[ ! -f "${SOCAT_PID}" ]] || ! ps -p $(cat "$SOCAT_PID") > /dev/null; then
+    if [[ ! -f "${SOCAT_PID}" ]] || ! ps -p $(cat "$SOCAT_PID" 2> /dev/null) &> /dev/null; then
       echo "Docker is not running"
       exit 1
     else
