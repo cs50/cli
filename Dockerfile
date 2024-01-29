@@ -218,10 +218,11 @@ RUN apt update && \
 # Install CS50 library
 RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
     apt update && \
-    apt install libcs50
+    apt install --yes \
+        libcs50
 
 
-# Install Docker
+# Install Docker CLI
 # https://docs.docker.com/engine/install/ubuntu/
 # https://docs.docker.com/engine/install/linux-postinstall/
 RUN apt update && \
