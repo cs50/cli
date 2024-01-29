@@ -1,0 +1,11 @@
+#!/bin/bash
+
+IMAGE="rocker/r-ver"
+
+docker run \
+    --interactive \
+    --rm \
+    --tty \
+    --volume "$LOCAL_WORKSPACE_FOLDER":/mnt \
+    --workdir /mnt \
+    "$IMAGE"
