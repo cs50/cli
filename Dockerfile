@@ -72,24 +72,6 @@ RUN cd /tmp && \
     pip3 install --no-cache-dir --upgrade pip
 
 
-# Install R
-# https://docs.posit.co/resources/install-r-source/#build-and-install-r
-# https://cran.rstudio.com/src/base/R-4/
-RUN sed --in-place "/^#.*deb-src.*universe$/s/^# //g" /etc/apt/sources.list && \
-    apt update && \
-    apt build-dep --yes r-base && \
-    cd /tmp && \
-    curl --remote-name https://cran.rstudio.com/src/base/R-4/R-4.3.2.tar.gz && \
-    tar xzf R-4.3.2.tar.gz && \
-    rm --force R-4.3.2.tar.gz && \
-    cd R-4.3.2 && \
-    ./configure --enable-memory-profiling --enable-R-shlib && \
-    make && \
-    make install && \
-    cd .. && \
-    rm --force --recursive R-4.3.2
-
-
 # Install Ruby 3.2.x
 # https://www.ruby-lang.org/en/downloads/
 RUN apt update && \
@@ -245,6 +227,7 @@ RUN pip3 install --no-cache-dir \
         autopep8 \
         black \
         "check50<4" \
+        cli50 \
         compare50 \
         cs50 \
         Flask \
