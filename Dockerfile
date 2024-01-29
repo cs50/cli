@@ -218,7 +218,26 @@ RUN apt update && \
 # Install CS50 library
 RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | bash && \
     apt update && \
-    apt install --yes libcs50
+    apt install --yes \
+        libcs50
+
+
+# Install Docker CLI
+# https://docs.docker.com/engine/install/ubuntu/
+# https://docs.docker.com/engine/install/linux-postinstall/
+RUN apt update && \
+    apt install --no-install-recommends --no-install-suggests --yes \
+        ca-certificates \
+        curl \
+        socat && \
+    install -d /etc/apt/keyrings -m 0755 && \
+    curl --fail --location --show-error --silent https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc && \
+    chmod a+r /etc/apt/keyrings/docker.asc && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt update && \
+    sudo apt install --no-install-recommends --no-install-suggests --yes \
+        docker-ce-cli && \
+    groupadd docker
 
 
 # Install Python packages
@@ -260,7 +279,8 @@ RUN useradd --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
     echo "ubuntu ALL=(ALL) NOPASSWD:ALL" >> /etc/sudoers && \
     echo "Defaults umask_override" >> /etc/sudoers && \
     echo "Defaults umask=0022" >> /etc/sudoers && \
-    sed --expression="s/^Defaults\tsecure_path=.*/Defaults\t!secure_path/" --in-place /etc/sudoers
+    sed --expression="s/^Defaults\tsecure_path=.*/Defaults\t!secure_path/" --in-place /etc/sudoers && \
+    usermod --append --groups docker ubuntu
 
 
 # Version the image (and any descendants)
@@ -270,7 +290,6 @@ ONBUILD USER root
 ONBUILD ARG VCS_REF
 ONBUILD RUN echo "$VCS_REF" >> /etc/issue
 ONBUILD USER ubuntu
-
 
 # Set user
 USER ubuntu
