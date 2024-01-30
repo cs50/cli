@@ -181,6 +181,8 @@ RUN apt update && \
         libpangocairo-1.0-0 `# For R` \
         libtiff5 `# For R` \
         libxt6 `# For R` \
+        libgmp-dev `# For gem` \
+        libffi-dev `# For gem` \
         libyaml-0-2 `# Runtime package for gem` \
         man \
         man-db \
