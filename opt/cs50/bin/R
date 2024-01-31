@@ -1,11 +1,23 @@
 #!/bin/bash
 
-IMAGE="rocker/r-ver"
+IMAGE=rocker/r-ver
 
-docker run \
-    --interactive \
-    --rm \
-    --tty \
-    --volume "$LOCAL_WORKSPACE_FOLDER":/mnt \
-    --workdir /mnt \
-    "$IMAGE"
+options=(
+    --interactive
+    --rm
+    --volume "$LOCAL_WORKSPACE_FOLDER":/mnt
+    --workdir /mnt
+    $IMAGE
+    R
+    "$@"
+)
+
+# If TTY
+if [[ -t 0 ]]; then
+    options=(--tty "${options[@]}")
+    docker run "${options[@]}"
+
+# If pipe
+else
+    cat | docker run "${options[@]}"
+fi
