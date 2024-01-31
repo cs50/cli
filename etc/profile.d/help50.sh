@@ -1,3 +1,8 @@
+# If root
+if [ "$(whoami)" == "root" ]; then
+    return
+fi
+
 . /opt/cs50/lib/cli
 
 # Directory with helpers
@@ -5,7 +10,13 @@ HELPERS="/opt/cs50/lib/help50"
 
 # Disable yes, lest users type it at prompt
 if command -v yes &> /dev/null; then
-    alias yes=":"
+    function yes() {
+        if [[ -t 0 ]]; then
+            :
+        else
+            command yes
+        fi
+    }
 fi
 
 # Ignore duplicates (but not commands that begin with spaces)
@@ -54,6 +65,9 @@ function _help50() {
 
         # Remove script's own output (if this is user's first command)
         typescript=$(echo "$typescript" | sed '1{/^Script started on .*/d}')
+
+        # Cap typescript at MIN(1K lines, 1M bytes), else `read` is slow
+        typescript=$(echo "$typescript" | head -n 1024 | cut -b 1-1048576)
 
         # Remove any line continuations from command line
         local lines=""
