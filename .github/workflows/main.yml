@@ -1,7 +1,7 @@
 on: push
 jobs:
   build:
-    runs-on: ubuntu-latest-16-cores
+    runs-on: ubuntu-latest-64-cores
     steps:
       - name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -15,6 +15,11 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
       - name: Build for linux/amd64
         uses: docker/build-push-action@v3
         with:
@@ -25,6 +30,12 @@ jobs:
           tags: cs50/cli:amd64
           cache-from: type=registry,ref=cs50/cli:amd64-buildcache
           cache-to: type=registry,ref=cs50/cli:amd64-buildcache,mode=max
+
+      - name: Squash for linux/amd64
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: |
+          pip3 install docker-squash
+          docker-squash --tag cs50/cli:amd64 cs50/cli:amd64
 
       - name: Push linux/amd64 build to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -41,6 +52,12 @@ jobs:
           tags: cs50/cli:arm64
           cache-from: type=registry,ref=cs50/cli:arm64-buildcache
           cache-to: type=registry,ref=cs50/cli:arm64-buildcache,mode=max
+
+      - name: Squash for linux/arm64
+        if: ${{ github.ref == 'refs/heads/develop' }}
+        run: |
+          pip3 install docker-squash
+          docker-squash --cleanup --tag cs50/cli:arm64 cs50/cli:arm64
 
       - name: Push linux/arm64 build to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}

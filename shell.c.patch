@@ -1,25 +1,4 @@
-# diff shell.c shell_modified.c > shell.c.patch
-28631,28641c28631,28641
-<       printf(
-<         "SQLite version %s %.19s%s\n" /*extra-version-info*/
-<         "Enter \".help\" for usage hints.\n",
-<         sqlite3_libversion(), sqlite3_sourceid(), zCharset
-<       );
-<       if( warnInmemoryDb ){
-<         printf("Connected to a ");
-<         printBold("transient in-memory database");
-<         printf(".\nUse \".open FILENAME\" to reopen on a "
-<                "persistent database.\n");
-<       }
----
->       // printf(
->       //   "SQLite version %s %.19s%s\n" /*extra-version-info*/
->       //   "Enter \".help\" for usage hints.\n",
->       //   sqlite3_libversion(), sqlite3_sourceid(), zCharset
->       // );
->       // if( warnInmemoryDb ){
->       //   printf("Connected to a ");
->       //   printBold("transient in-memory database");
->       //   printf(".\nUse \".open FILENAME\" to reopen on a "
->       //          "persistent database.\n");
->       // }
+29438,29440d29437
+<       sputf(stdout, "SQLite version %s %.19s%s\n" /*extra-version-info*/
+<             "Enter \".help\" for usage hints.\n",
+<             sqlite3_libversion(), sqlite3_sourceid(), SHELL_CIO_CHAR_SET);
