@@ -8,8 +8,7 @@ options=(
     --volume "$LOCAL_WORKSPACE_FOLDER":/mnt
     --workdir /mnt
     $IMAGE
-    R
-    "$@"
+    R "$@"
 )
 
 # If TTY
