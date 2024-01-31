@@ -1,3 +1,5 @@
+. /opt/cs50/lib/cli
+
 # Directory with helpers
 HELPERS="/opt/cs50/lib/help50"
 
@@ -11,28 +13,28 @@ export HISTCONTROL="ignoredups"
 
 function _help50() {
 
-    # Exit status of last command
+    # Get exit status of last command
     local status=$?
 
-    # Append to history right away
-    history -a
-
-    # Parse command line in case we want ${argv[0]}
-    read -a argv <<< $(history 1 | cut -c 8-)
+    # Get last command, independent of user's actual history
+    histfile=/tmp/help50.$$.history
+    HISTFILE=$histfile history -a
+    local argv0=$(HISTFILE=$histfile history 1 | cut -c 8- | awk '{print $1}')
+    rm --force $histfile
 
     # If no typescript yet
-    if [[ -z "$SCRIPT" ]]; then
+    if [[ -z $TYPESCRIPT ]]; then
 
         # Use this shell's PID as typescript's name, exporting so that subshells know script is already running
-        export SCRIPT="/tmp/help50.$$"
+        export TYPESCRIPT=/tmp/help50.$$.typescript
 
         # Make a typescript of everything displayed in terminal (without using exec, which breaks sudo);
         # --append avoids `bash: warning: command substitution: ignored null byte in input`;
         # --quiet suppresses `Script started...`
-        script --append --command "bash --login" --flush --quiet "$SCRIPT"
+        script --append --command "bash --login" --flush --quiet $TYPESCRIPT
 
         # Remove typescript before exiting this shell
-        rm --force "$SCRIPT"
+        rm --force $TYPESCRIPT
 
         # Now exit this shell too
         exit
@@ -40,10 +42,15 @@ function _help50() {
 
     # If last command erred (and not ctl-z)
     # https://tldp.org/LDP/abs/html/exitcodes.html
-    if [[ $status -ne 0 && $status -ne 148 ]]; then
+    if [[ $status -ne 0 && $status -ne 148 && ! "$command" =~ ^\./ ]]; then
+
+        # Ignore ./* if executable file
+        if [[ "$argv" =~ ^\./ && -f "$argv" && -x "$argv" ]]; then
+            break
+        fi
 
         # Read typescript from disk
-        local typescript=$(cat "$SCRIPT")
+        local typescript=$(cat $TYPESCRIPT)
 
         # Remove script's own output (if this is user's first command)
         typescript=$(echo "$typescript" | sed '1{/^Script started on .*/d}')
@@ -71,9 +78,9 @@ function _help50() {
         typescript=$(echo "$typescript" | col -bp)
 
         # Try to get help
-        for helper in "$HELPERS"/*; do
-            if [[ -f "$helper" && -x "$helper" ]]; then
-                local help=$(. $helper <<< "$typescript")
+        for helper in $HELPERS/*; do
+            if [[ -f $helper && -x $helper ]]; then
+                local help=$($helper <<< "$typescript")
                 if [[ -n "$help" ]]; then
                     break
                 fi
@@ -82,63 +89,23 @@ function _help50() {
         if [[ -n "$help" ]]; then # If helpful
             _helpful "$help"
         elif [[ $status -ne 0 ]]; then # If helpless
-            _helpless "$text"
+            _helpless "$typescript"
         fi
     fi
 
     # Truncate typescript
-    truncate -s 0 "$SCRIPT"
+    truncate -s 0 "$TYPESCRIPT"
 }
 
-function _search() {
-
-    # In $1 is path to find
-    if [[ $# -ne 1 ]]; then
-        return
-    fi
-
-    # Find any $1 in descendants
-    paths=$(find $(pwd) -name "$1" 2> /dev/null)
-    if [[ -z "$paths" ]]; then
-
-        # Find any $1 in ancestors
-        local dir="$(dirname "$(pwd)")"
-        while [[ "$dir" != "/" ]]; do
-            paths=$(find "$dir" -maxdepth 1 -name "$1")
-            if [[ -z "$paths" ]]; then
-                dir=$(dirname "$dir")
-            else
-                break
-            fi
-        done
-        if [[ -z "$paths" ]]; then
-
-            # Find any $1 relative to `cd`
-            pushd "$(cd && pwd)" > /dev/null
-            paths=$(find $(pwd) -name "$1" 2> /dev/null)
-            popd > /dev/null
-        fi
-    fi
-
-    # Count paths
-    count=$(echo "$paths" | grep -c .)
-
-    # If just one
-    if [[ "$count" -eq 1 ]]; then
-
-        # Resolve absolute path to relative path
-        realpath --relative-to=. "$(dirname "$paths")"
-    fi
-}
-
+# Default helpers
 if ! type _helpful >/dev/null 2>&1; then
     function _helpful() {
-        echo "$1"
+        local output=$(_ansi "$1")
+        echo -e "\033[7m${output}\033[27m" # Reverse video
     }
 fi
-
 if ! type _helpless >/dev/null 2>&1; then
-    function _helpless() { :; }
+    function _helpless() { :; } # Silent
 fi
 
 export PROMPT_COMMAND="_help50${PROMPT_COMMAND:+; $PROMPT_COMMAND}"

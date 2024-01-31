@@ -1,5 +1,7 @@
 #!/bin/bash
 
+. /opt/cs50/lib/cli
+
 output=$(cat)
 
 regex="AttributeError: module 'cs50' has no attribute '(get_(float|int|string)|SQL)'$"
