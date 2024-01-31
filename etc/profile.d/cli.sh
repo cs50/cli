@@ -25,7 +25,6 @@ if [ "$(whoami)" != "root" ]; then
     alias mv="mv -i"
     alias pip="pip --no-cache-dir"
     alias python="python -q"
-    alias R="R --vanilla"
     alias rm="rm -i"
     alias sudo="sudo " # Trailing space enables elevated command to be an alias
 
@@ -41,7 +40,7 @@ if [ "$(whoami)" != "root" ]; then
     export PROMPT_COMMAND='history -a' # Store Bash History Immediately
 
     # Java
-    export JAVA_HOME="/opt/jdk-21.0.1"
+    export JAVA_HOME="/opt/jdk"
 
     # Make
     export CC="clang"
