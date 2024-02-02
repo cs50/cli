@@ -12,12 +12,13 @@ if [[ "$output" =~ $regex ]]; then
     fi
 fi
 
-regex="bash: \./(.*): Is a directory"
+regex="bash: \./([^:]*): Is a directory"
 if [[ "$output" =~ $regex ]]; then
     echo "Cannot execute a directory. Did you mean to \`cd\` into \`${BASH_REMATCH[1]}\` instead?"
+    exit
 fi
 
-regex="bash: (./.*\.py): Permission denied"
+regex="bash: (\./.*\.py): Permission denied"
 if [[ "$output" =~ $regex ]]; then
 
     # If file exists
@@ -27,7 +28,7 @@ if [[ "$output" =~ $regex ]]; then
     fi
 fi
 
-regex="bash: /.(.*): No such file or directory"
+regex="bash: /\.([^:]*): No such file or directory"
 if [[ "$output" =~ $regex ]]; then
 
     # If file exists
