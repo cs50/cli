@@ -18,6 +18,16 @@ if [[ "$output" =~ $regex ]]; then
     exit
 fi
 
+regex="bash: \./(([^:]*)\.c): Permission denied"
+if [[ "$output" =~ $regex ]]; then
+
+    # If file exists
+    if [[ -f "${BASH_REMATCH[1]}" ]]; then
+        echo "Did you mean to run \`make ${BASH_REMATCH[2]}\` and then \`./${BASH_REMATCH[2]}\`?"
+        exit
+    fi
+fi
+
 regex="bash: (\./.*\.py): Permission denied"
 if [[ "$output" =~ $regex ]]; then
 
