@@ -74,6 +74,7 @@ RUN cd /tmp && \
 
 # Install Ruby 3.3.x
 # https://www.ruby-lang.org/en/downloads/
+# https://bugs.ruby-lang.org/issues/20085#note-5
 RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
         autoconf \
@@ -85,7 +86,7 @@ RUN apt update && \
     tar xzf ruby-3.3.0.tar.gz && \
     rm --force ruby-3.3.0.tar.gz && \
     cd ruby-3.3.0 && \
-    CFLAGS="-Os" ./configure --disable-install-doc --enable-load-relative && \
+    ASFLAGS=-mbranch-protection=pac-ret CFLAGS="-Os" ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
