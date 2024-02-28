@@ -29,7 +29,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 21.6.1
+    n 21.6.2
 
 
 # Install Node.js packages
@@ -57,23 +57,24 @@ RUN apt update && \
 # Install Python 3.11.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl --remote-name https://www.python.org/ftp/python/3.11.7/Python-3.11.7.tgz && \
-    tar xzf Python-3.11.7.tgz && \
-    rm --force Python-3.11.7.tgz && \
-    cd Python-3.11.7 && \
+    curl --remote-name https://www.python.org/ftp/python/3.11.8/Python-3.11.8.tgz && \
+    tar xzf Python-3.11.8.tgz && \
+    rm --force Python-3.11.8.tgz && \
+    cd Python-3.11.8 && \
     CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.11.7 && \
+    rm --force --recursive Python-3.11.8 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade pip
 
 
-# Install Ruby 3.2.x
+# Install Ruby 3.3.x
 # https://www.ruby-lang.org/en/downloads/
+# https://bugs.ruby-lang.org/issues/20085#note-5
 RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
         autoconf \
@@ -81,19 +82,20 @@ RUN apt update && \
     apt clean && \
     rm --force --recursive /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz --output ruby-3.2.2.tar.gz && \
-    tar xzf ruby-3.2.2.tar.gz && \
-    rm --force ruby-3.2.2.tar.gz && \
-    cd ruby-3.2.2 && \
-    CFLAGS="-Os" ./configure --disable-install-doc --enable-load-relative && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.0.tar.gz --output ruby-3.3.0.tar.gz && \
+    tar xzf ruby-3.3.0.tar.gz && \
+    rm --force ruby-3.3.0.tar.gz && \
+    cd ruby-3.3.0 && \
+    ASFLAGS=-mbranch-protection=pac-ret CFLAGS="-Os" ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.2.2
+    rm --force --recursive ruby-3.3.0
 
 
 # Install Ruby packages
-RUN gem install --no-document \
+RUN echo "gem: --no-document" > /etc/gemrc && \
+    gem install \
         jekyll \
         minitest `# So that Bundler needn't install` \
         pygments.rb \
