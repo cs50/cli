@@ -14,7 +14,7 @@ RUN apt update && \
 # Install Java 21.x
 # http://jdk.java.net/21/
 RUN cd /tmp && \
-    if [ $(uname -m) = "x86_64" ]; then ARCH="x64"; else ARCH="aarch64"; fi && \
+    if [ $(uname -m) = "arm64" ]; then ARCH="aarch64"; else ARCH="x64"; fi && \
     curl --remote-name https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-${ARCH}_bin.tar.gz && \
     tar xzf openjdk-21.0.2_linux-${ARCH}_bin.tar.gz && \
     rm --force openjdk-21.0.2_linux-${ARCH}_bin.tar.gz && \
@@ -86,7 +86,8 @@ RUN apt update && \
     tar xzf ruby-3.3.0.tar.gz && \
     rm --force ruby-3.3.0.tar.gz && \
     cd ruby-3.3.0 && \
-    ASFLAGS=-mbranch-protection=pac-ret CFLAGS="-Os" ./configure --disable-install-doc --enable-load-relative && \
+    if [ $(uname -m) = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
+    ASFLAGS=${ASFLAGS} CFLAGS=-Os ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
