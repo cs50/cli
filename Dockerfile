@@ -180,6 +180,7 @@ RUN apt update && \
         less \
         liblapack3 `# For R` \
         libmagic-dev `# For style50` \
+        libncurses-dev \
         libpango-1.0-0 libharfbuzz0b libpangoft2-1.0-0 `# For render50` \
         libpangocairo-1.0-0 `# For R` \
         libtiff5 `# For R` \
