@@ -1,6 +1,10 @@
 # Build stage
 FROM ubuntu:22.04 as builder
+
+
+# Build-time variables
 ARG DEBIAN_FRONTEND=noninteractive
+ARG BUILDARCH
 
 
 # Stage-wide dependencies
@@ -11,14 +15,14 @@ RUN apt update && \
         curl
 
 
-# Install Java 21.x
-# http://jdk.java.net/21/
+# Install Java 22.x
+# http://jdk.java.net/22/
 RUN cd /tmp && \
-    if [ $(uname -m) = "arm64" ]; then ARCH="aarch64"; else ARCH="x64"; fi && \
-    curl --remote-name https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-${ARCH}_bin.tar.gz && \
-    tar xzf openjdk-21.0.2_linux-${ARCH}_bin.tar.gz && \
-    rm --force openjdk-21.0.2_linux-${ARCH}_bin.tar.gz && \
-    mv jdk-21.0.2 /opt/jdk && \
+    if [ "$BUILDARCH" = "arm64" ]; then ARCH="aarch64"; else ARCH="x64"; fi && \
+    curl --remote-name https://download.java.net/java/GA/jdk22/830ec9fcccef480bb3e73fb7ecafe059/36/GPL/openjdk-22_linux-${ARCH}_bin.tar.gz && \
+    tar xzf openjdk-22_linux-${ARCH}_bin.tar.gz && \
+    rm --force openjdk-22_linux-${ARCH}_bin.tar.gz && \
+    mv jdk-22 /opt/jdk && \
     mkdir --parent /opt/bin && \
     ln --symbolic /opt/jdk/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
@@ -86,7 +90,7 @@ RUN apt update && \
     tar xzf ruby-3.3.0.tar.gz && \
     rm --force ruby-3.3.0.tar.gz && \
     cd ruby-3.3.0 && \
-    if [ $(uname -m) = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
+    if [ "$BUILDARCH" = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
     ASFLAGS=${ASFLAGS} CFLAGS=-Os ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \

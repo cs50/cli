@@ -25,6 +25,7 @@ jobs:
         with:
           build-args: |
             VCS_REF=${{ github.sha }}
+            BUILDARG=amd64
           load: true
           platforms: linux/amd64
           tags: cs50/cli:amd64
@@ -41,6 +42,7 @@ jobs:
         with:
           build-args: |
             VCS_REF=${{ github.sha }}
+            BUILDARG=arm64
           load: true
           platforms: linux/arm64
           tags: cs50/cli:arm64
