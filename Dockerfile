@@ -236,6 +236,7 @@ RUN apt update && \
 RUN pip3 install --no-cache-dir \
         autopep8 \
         black \
+        cachelib \
         "check50<4" \
         cli50 \
         compare50 \
