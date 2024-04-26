@@ -232,6 +232,13 @@ RUN apt update && \
     groupadd docker
 
 
+# Manually install libc6_2.38
+RUN if [ "$BUILDARCH" = "arm64" ]; then ARCH="arm64"; else ARCH="amd64"; fi && \
+    wget http://ftp.us.debian.org/debian/pool/main/g/glibc/libc6_2.38-6_${ARCH}.deb && \
+    dpkg --auto-deconfigure -i libc6_2.38-6_${ARCH}.deb ; exit 0 && \
+    rm libc6_2.38-6_${ARCH}.deb
+
+
 # Install Python packages
 RUN pip3 install --no-cache-dir \
         autopep8 \
