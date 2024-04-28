@@ -36,7 +36,6 @@ jobs:
           docker push cs50/cli:amd64
 
   build-arm64:
-    needs: build-amd64
     runs-on: ubuntu-latest-64-cores-arm
     steps:
       - name: Install Docker
@@ -87,6 +86,10 @@ jobs:
         run: |
           docker push cs50/cli:arm64
 
+  finalize:
+    needs: [build-amd64, build-arm64]
+    runs-on: ubuntu-latest
+    steps:
       - name: Create multi-arch manifest and push to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
