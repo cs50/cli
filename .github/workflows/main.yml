@@ -44,7 +44,7 @@ jobs:
   build-arm64:
     runs-on: ubuntu-latest-64-cores-arm
     steps:
-      - name: Install Docker
+      - name: Install Docker (remove once Docker is pre-installed on arm64 runners)
         run: |
           export DEBIAN_FRONTEND=noninteractive
           sudo apt update
@@ -71,7 +71,7 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Install Python
+      - name: Install Python (replace with setup-python once available on arm64 runners)
         run: |
           sudo apt install -y python3
 
