@@ -3,7 +3,9 @@ if [ "$(whoami)" == "root" ]; then
     return
 fi
 
-. /opt/cs50/lib/cli
+# TEMP
+#. /opt/cs50/lib/cli
+. opt/cs50/lib/cli
 
 # Directory with helpers
 HELPERS="/opt/cs50/lib/help50"
@@ -54,7 +56,7 @@ function _help50() {
 
     # If last command erred (and is not ctl-z)
     # https://tldp.org/LDP/abs/html/exitcodes.html
-    if [[ $status -ne 0 && $status -ne 148 && ]]; then
+    if [[ $status -ne 0 && $status -ne 148 ]]; then
 
         # Ignore ./* if executable file
         if [[ "$argv" =~ ^\./ && -f "$argv" && -x "$argv" ]]; then
@@ -123,9 +125,10 @@ if ! type _helpless >/dev/null 2>&1; then
     function _helpless() { :; } # Silent
 fi
 
-if [[ ! "$PROMPT_COMMAND" =~ ^_help50; ]]; then
-    export PROMPT_COMMAND="_help50;${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
-fi
+#if [[ ! "$PROMPT_COMMAND" =~ ^_help50\; ]]; then
+    #export PROMPT_COMMAND="_help50${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+#fi
+export PROMPT_COMMAND=_help50
 
 # TODO:
 # help on, off
