@@ -39,7 +39,8 @@ function _help50() {
         # Use this shell's PID as typescript's name, exporting so that subshells know script is already running
         export TYPESCRIPT=/tmp/help50.$$.typescript
 
-        # Make a typescript of everything displayed in terminal (without using exec, which breaks sudo);
+        # Make a typescript of everything displayed in terminal,
+        # without using exec, which causes sudo to hang, or tee, which triggers "Output is not a terminal" in vim;
         # --append avoids `bash: warning: command substitution: ignored null byte in input`;
         # --quiet suppresses `Script started...`
         script --append --command "bash --login" --flush --quiet $TYPESCRIPT
@@ -51,9 +52,9 @@ function _help50() {
         exit
     fi
 
-    # If last command erred (and not ctl-z)
+    # If last command erred (and is not ctl-z)
     # https://tldp.org/LDP/abs/html/exitcodes.html
-    if [[ $status -ne 0 && $status -ne 148 && ! "$command" =~ ^\./ ]]; then
+    if [[ $status -ne 0 && $status -ne 148 && ]]; then
 
         # Ignore ./* if executable file
         if [[ "$argv" =~ ^\./ && -f "$argv" && -x "$argv" ]]; then
@@ -122,4 +123,9 @@ if ! type _helpless >/dev/null 2>&1; then
     function _helpless() { :; } # Silent
 fi
 
-export PROMPT_COMMAND="_help50${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+if [[ ! "$PROMPT_COMMAND" =~ ^_help50; ]]; then
+    export PROMPT_COMMAND="_help50;${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
+fi
+
+# TODO:
+# help on, off
