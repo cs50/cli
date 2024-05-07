@@ -1,18 +1,13 @@
-# Helpers
-# TODO
-#. /opt/cs50/lib/help50
-#. opt/cs50/lib/cli
-
+# If not started
 if [[ -z "$HELP50" ]]; then
     return
 fi
 
-echo HEREEEEEE
-
 # Directory with helpers
-# TODO
-#HELPERS="/opt/cs50/lib/help50"
-HELPERS="/mnt/opt/cs50/lib/help50"
+HELPERS="/opt/cs50/lib/help50"
+
+# Library
+. /opt/cs50/lib/cli
 
 # Disable yes, lest users type it at prompt
 if command -v yes &> /dev/null; then
@@ -96,7 +91,7 @@ function _help50() {
     fi
 
     # Truncate typescript
-    truncate -s 0 "/tmp/help50.$HELP50.typescript"
+    truncate -s 0 /tmp/help50.$HELP50.typescript
 }
 
 # Default helpers
@@ -107,10 +102,10 @@ if ! type _helpful >/dev/null 2>&1; then
     }
 fi
 if ! type _helpless >/dev/null 2>&1; then
-    function _helpless() { :; } # Silent
+    #function _helpless() { :; } # Silent
+    function _helpless() {
+        echo TODO
+    }
 fi
 
-#if [[ ! "$PROMPT_COMMAND" =~ ^_help50\; ]]; then
-    #export PROMPT_COMMAND="_help50${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
-#fi
 export PROMPT_COMMAND=_help50
