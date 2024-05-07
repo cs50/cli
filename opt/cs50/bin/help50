@@ -1,14 +1,85 @@
+#!/bin/bash
+
 # If root
-if [ "$(whoami)" == "root" ]; then
-    return
+if [[ `id -u` -eq 0 ]]; then
+    exit 1
 fi
 
-# TEMP
-#. /opt/cs50/lib/cli
+function _start() {
+
+    # If already helping
+    if [[ -n "$HELP50" ]]; then
+        exit 0
+    fi
+
+    # PID of shell to help
+    export HELP50="$PPID"
+
+    # Start `script` in background
+    set -o monitor
+    script --append --command "bash --login && exit 1" --flush --quiet --return "/tmp/help50.$HELP50.typescript" &
+
+    # Remember PID of `script`, in case user wants to turn off
+    echo $! > "/tmp/help50.$HELP50.pid"
+
+    # Foreground `script`, without echoing command
+    fg > /dev/null
+
+    # If `script` exited on its own, as via ctl-d or `logout`, then kill parent shell
+    if [[ $? -ne 0 ]]; then
+        kill -SIGHUP "$PPID"
+    fi
+}
+
+function _stop() {
+
+    # If not helping
+    if [[ -z "$HELP50" ]]; then
+        exit 0
+    fi
+
+    # Kill `script`
+    pid=$(cat "/tmp/help50.$HELP50.pid")
+    kill -SIGTERM "$pid"
+
+    # No longer helping
+    rm --force "/tmp/help50.$HELP50.pid"
+    unset HELP50
+}
+
+# Parse argument
+if [[ "$1" == "off" ]]; then
+    _stop
+elif [[ "$1" == "on" ]]; then
+    _start
+elif [[ "$1" == "status" ]]; then
+    if [[ -n "$HELP50" ]]; then
+        echo "Running"
+        exit 0
+    else
+        echo "Not running"
+        exit 1
+    fi
+else
+    echo "Usage: $0 [off|on|status]"
+    exit 1
+fi
+
+exit 0
+
+
+
+
+
+# Helpers
+# TODO
+#. /opt/cs50/lib/help50
 . opt/cs50/lib/cli
 
 # Directory with helpers
-HELPERS="/opt/cs50/lib/help50"
+# TODO
+#HELPERS="/opt/cs50/lib/help50"
+HELPERS="/mnt/opt/cs50/lib/help50"
 
 # Disable yes, lest users type it at prompt
 if command -v yes &> /dev/null; then
