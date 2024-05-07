@@ -1,84 +1,13 @@
-#!/bin/bash
-
-# If root
-if [[ `id -u` -eq 0 ]]; then
-    exit 1
-fi
-
-function _off() {
-
-    # If not helping
-    if [[ -z "$HELP50" ]]; then
-        exit 0
-    fi
-
-    # Kill `script`
-    pid=$(cat "/tmp/help50.$HELP50.pid")
-    kill -SIGTERM "$pid"
-
-    # No longer helping
-    rm --force /tmp/help50.$HELP50.*
-    unset HELP50
-}
-
-function _on() {
-
-    # If already helping
-    if [[ -n "$HELP50" ]]; then
-        exit 0
-    fi
-
-    # PID of shell to help
-    export HELP50="$PPID"
-
-    # Start `script` in background
-    set -o monitor
-    script --append --command "bash --login && exit 1" --flush --quiet --return "/tmp/help50.$HELP50.typescript" &
-
-    # Remember PID of `script`, in case user wants to turn off
-    echo $! > "/tmp/help50.$HELP50.pid"
-
-    # Foreground `script`, without echoing command
-    fg > /dev/null
-    status=$?
-
-    # No longer helping
-    rm --force /tmp/help50.$HELP50.*
-
-    # If `script` was killed, in which case `exit 1` above won't execute
-    if [[ $status -ne 1 ]]; then
-
-        # Without this, prompt ends up below and to right of "Session terminated, killing shell... ...killed."
-        echo -e "\r"
-
-    # Else if `script` exited on its own, as via ctl-d or `logout`
-    else
-
-        # Kill parent shell, since user presumably wants to exit
-        kill -SIGHUP "$PPID"
-    fi
-}
-
-# Parse argument
-if [[ "$1" == "off" ]]; then
-    _off
-elif [[ "$1" == "on" ]]; then
-    _on
-else
-    echo "Usage: $0 [off|on]"
-    exit 1
-fi
-
-exit 0
-
-
-
-
-
 # Helpers
 # TODO
 #. /opt/cs50/lib/help50
-. opt/cs50/lib/cli
+#. opt/cs50/lib/cli
+
+if [[ -z "$HELP50" ]]; then
+    return
+fi
+
+echo HEREEEEEE
 
 # Directory with helpers
 # TODO
@@ -110,25 +39,6 @@ function _help50() {
     local argv0=$(HISTFILE=$histfile history 1 | cut -c 8- | awk '{print $1}')
     rm --force $histfile
 
-    # If no typescript yet
-    if [[ -z $TYPESCRIPT ]]; then
-
-        # Use this shell's PID as typescript's name, exporting so that subshells know script is already running
-        export TYPESCRIPT=/tmp/help50.$$.typescript
-
-        # Make a typescript of everything displayed in terminal,
-        # without using exec, which causes sudo to hang, or tee, which triggers "Output is not a terminal" in vim;
-        # --append avoids `bash: warning: command substitution: ignored null byte in input`;
-        # --quiet suppresses `Script started...`
-        script --append --command "bash --login" --flush --quiet $TYPESCRIPT
-
-        # Remove typescript before exiting this shell
-        rm --force $TYPESCRIPT
-
-        # Now exit this shell too
-        exit
-    fi
-
     # If last command erred (and is not ctl-z)
     # https://tldp.org/LDP/abs/html/exitcodes.html
     if [[ $status -ne 0 && $status -ne 148 ]]; then
@@ -139,7 +49,7 @@ function _help50() {
         fi
 
         # Read typescript from disk
-        local typescript=$(cat $TYPESCRIPT)
+        local typescript=$(cat /tmp/help50.$HELP50.typescript)
 
         # Remove script's own output (if this is user's first command)
         typescript=$(echo "$typescript" | sed '1{/^Script started on .*/d}')
@@ -186,7 +96,7 @@ function _help50() {
     fi
 
     # Truncate typescript
-    truncate -s 0 "$TYPESCRIPT"
+    truncate -s 0 "/tmp/help50.$HELP50.typescript"
 }
 
 # Default helpers
@@ -204,6 +114,3 @@ fi
     #export PROMPT_COMMAND="_help50${PROMPT_COMMAND:+; $PROMPT_COMMAND}"
 #fi
 export PROMPT_COMMAND=_help50
-
-# TODO:
-# help on, off
