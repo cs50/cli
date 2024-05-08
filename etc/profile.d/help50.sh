@@ -34,9 +34,9 @@ function _help50() {
     local argv0=$(HISTFILE=$histfile history 1 | cut -c 8- | awk '{print $1}')
     rm --force $histfile
 
-    # If last command erred (and is not ctl-z)
+    # If last command erred (and is not ctl-c or ctl-z)
     # https://tldp.org/LDP/abs/html/exitcodes.html
-    if [[ $status -ne 0 && $status -ne 148 ]]; then
+    if [[ $status -ne 0 && $status -ne 130 && $status -ne 148 ]]; then
 
         # Ignore ./* if executable file
         if [[ "$argv" =~ ^\./ && -f "$argv" && -x "$argv" ]]; then
