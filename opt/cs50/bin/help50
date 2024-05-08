@@ -6,11 +6,11 @@ if [[ `id -u` -eq 0 ]]; then
 fi
 
 function _disable() {
-    touch /var/tmp/help50.lock
+    touch /tmp/help50.lock
 }
 
 function _is-enabled() {
-    if [[ -f /var/tmp/help50.lock ]]; then
+    if [[ -f /tmp/help50.lock ]]; then
         echo disabled
         return 1
     else
@@ -20,7 +20,7 @@ function _is-enabled() {
 }
 
 function _enable() {
-    rm --force /var/tmp/help50.lock
+    rm --force /tmp/help50.lock
 }
 
 function _start() {
@@ -36,46 +36,31 @@ function _start() {
     # Start `script` in background, using ; instead of && for command,
     # else if user logs out (as via ctl-d) after a non-0 command, bash exits with 127
     set -o monitor
-    HELP50=$HELP50 script --command "bash --login ; exit 1" --flush --quiet --return /var/tmp/help50.$HELP50.typescript &
-    local pid=$!
-
-    # Remember PID of `script`, in case user wants to turn off
-    echo $pid > /var/tmp/help50.$HELP50.pid
-
-    # Foreground `script`, without echoing command
-    #fg > /dev/null
-    wait
+    HELP50=$HELP50 script --append --command "bash --login ; exit 1" --flush --quiet --return /tmp/help50.$HELP50.typescript
     local status=$?
 
     # No longer helping
-    rm --force /var/tmp/help50.$HELP50.*
-
-    # Temporary
-    if [[ $status -eq 150 ]]; then
-        echo "[$status]"
-        echo "Sorry, something's wrong! Please let sysadmins@cs50.harvard.edu know."
+    rm --force /tmp/help50.$HELP50.*
 
     # If `script` was killed, in which case `exit 1` above won't execute
-    elif [[ $status -ne 1 ]]; then
+    if [[ $status -ne 1 ]]; then
 
         # Without this, prompt ends up below and to right of "Session terminated, killing shell... ...killed."
         echo -e "\r"
-        echo "[[$status]]"
 
     # Else if `script` exited on its own, as via ctl-d or `logout`
     else
 
         # Kill parent shell, since user presumably wants to exit
-        echo "[[[$status]]]"
         kill -SIGHUP $HELP50
     fi
 }
 
 function _stop() {
-    for pid in /var/tmp/help50.*.pid
-    do
-        kill -SIGTERM $(cat "$pid")
-    done
+    local ppid=$(ps -o ppid= -p $$)  # bash --login
+    local gppid=$(ps -o ppid= -p $ppid)  # sh -c
+    local ggppid=$(ps -o ppid= -p $gppid)  # script
+    kill -SIGTERM $ggppid
 }
 
 # Parse argument
