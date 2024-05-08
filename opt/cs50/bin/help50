@@ -57,9 +57,9 @@ function _start() {
 }
 
 function _stop() {
-    local ppid=$(ps -o ppid= -p $$)  # bash --login
-    local gppid=$(ps -o ppid= -p $ppid)  # sh -c
-    local ggppid=$(ps -o ppid= -p $gppid)  # script
+    local ppid=$(ps -o ppid= -p $$) # bash --login
+    local gppid=$(ps -o ppid= -p $ppid) # sh -c
+    local ggppid=$(ps -o ppid= -p $gppid) # script
     kill -SIGTERM $ggppid
 }
 

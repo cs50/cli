@@ -98,14 +98,11 @@ function _help50() {
 if ! type _helpful >/dev/null 2>&1; then
     function _helpful() {
         local output=$(_ansi "$1")
-        echo -e "\033[7m${output}\033[27m" # Reverse video
+        echo -e "\033[33m${output}\033[39m" # Yellow
     }
 fi
 if ! type _helpless >/dev/null 2>&1; then
-    #function _helpless() { :; } # Silent
-    function _helpless() {
-        echo TODO
-    }
+    function _helpless() { :; } # Silent
 fi
 
 export PROMPT_COMMAND=_help50
