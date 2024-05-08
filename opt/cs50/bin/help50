@@ -6,11 +6,11 @@ if [[ `id -u` -eq 0 ]]; then
 fi
 
 function _disable() {
-    touch /tmp/help50.lock
+    touch /var/tmp/help50.lock
 }
 
 function _is-enabled() {
-    if [[ -f /tmp/help50.lock ]]; then
+    if [[ -f /var/tmp/help50.lock ]]; then
         echo disabled
         return 1
     else
@@ -20,7 +20,7 @@ function _is-enabled() {
 }
 
 function _enable() {
-    rm --force /tmp/help50.lock
+    rm --force /var/tmp/help50.lock
 }
 
 function _start() {
@@ -36,18 +36,19 @@ function _start() {
     # Start `script` in background, using ; instead of && for command,
     # else if user logs out (as via ctl-d) after a non-0 command, bash exits with 127
     set -o monitor
-    HELP50=$HELP50 script --command "bash --login ; exit 1" --flush --quiet --return /tmp/help50.$HELP50.typescript &
+    HELP50=$HELP50 script --command "bash --login ; exit 1" --flush --quiet --return /var/tmp/help50.$HELP50.typescript &
+    local pid=$!
 
     # Remember PID of `script`, in case user wants to turn off
-    echo $! > /tmp/help50.$HELP50.pid
-    ps aux
+    echo $pid > /var/tmp/help50.$HELP50.pid
 
     # Foreground `script`, without echoing command
-    fg > /dev/null
-    status=$?
+    #fg > /dev/null
+    wait
+    local status=$?
 
     # No longer helping
-    rm --force /tmp/help50.$HELP50.*
+    rm --force /var/tmp/help50.$HELP50.*
 
     # Temporary
     if [[ $status -eq 150 ]]; then
@@ -71,7 +72,7 @@ function _start() {
 }
 
 function _stop() {
-    for pid in /tmp/help50.*.pid
+    for pid in /var/tmp/help50.*.pid
     do
         kill -SIGTERM $(cat "$pid")
     done
