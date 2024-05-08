@@ -19,15 +19,20 @@ function _ansi() {
     echo "$input" | sed "s/\`\\([^\`]*\\)\`/${bold}\\1${normal}/g"
 }
 
-function _search() {
+function _find() {
 
-    # In $1 is path to find
-    if [[ $# -ne 1 ]]; then
+    # Usage
+    if [[ $# -eq 1 ]]; then # Files AND directories
+        local path="$1"
+    elif [[ $# -eq 3 && "$1" == "-type" && "$2" =~ ^[df]$ ]]; then # Files OR directories
+        local type="$1 $2"
+        local path="$3"
+    else
         return
     fi
 
     # Find any $1 in descendants of $WORKDIR
-    paths=$(find "$WORKDIR" -name "$1" -printf "%T+ %p\n" | sort -nr | awk '{print $2}' 2> /dev/null)
+    paths=$(find "$WORKDIR" -name "$path" -printf "%T+ %p\n" $type | sort -nr | awk '{print $2}' 2> /dev/null)
 
     # Count paths
     local count=$(echo "$paths" | grep -c .)

@@ -28,7 +28,7 @@ if [[ "$output" =~ $regex ]]; then
 
     # If .py is in $PWD
     if [[ -n "$path" && "$path" == $(basename "$path") ]]; then
-        dir=$(_search "$path")
+        dir=$(_find -type f "$path")
         echo -n "There isn't a file called \`$path\` in your current directory."
         if [[ ! -z "$dir" ]]; then
             echo " Did you mean to \`cd $dir\` first?"

@@ -9,7 +9,7 @@ if [[ "$output" =~ $regex ]]; then
 
     # If target is a directory
     if [[ -d "${BASH_REMATCH[1]}" ]]; then
-        echo "Cannot run \`make\` on a directory. Did you mean to \`cd ${BASH_REMATCH[1]}\` first?"
+        echo "Cannot run \`make\` on a directory. Did you mean to run \`cd ${BASH_REMATCH[1]}\`?"
         exit
     fi
 
@@ -17,7 +17,7 @@ if [[ "$output" =~ $regex ]]; then
     if [[ "${BASH_REMATCH[1]}" == *?.c ]]; then
         base="${BASH_REMATCH[1]%.c}"
         if [[ -n "$base" && ! -d "$base" ]]; then
-            echo "Did you mean to \`make ${base}\`?"
+            echo "Did you mean to run \`make ${base}\`?"
             exit
         fi
     fi
@@ -32,10 +32,10 @@ if [[ "$output" =~ $regex ]]; then
     if [[ ! -f "$file" ]]; then
 
         # Search recursively for .c file
-        dir=$(_search "$file")
+        dir=$(_find -type f "$file")
         echo -n "There isn't a file called \`$file\` in your current directory."
         if [[ ! -z "$dir" ]]; then
-            echo " Did you mean to \`cd $dir\` first?"
+            echo " Did you mean to run \`cd $dir\` first?"
         else
             echo
         fi

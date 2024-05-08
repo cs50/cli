@@ -9,21 +9,6 @@ HELPERS="/opt/cs50/lib/help50"
 # Library
 . /opt/cs50/lib/cli
 
-# Disable yes, lest users type it at prompt
-function yes() {
-    if [[ -t 0 ]]; then
-        _alert "That was a rhetorical question. :)"
-    else
-        command yes
-    fi
-}
-alias y=yes
-
-# Don't override `n`, though
-function no() {
-    _alert "That was a rhetorical question. :)"
-}
-
 # Ignore duplicates (but not commands that begin with spaces)
 export HISTCONTROL="ignoredups"
 
@@ -37,6 +22,11 @@ function _help50() {
     HISTFILE=$histfile history -a
     local argv0=$(HISTFILE=$histfile history 1 | cut -c 8- | awk '{print $1}')
     rm --force $histfile
+
+    # Remove aliases
+    for name in n no y yes; do
+        unalias $name 2> /dev/null
+    done
 
     # If last command erred (and is not ctl-c or ctl-z)
     # https://tldp.org/LDP/abs/html/exitcodes.html
@@ -98,9 +88,20 @@ function _help50() {
     truncate -s 0 /tmp/help50.$HELP50.typescript
 }
 
+function _question() {
+    _alert "That was a rhetorical question. :)"
+}
+
 # Default helpers
 if ! type _helpful >/dev/null 2>&1; then
     function _helpful() {
+
+        # Intercept accidental invocation of `yes` and `n`, which are actual programs
+        for name in n no y yes; do
+            alias $name=_question
+        done
+
+        # Output help
         local output=$(_ansi "$1")
         _alert "$output"
     }

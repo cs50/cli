@@ -13,6 +13,17 @@ if [[ "$output" =~ $regex ]]; then
     fi
 fi
 
+# mkdir foo && bar
+regex="bash: (.*): command not found"
+if [[ "$output" =~ $regex ]]; then
+
+    # If directory exists
+    if [[ -d "${BASH_REMATCH[1]}" ]]; then
+        echo "Did you mean to run \`cd ${BASH_REMATCH[1]}\`?"
+        exit
+    fi
+fi
+
 # mkdir foo && ./foo
 regex="bash: \./([^:]*): Is a directory"
 if [[ "$output" =~ $regex ]]; then
