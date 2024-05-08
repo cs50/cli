@@ -57,6 +57,13 @@ function _start() {
 }
 
 function _stop() {
+
+    # If not helping
+    if [[ -z "$HELP50" ]]; then
+        return 0
+    fi
+
+    # Kill grandparent process (i.e., `script` itself)
     local ppid=$(ps -o ppid= -p $$) # bash --login
     local gppid=$(ps -o ppid= -p $ppid) # sh -c
     local ggppid=$(ps -o ppid= -p $gppid) # script

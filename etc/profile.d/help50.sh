@@ -10,15 +10,19 @@ HELPERS="/opt/cs50/lib/help50"
 . /opt/cs50/lib/cli
 
 # Disable yes, lest users type it at prompt
-if command -v yes &> /dev/null; then
-    function yes() {
-        if [[ -t 0 ]]; then
-            :
-        else
-            command yes
-        fi
-    }
-fi
+function yes() {
+    if [[ -t 0 ]]; then
+        _alert "That was a rhetorical question. :)"
+    else
+        command yes
+    fi
+}
+alias y=yes
+
+# Don't override `n`, though
+function no() {
+    _alert "That was a rhetorical question. :)"
+}
 
 # Ignore duplicates (but not commands that begin with spaces)
 export HISTCONTROL="ignoredups"
@@ -98,7 +102,7 @@ function _help50() {
 if ! type _helpful >/dev/null 2>&1; then
     function _helpful() {
         local output=$(_ansi "$1")
-        echo -e "\033[33m${output}\033[39m" # Yellow
+        _alert "$output"
     }
 fi
 if ! type _helpless >/dev/null 2>&1; then

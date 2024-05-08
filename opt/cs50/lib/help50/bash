@@ -2,6 +2,7 @@
 
 output=$(cat)
 
+# touch foo.py && foo.py
 regex="bash: (.*\.py): command not found"
 if [[ "$output" =~ $regex ]]; then
 
@@ -12,12 +13,14 @@ if [[ "$output" =~ $regex ]]; then
     fi
 fi
 
+# mkdir foo && ./foo
 regex="bash: \./([^:]*): Is a directory"
 if [[ "$output" =~ $regex ]]; then
-    echo "Cannot execute a directory. Did you mean to \`cd\` into \`${BASH_REMATCH[1]}\` instead?"
+    echo "Cannot execute a directory. Did you mean to run \`cd ${BASH_REMATCH[1]}\`?"
     exit
 fi
 
+# touch foo.c && ./foo.c
 regex="bash: \./(([^:]*)\.c): Permission denied"
 if [[ "$output" =~ $regex ]]; then
 
@@ -28,7 +31,7 @@ if [[ "$output" =~ $regex ]]; then
     fi
 fi
 
-regex="bash: (\./.*\.py): Permission denied"
+regex="bash: \./(.*\.py): Permission denied"
 if [[ "$output" =~ $regex ]]; then
 
     # If file exists
@@ -38,6 +41,7 @@ if [[ "$output" =~ $regex ]]; then
     fi
 fi
 
+# touch foo && /.foo
 regex="bash: /\.([^:]*): No such file or directory"
 if [[ "$output" =~ $regex ]]; then
 
