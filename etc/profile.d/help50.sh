@@ -17,10 +17,10 @@ function _help50() {
     # Get exit status of last command
     local status=$?
 
-    # Get last command, independent of user's actual history
+    # Get last command line, independent of user's actual history
     histfile=/tmp/help50.$$.history
     HISTFILE=$histfile history -a
-    local argv0=$(HISTFILE=$histfile history 1 | cut -c 8- | awk '{print $1}')
+    local argv=$(HISTFILE=$histfile history 1 | cut -c 8-) # Could technically contain multiple commands, separated by ; or &&
     rm --force $histfile
 
     # Remove aliases
@@ -33,7 +33,8 @@ function _help50() {
     if [[ $status -ne 0 && $status -ne 130 && $status -ne 148 ]]; then
 
         # Ignore ./* if executable file
-        if [[ "$argv" =~ ^\./ && -f "$argv" && -x "$argv" ]]; then
+        local argv0=$(echo "$argv" | awk '{print $1}') # Assume for simplicity it's just a single command
+        if [[ "$argv0" =~ ^\./ && -f "$argv0" && -x "$argv0" ]]; then
             break
         fi
 

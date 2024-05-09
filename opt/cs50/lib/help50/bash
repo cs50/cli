@@ -17,6 +17,12 @@ fi
 regex="bash: (.*): command not found"
 if [[ "$output" =~ $regex ]]; then
 
+    # If typo
+    if [[ "${BASH_REMATCH[1]}" == "1s" ]]; then
+        echo "Did you mean to run \`ls\` (which starts with a lowercase L)?"
+        exit
+    fi
+
     # If directory exists
     if [[ -d "${BASH_REMATCH[1]}" ]]; then
         echo "Did you mean to run \`cd ${BASH_REMATCH[1]}\`?"
