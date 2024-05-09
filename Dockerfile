@@ -1,6 +1,10 @@
 # Build stage
 FROM ubuntu:22.04 as builder
+
+
+# Build-time variables
 ARG DEBIAN_FRONTEND=noninteractive
+ARG BUILDARCH
 
 
 # Stage-wide dependencies
@@ -11,14 +15,14 @@ RUN apt update && \
         curl
 
 
-# Install Java 21.x
-# http://jdk.java.net/21/
+# Install Java 22.x
+# http://jdk.java.net/22/
 RUN cd /tmp && \
-    if [ $(uname -m) = "x86_64" ]; then ARCH="x64"; else ARCH="aarch64"; fi && \
-    curl --remote-name https://download.java.net/java/GA/jdk21.0.2/f2283984656d49d69e91c558476027ac/13/GPL/openjdk-21.0.2_linux-${ARCH}_bin.tar.gz && \
-    tar xzf openjdk-21.0.2_linux-${ARCH}_bin.tar.gz && \
-    rm --force openjdk-21.0.2_linux-${ARCH}_bin.tar.gz && \
-    mv jdk-21.0.2 /opt/jdk && \
+    if [ "$BUILDARCH" = "arm64" ]; then ARCH="aarch64"; else ARCH="x64"; fi && \
+    curl --remote-name https://download.java.net/java/GA/jdk22/830ec9fcccef480bb3e73fb7ecafe059/36/GPL/openjdk-22_linux-${ARCH}_bin.tar.gz && \
+    tar xzf openjdk-22_linux-${ARCH}_bin.tar.gz && \
+    rm --force openjdk-22_linux-${ARCH}_bin.tar.gz && \
+    mv jdk-22 /opt/jdk && \
     mkdir --parent /opt/bin && \
     ln --symbolic /opt/jdk/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
@@ -29,7 +33,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 21.6.1
+    n 21.6.2
 
 
 # Install Node.js packages
@@ -54,26 +58,27 @@ RUN apt update && \
         make tk-dev unzip wget xz-utils zlib1g-dev
 
 
-# Install Python 3.11.x
+# Install Python 3.12.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl --remote-name https://www.python.org/ftp/python/3.11.7/Python-3.11.7.tgz && \
-    tar xzf Python-3.11.7.tgz && \
-    rm --force Python-3.11.7.tgz && \
-    cd Python-3.11.7 && \
+    curl --remote-name https://www.python.org/ftp/python/3.12.2/Python-3.12.2.tgz && \
+    tar xzf Python-3.12.2.tgz && \
+    rm --force Python-3.12.2.tgz && \
+    cd Python-3.12.2 && \
     CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.11.7 && \
+    rm --force --recursive Python-3.12.2 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade pip
 
 
-# Install Ruby 3.2.x
+# Install Ruby 3.3.x
 # https://www.ruby-lang.org/en/downloads/
+# https://bugs.ruby-lang.org/issues/20085#note-5
 RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
         autoconf \
@@ -81,19 +86,21 @@ RUN apt update && \
     apt clean && \
     rm --force --recursive /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.2/ruby-3.2.2.tar.gz --output ruby-3.2.2.tar.gz && \
-    tar xzf ruby-3.2.2.tar.gz && \
-    rm --force ruby-3.2.2.tar.gz && \
-    cd ruby-3.2.2 && \
-    CFLAGS="-Os" ./configure --disable-install-doc --enable-load-relative && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.0.tar.gz --output ruby-3.3.0.tar.gz && \
+    tar xzf ruby-3.3.0.tar.gz && \
+    rm --force ruby-3.3.0.tar.gz && \
+    cd ruby-3.3.0 && \
+    if [ "$BUILDARCH" = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
+    ASFLAGS=${ASFLAGS} CFLAGS=-Os ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.2.2
+    rm --force --recursive ruby-3.3.0
 
 
 # Install Ruby packages
-RUN gem install --no-document \
+RUN echo "gem: --no-document" > /etc/gemrc && \
+    gem install \
         jekyll \
         minitest `# So that Bundler needn't install` \
         pygments.rb \
@@ -179,6 +186,7 @@ RUN apt update && \
         less \
         liblapack3 `# For R` \
         libmagic-dev `# For style50` \
+        libncurses-dev \
         libpango-1.0-0 libharfbuzz0b libpangoft2-1.0-0 `# For render50` \
         libpangocairo-1.0-0 `# For R` \
         libtiff5 `# For R` \
@@ -230,6 +238,7 @@ RUN apt update && \
 RUN pip3 install --no-cache-dir \
         autopep8 \
         black \
+        cachelib \
         "check50<4" \
         cli50 \
         compare50 \
