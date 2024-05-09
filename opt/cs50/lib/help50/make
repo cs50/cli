@@ -9,7 +9,7 @@ if [[ "$output" =~ $regex ]]; then
 
     # If target is a directory
     if [[ -d "${BASH_REMATCH[1]}" ]]; then
-        echo "Cannot run \`make\` on a directory. Did you mean to run \`cd ${BASH_REMATCH[1]}\`?"
+        echo "Cannot run \`make\` on a directory. Did you mean to run \`cd ${BASH_REMATCH[1]}\` instead?"
         exit
     fi
 
@@ -17,7 +17,7 @@ if [[ "$output" =~ $regex ]]; then
     if [[ "${BASH_REMATCH[1]}" == *?.c ]]; then
         base="${BASH_REMATCH[1]%.c}"
         if [[ -n "$base" && ! -d "$base" ]]; then
-            echo "Did you mean to run \`make ${base}\`?"
+            echo "Did you mean to run \`make ${base}\` instead?"
             exit
         fi
     fi
@@ -28,7 +28,8 @@ regex="make: \*\*\* No rule to make target '(.*)'"
 if [[ "$output" =~ $regex ]]; then
 
     # If no .c file for target
-    file="${BASH_REMATCH[1]}.c"
+    file="${BASH_REMATCH[1]}"
+    [[ "$file" == *.c ]] || file="$file.c"
     if [[ ! -f "$file" ]]; then
 
         # Search recursively for .c file

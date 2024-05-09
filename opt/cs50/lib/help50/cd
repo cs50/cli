@@ -18,3 +18,10 @@ if [[ "$output" =~ $regex ]]; then
         echo
     fi
 fi
+
+# cd.. || cd.
+regex="bash: cd\.\.?: command not found"
+if [[ "$output" =~ $regex ]]; then
+    echo "Did you mean to run \`cd ..\` instead?"
+    exit
+fi

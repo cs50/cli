@@ -37,6 +37,14 @@ if [[ "$output" =~ $regex ]]; then
     exit
 fi
 
+# touch foo && cd foo
+regex="bash: cd: (.*): Not a directory"
+if [[ "$output" =~ $regex ]]; then
+    file="${BASH_REMATCH[1]}"
+    echo "Looks like you're trying to change directories, but \`$file\` isn't a directory."
+    exit
+fi
+
 # touch foo.c && ./foo.c
 regex="bash: \./(([^:]*)\.c): Permission denied"
 if [[ "$output" =~ $regex ]]; then
