@@ -61,8 +61,8 @@ if [ `id -u` -ne 0 ]; then
     # Valgrind
     export VALGRIND_OPTS="--memcheck:leak-check=full --memcheck:show-leak-kinds=all --memcheck:track-origins=yes"
 
-    # Start help50 if enabled
-    if help50 is-enabled > /dev/null; then
-        help50 start
-    fi
+    ## TODO: Start help50 if enabled
+    # if help50 is-enabled > /dev/null; then
+    #     help50 start
+    # fi
 fi
