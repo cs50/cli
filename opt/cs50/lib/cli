@@ -31,8 +31,8 @@ function _find() {
         return
     fi
 
-    # Find any $1 in descendants of $WORKDIR
-    paths=$(find "$WORKDIR" -name "$path" -printf "%T+ %p\n" $type | sort -nr | awk '{print $2}' 2> /dev/null)
+    # Find $path in descendants of $WORKDIR, excluding hidden directories
+    paths=$(find "$WORKDIR" -not -path "*/.*" -name "$path" -printf "%T+ %p\n" $type | sort -nr | awk '{print $2}' 2> /dev/null)
 
     # Count paths
     local count=$(echo "$paths" | grep -c .)
