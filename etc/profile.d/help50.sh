@@ -18,7 +18,7 @@ function _help50() {
     local status=$?
 
     # Get last command line, independent of user's actual history
-    histfile=/tmp/help50.$$.history
+    histfile=$(mktemp)
     HISTFILE=$histfile history -a
     local argv=$(HISTFILE=$histfile history 1 | cut -c 8-) # Could technically contain multiple commands, separated by ; or &&
     rm --force $histfile
@@ -39,7 +39,7 @@ function _help50() {
         fi
 
         # Read typescript from disk
-        local typescript=$(cat /tmp/help50.$HELP50.typescript)
+        local typescript=$(cat $HELP50)
 
         # Remove script's own output (if this is user's first command)
         typescript=$(echo "$typescript" | sed '1{/^Script started on .*/d}')
@@ -86,7 +86,7 @@ function _help50() {
     fi
 
     # Truncate typescript
-    truncate -s 0 /tmp/help50.$HELP50.typescript
+    truncate -s 0 $HELP50
 }
 
 function _question() {

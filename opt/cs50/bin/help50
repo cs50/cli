@@ -30,17 +30,17 @@ function _start() {
         return 0
     fi
 
-    # PID of parent shell to help
-    local HELP50=$PPID
+    # Uniquely identify typescript using PID of parent shell to help
+    local HELP50=/tmp/help50.$PPID
 
     # Start `script` in background, using ; instead of && for command,
     # else if user logs out (as via ctl-d) after a non-0 command, bash exits with 127
     set -o monitor
-    HELP50=$HELP50 script --append --command "bash --login ; exit 1" --flush --quiet --return /tmp/help50.$HELP50.typescript
+    HELP50=$HELP50 script --append --command "bash --login ; exit 1" --flush --quiet --return $HELP50
     local status=$?
 
     # No longer helping
-    rm --force /tmp/help50.$HELP50.*
+    rm --force $HELP50
 
     # If `script` was killed, in which case `exit 1` above won't execute
     if [[ $status -ne 1 ]]; then
@@ -52,7 +52,7 @@ function _start() {
     else
 
         # Kill parent shell, since user presumably wants to exit
-        kill -SIGHUP $HELP50
+        kill -SIGHUP $PPID
     fi
 }
 
