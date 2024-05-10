@@ -24,6 +24,7 @@ function _find() {
     # Usage
     if [[ $# -eq 1 ]]; then # Files AND directories
         local path="$1"
+        local type=""
     elif [[ $# -eq 3 && "$1" == "-type" && "$2" =~ ^[df]$ ]]; then # Files OR directories
         local type="$1 $2"
         local path="$3"
