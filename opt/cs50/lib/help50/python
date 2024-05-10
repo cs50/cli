@@ -4,7 +4,8 @@
 
 output=$(cat)
 
-regex="AttributeError: module 'cs50' has no attribute '(get_(float|int|string)|SQL)'$"
+# touch cs50.py && python -c "import cs50; cs50.get_int" && python -c "from cs50 import get_int"
+regex="AttributeError: module 'cs50' has no attribute '.*'|ImportError: cannot import name '.*' from 'cs50'"
 if [[ "$output" =~ $regex ]]; then
     if [[ -f cs50.py ]]; then
         echo "You have a file called \`cs50.py\` that is \"shadowing\" CS50's own. Best to rename that file with \`mv\`."
@@ -12,14 +13,25 @@ if [[ "$output" =~ $regex ]]; then
     fi
 fi
 
-regex='^\s*(import string\s*$|from\s+string\s+import\s+)'
-if echo "$output" | grep -Pq "$regex"; then
+# touch re.py && python -c "import re; re.search" && python -c "from re import search"
+regex="AttributeError: module 're' has no attribute '.*'|ImportError: cannot import name '.*' from 're'"
+if [[ "$output" =~ $regex ]]; then
+    if [[ -f re.py ]]; then
+        echo "You have a file called \`re.py\` that is \"shadowing\" Python's own. Best to rename that file with \`mv\`."
+        exit
+    fi
+fi
+
+# touch re.py && python -c "import string; string.digits" && python -c "from string import digits"
+regex="AttributeError: module 'string' has no attribute '.*'|ImportError: cannot import name '.*' from 'string'"
+if [[ "$output" =~ $regex ]]; then
     if [[ -f string.py ]]; then
         echo "You have a file called \`string.py\` that is \"shadowing\" Python's own. Best to rename that file with \`mv\`."
         exit
     fi
 fi
 
+# mkdir foo && touch foo/bar.py && python bar.py
 regex="python: can't open file '(.*\.py)': \[Errno 2\] No such file or directory"
 if [[ "$output" =~ $regex ]]; then
 
