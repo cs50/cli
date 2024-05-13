@@ -35,7 +35,7 @@ function _help50() {
         # Ignore ./* if executable file
         local argv0=$(echo "$argv" | awk '{print $1}') # Assume for simplicity it's just a single command
         if [[ "$argv0" =~ ^\./ && -f "$argv0" && -x "$argv0" ]]; then
-            break
+            return
         fi
 
         # Read typescript from disk
@@ -112,3 +112,16 @@ if ! type _helpless >/dev/null 2>&1; then
 fi
 
 export PROMPT_COMMAND=_help50
+
+# touch foo.c && touch foo && ./foo
+function _trap() {
+    if [[ "$BASH_COMMAND" =~ ^\./(.*)$ ]]; then
+        local src="${BASH_REMATCH[1]}.c"
+        local dst="${BASH_REMATCH[1]}"
+        if [[ "$src" -nt "$dst" ]]; then
+            local output=$(_ansi "It looks like \`$src\` has changed. Did you mean to run \`make $dst\` again?")
+            _alert "$output"
+        fi
+    fi
+}
+trap _trap DEBUG
