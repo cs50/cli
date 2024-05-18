@@ -76,3 +76,10 @@ if [[ "$output" =~ $regex ]]; then
         exit
     fi
 fi
+
+# int main(void) || do {
+regex="bash: syntax error near unexpected token \`.*'"
+if [[ "$output" =~ $regex ]]; then
+    echo "Did you mean to type that in a file instead of your terminal window?"
+    exit
+fi
