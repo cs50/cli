@@ -19,5 +19,5 @@ if [[ -d "$1" ]]; then
     echo "$1 is a directory"
     exit 1
 else
-    /usr/bin/make -B -s $*
+    /usr/bin/make -B -s --debug=why $*
 fi
