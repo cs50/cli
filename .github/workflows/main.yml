@@ -1,16 +1,14 @@
 on: push
+
 jobs:
-  build:
+  build-amd64:
     runs-on: ubuntu-latest-64-cores
     steps:
-      - name: Set up QEMU
-        uses: docker/setup-qemu-action@v2
-
       - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
+        uses: docker/setup-buildx-action@v3
 
       - name: Log into Docker Hub
-        uses: docker/login-action@v2
+        uses: docker/login-action@v3
         with:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
@@ -21,14 +19,16 @@ jobs:
           python-version: '3.11'
 
       - name: Build for linux/amd64
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           build-args: |
             VCS_REF=${{ github.sha }}
             BUILDARCH=amd64
           load: true
           platforms: linux/amd64
-          tags: cs50/cli:amd64
+          tags: |
+            cs50/cli:amd64
+            cs50/cli:canary-amd64
           cache-from: type=registry,ref=cs50/cli:amd64-buildcache
           cache-to: type=registry,ref=cs50/cli:amd64-buildcache,mode=max
 
@@ -37,15 +37,55 @@ jobs:
         run: |
           docker push cs50/cli:amd64
 
+      - name: Push linux/amd64 build to Docker Hub (canary)
+        run: |
+          docker push cs50/cli:canary-amd64
+
+  build-arm64:
+    runs-on: ubuntu-latest-64-cores-arm
+    steps:
+      - name: Install Docker (remove once Docker is pre-installed on arm64 runners)
+        run: |
+          export DEBIAN_FRONTEND=noninteractive
+          sudo apt update
+          sudo apt install -y ca-certificates curl
+          sudo install -m 0755 -d /etc/apt/keyrings
+          sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+          sudo chmod a+r /etc/apt/keyrings/docker.asc
+          echo \
+          "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+          $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+          sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+          sudo apt update
+          sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
+          sudo usermod -aG docker $USER
+          sudo apt install -y acl
+          sudo setfacl --modify user:$USER:rw /var/run/docker.sock
+
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      - name: Log into Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Install Python (replace with setup-python once available on arm64 runners)
+        run: |
+          sudo apt install -y python3
+
       - name: Build for linux/arm64
-        uses: docker/build-push-action@v3
+        uses: docker/build-push-action@v5
         with:
           build-args: |
             VCS_REF=${{ github.sha }}
             BUILDARCH=arm64
           load: true
           platforms: linux/arm64
-          tags: cs50/cli:arm64
+          tags: |
+            cs50/cli:arm64
+            cs50/cli:canary-arm64
           cache-from: type=registry,ref=cs50/cli:arm64-buildcache
           cache-to: type=registry,ref=cs50/cli:arm64-buildcache,mode=max
 
@@ -53,6 +93,20 @@ jobs:
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
           docker push cs50/cli:arm64
+
+      - name: Push linux/arm64 build to Docker Hub (canary)
+        run: |
+          docker push cs50/cli:canary-arm64
+
+  finalize:
+    needs: [build-amd64, build-arm64]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Log into Docker Hub
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
 
       - name: Create multi-arch manifest and push to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -62,9 +116,16 @@ jobs:
           --amend cs50/cli:arm64
           docker manifest push cs50/cli:latest
 
+      - name: Create multi-arch manifest and push to Docker Hub (canary)
+        run: |
+          docker manifest create cs50/cli:canary \
+          --amend cs50/cli:canary-amd64 \
+          --amend cs50/cli:canary-arm64
+          docker manifest push cs50/cli:canary
+
       - name: Re-deploy depdendents
         if: ${{ github.ref == 'refs/heads/main' }}
-        uses: actions/github-script@v6
+        uses: actions/github-script@v7
         with:
           github-token: ${{ secrets.DEPLOY50_PAT }}
           script: |
