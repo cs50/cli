@@ -203,8 +203,9 @@ RUN apt update && \
         valgrind \
         vim \
         wget \
-        zip && \
-        apt clean
+        zip \
+        zlib1g-dev `# For bundle` && \
+    apt clean
 
 
 # Install CS50 library
