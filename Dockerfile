@@ -1,5 +1,5 @@
 # Build stage
-FROM ubuntu:22.04 as builder
+FROM ubuntu:24.04 as builder
 
 
 # Build-time variables
@@ -126,7 +126,7 @@ RUN cd /tmp && \
 
 
 # Final stage
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 LABEL maintainer="sysadmins@cs50.harvard.edu"
 ARG DEBIAN_FRONTEND=noninteractive
 
