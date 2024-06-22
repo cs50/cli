@@ -265,9 +265,15 @@ RUN echo >> /etc/inputrc && \
     echo "set enable-bracketed-paste off" >> /etc/inputrc
 
 
-# Add user
-RUN useradd --home-dir /home/ubuntu --shell /bin/bash ubuntu && \
-    umask 0077 && \
+# Ensure the 'ubuntu' user is created if not exists
+RUN set -eux; \
+    if ! id -u ubuntu > /dev/null 2>&1; then \
+        useradd --home-dir /home/ubuntu --shell /bin/bash ubuntu; \
+    fi
+
+
+# Set permissions and configure environment
+RUN umask 0077 && \
     mkdir --parents /home/ubuntu && \
     chown --recursive ubuntu:ubuntu /home/ubuntu && \
     echo "\n# CS50 CLI" >> /etc/sudoers && \
