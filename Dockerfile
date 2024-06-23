@@ -1,5 +1,5 @@
 # Build stage
-FROM ubuntu:22.04 as builder
+FROM ubuntu:24.04 as builder
 
 
 # Build-time variables
@@ -126,9 +126,14 @@ RUN cd /tmp && \
 
 
 # Final stage
-FROM ubuntu:22.04
+FROM ubuntu:24.04
 LABEL maintainer="sysadmins@cs50.harvard.edu"
 ARG DEBIAN_FRONTEND=noninteractive
+
+
+# Remove exisiting ubuntu user (if any) and home directory
+RUN userdel --force --remove ubuntu && \
+    rm --force --recursive /home/ubuntu
 
 
 # Copy files from builder
@@ -187,7 +192,7 @@ RUN apt update && \
         libncurses-dev \
         libpango-1.0-0 libharfbuzz0b libpangoft2-1.0-0 `# For render50` \
         libpangocairo-1.0-0 `# For R` \
-        libtiff5 `# For R` \
+        libtiff6 `# For R` \
         libxt6 `# For R` \
         libgmp-dev `# For gem` \
         libffi-dev `# For gem` \
