@@ -32,6 +32,12 @@ jobs:
           cache-from: type=registry,ref=cs50/cli:amd64-buildcache
           cache-to: type=registry,ref=cs50/cli:amd64-buildcache,mode=max
 
+      - name: Tag image with ubuntu-22.04 suffix
+        if: ${{ github.ref == 'refs/heads/ubuntu-22.04' }}
+        run: |
+          docker tag cs50/cli:amd64 cs50/cli:amd64-ubuntu-22.04
+          docker tag cs50/cli:canary-amd64 cs50/cli:canary-amd64-ubuntu-22.04
+
       - name: Push linux/amd64 build to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
@@ -40,6 +46,12 @@ jobs:
       - name: Push linux/amd64 build to Docker Hub (canary)
         run: |
           docker push cs50/cli:canary-amd64
+
+      - name: Push linux/amd64 build to Docker Hub with ubuntu-22.04 suffix
+        if: ${{ github.ref == 'refs/heads/ubuntu-22.04' }}
+        run: |
+          docker push cs50/cli:amd64-ubuntu-22.04
+          docker push cs50/cli:canary-amd64-ubuntu-22.04
 
   build-arm64:
     runs-on: ubuntu-latest-64-cores-arm
@@ -89,6 +101,12 @@ jobs:
           cache-from: type=registry,ref=cs50/cli:arm64-buildcache
           cache-to: type=registry,ref=cs50/cli:arm64-buildcache,mode=max
 
+      - name: Tag image with ubuntu-22.04 suffix
+        if: ${{ github.ref == 'refs/heads/ubuntu-22.04' }}
+        run: |
+          docker tag cs50/cli:arm64 cs50/cli:arm64-ubuntu-22.04
+          docker tag cs50/cli:canary-arm64 cs50/cli:canary-arm64-ubuntu-22.04
+
       - name: Push linux/arm64 build to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
@@ -97,6 +115,12 @@ jobs:
       - name: Push linux/arm64 build to Docker Hub (canary)
         run: |
           docker push cs50/cli:canary-arm64
+
+      - name: Push linux/arm64 build to Docker Hub with ubuntu-22.04 suffix
+        if: ${{ github.ref == 'refs/heads/ubuntu-22.04' }}
+        run: |
+          docker push cs50/cli:arm64-ubuntu-22.04
+          docker push cs50/cli:canary-arm64-ubuntu-22.04
 
   finalize:
     needs: [build-amd64, build-arm64]
@@ -123,7 +147,23 @@ jobs:
           --amend cs50/cli:canary-arm64
           docker manifest push cs50/cli:canary
 
-      - name: Re-deploy depdendents
+      - name: Create multi-arch manifest and push to Docker Hub with ubuntu-22.04 suffix
+        if: ${{ github.ref == 'refs/heads/ubuntu-22.04' }}
+        run: |
+          docker manifest create cs50/cli:ubuntu-22.04 \
+          --amend cs50/cli:amd64-ubuntu-22.04 \
+          --amend cs50/cli:arm64-ubuntu-22.04
+          docker manifest push cs50/cli:ubuntu-22.04
+
+      - name: Create multi-arch manifest and push to Docker Hub (canary) with ubuntu-22.04 suffix
+        if: ${{ github.ref == 'refs/heads/ubuntu-22.04' }}
+        run: |
+          docker manifest create cs50/cli:canary-ubuntu-22.04 \
+          --amend cs50/cli:canary-amd64-ubuntu-22.04 \
+          --amend cs50/cli:canary-arm64-ubuntu-22.04
+          docker manifest push cs50/cli:canary-ubuntu-22.04
+
+      - name: Re-deploy dependents
         if: ${{ github.ref == 'refs/heads/main' }}
         uses: actions/github-script@v7
         with:
