@@ -13,9 +13,15 @@ if [[ "$output" =~ $regex ]]; then
     fi
 fi
 
-# mkdir foo && bar
+# mkdir foo && (foo || 1s || .\foo)
 regex="bash: (.*): command not found"
 if [[ "$output" =~ $regex ]]; then
+
+    # If directory exists
+    if [[ -d "${BASH_REMATCH[1]}" ]]; then
+        echo "Did you mean to run \`cd ${BASH_REMATCH[1]}\`?"
+        exit
+    fi
 
     # If typo
     if [[ "${BASH_REMATCH[1]}" == "1s" ]]; then
@@ -23,10 +29,12 @@ if [[ "$output" =~ $regex ]]; then
         exit
     fi
 
-    # If directory exists
-    if [[ -d "${BASH_REMATCH[1]}" ]]; then
-        echo "Did you mean to run \`cd ${BASH_REMATCH[1]}\`?"
-        exit
+    # If backslash instead of forward slash
+    if [[ "${BASH_REMATCH[1]}" =~ ^\.(.*) ]]; then
+        if [[ -f "./${BASH_REMATCH[1]}" ]]; then
+            echo "Did you mean to run \`./${BASH_REMATCH[1]}\`, with a forward slash instead?"
+            exit
+        fi
     fi
 fi
 
