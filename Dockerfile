@@ -177,11 +177,13 @@ RUN apt update && \
         ca-certificates \
         clang \
         clang-format \
+        colorized-logs `# For help50` \
         coreutils `# For fold` \
         cowsay \
         curl \
         dos2unix \
         dnsutils `# For nslookup` \
+        expect `# For help50` \
         fonts-noto-color-emoji `# For render50` \
         gdb \
         git \
@@ -251,7 +253,6 @@ RUN pip3 install --no-cache-dir \
         cs50 \
         Flask \
         Flask-Session \
-        help50 \
         pytest \
         render50 \
         setuptools \
