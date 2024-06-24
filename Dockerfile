@@ -176,6 +176,7 @@ RUN apt update && \
         build-essential `# dpkg-dev, libc, gcc, g++, make, etc.`\
         ca-certificates \
         clang \
+        clang-format \
         coreutils `# For fold` \
         cowsay \
         curl \
