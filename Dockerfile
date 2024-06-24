@@ -28,12 +28,12 @@ RUN cd /tmp && \
     chmod a+rx /opt/bin/*
 
 
-# Install Node.js 21.x
+# Install Node.js 22.x
 # https://nodejs.dev/en/download/
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 21.6.2
+    n 22.3.0
 
 
 # Install Node.js packages
@@ -86,16 +86,16 @@ RUN apt update && \
     apt clean && \
     rm --force --recursive /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.0.tar.gz --output ruby-3.3.0.tar.gz && \
-    tar xzf ruby-3.3.0.tar.gz && \
-    rm --force ruby-3.3.0.tar.gz && \
-    cd ruby-3.3.0 && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.3.tar.gz --output ruby-3.3.3.tar.gz && \
+    tar xzf ruby-3.3.3.tar.gz && \
+    rm --force ruby-3.3.3.tar.gz && \
+    cd ruby-3.3.3 && \
     if [ "$BUILDARCH" = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
     ASFLAGS=${ASFLAGS} CFLAGS=-Os ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.3.0
+    rm --force --recursive ruby-3.3.3
 
 
 # Install Ruby packages
@@ -114,14 +114,14 @@ RUN echo "gem: --no-document" > /etc/gemrc && \
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl --remote-name https://www.sqlite.org/2024/sqlite-amalgamation-3450000.zip && \
-    unzip sqlite-amalgamation-3450000.zip && \
-    rm --force sqlite-amalgamation-3450000.zip && \
-    cd sqlite-amalgamation-3450000 && \
+    curl --remote-name https://www.sqlite.org/2024/sqlite-amalgamation-3460000.zip && \
+    unzip sqlite-amalgamation-3460000.zip && \
+    rm --force sqlite-amalgamation-3460000.zip && \
+    cd sqlite-amalgamation-3460000 && \
     patch shell.c < /tmp/shell.c.patch && \
     gcc -D HAVE_READLINE -D SQLITE_DEFAULT_FOREIGN_KEYS=1 -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3450000 && \
+    rm --force --recursive sqlite-amalgamation-3460000 && \
     rm --force /tmp/shell.c.patch
 
 
