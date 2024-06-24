@@ -188,6 +188,7 @@ RUN apt update && \
         git-lfs \
         jq \
         less \
+        libclang-rt-18-dev `# For clang` \
         liblapack3 `# For R` \
         libmagic-dev `# For style50` \
         libncurses-dev \
