@@ -29,6 +29,13 @@ if [[ "$output" =~ $regex ]]; then
         exit
     fi
 
+    # If uppercase
+    argv0="${BASH_REMATCH[1],,}" # Lowercase it
+    if command -v "$argv0" &> /dev/null; then
+        echo "Did you mean to run \`$argv0\`, in lowercase instead?"
+        exit
+    fi
+
     # If backslash instead of forward slash
     if [[ "${BASH_REMATCH[1]}" =~ ^\.(.*) ]]; then
         if [[ -f "./${BASH_REMATCH[1]}" ]]; then
