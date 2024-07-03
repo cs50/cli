@@ -72,7 +72,7 @@ function _help50() {
         # Try to get help
         for helper in $HELPERS/*; do
             if [[ -f $helper && -x $helper ]]; then
-                local help=$($helper <<< "$typescript")
+                local help=$($helper $argv <<< "$typescript")
                 if [[ -n "$help" ]]; then
                     break
                 fi
