@@ -243,7 +243,6 @@ RUN apt update && \
 # Install Python packages
 RUN pip3 install --no-cache-dir \
         autopep8 \
-        black \
         cachelib \
         "check50<4" \
         cli50 \
@@ -255,7 +254,7 @@ RUN pip3 install --no-cache-dir \
         pytest \
         render50 \
         setuptools \
-        style50 \
+        "style50>2.10.0" \
         "submit50<4"
 
 
