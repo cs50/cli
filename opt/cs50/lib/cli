@@ -55,7 +55,7 @@ function _sure() {
         read -p "$prompt [y/N] " -r
         if [[ "${REPLY,,}" =~ ^(y|yes)$ ]]; then
             return 0
-        elif [[ "${REPLY,,}" =~ ^(n|no)$ ]]; then
+        else
             return 1
         fi
     done
