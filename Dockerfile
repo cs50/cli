@@ -184,6 +184,7 @@ RUN apt update && \
         dos2unix \
         dnsutils `# For nslookup` \
         expect `# For help50` \
+        file `# For help50` \
         fonts-noto-color-emoji `# For render50` \
         gdb \
         git \
