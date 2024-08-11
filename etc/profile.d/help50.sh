@@ -23,7 +23,7 @@ function _help50() {
     local argv=$(HISTFILE=$histfile history 1 | cut -c 8-) # Could technically contain multiple commands, separated by ; or &&
     rm --force $histfile
 
-    # Remove aliases
+    # Remove any of these aliases
     for name in n no y yes; do
         unalias $name 2> /dev/null
     done
@@ -113,15 +113,21 @@ fi
 
 export PROMPT_COMMAND=_help50
 
-# touch foo.c && touch foo && ./foo
 function _trap() {
+
+    # touch foo.c && make foo && touch foo.c && ./foo
     if [[ "$BASH_COMMAND" =~ ^\./(.*)$ ]]; then
         local src="${BASH_REMATCH[1]}.c"
         local dst="${BASH_REMATCH[1]}"
-        if [[ "$src" -nt "$dst" ]]; then
-            local output=$(_ansi "It looks like \`$src\` has changed. Did you mean to run \`make $dst\` again?")
-            _alert "$output"
+        if [[ -f "$src" && $(file --brief --mime-type "$src") == "text/x-c" ]]; then
+            if [[ -x "$dst" && $(file --brief --mime-type "$dst") == "application/x-pie-executable" ]]; then
+                _helpful "It looks like \`$src\` has changed. Did you mean to run \`make $dst\` again?"
+            fi
         fi
     fi
 }
+
+# If the command run by the DEBUG trap returns a non-zero value, the next command is skipped and not executed
+shopt -s extdebug
+
 trap _trap DEBUG
