@@ -31,14 +31,26 @@ if [[ "$output" =~ $regex ]]; then
     fi
 fi
 
-# mkdir foo && touch foo/bar.py && python bar.py
+# mkdir -p foo/bar && touch foo/bar/baz.py && python baz.py
 regex="python: can't open file '(.*\.py)': \[Errno 2\] No such file or directory"
 if [[ "$output" =~ $regex ]]; then
 
     # Relative path from $PWD
     path=$(realpath --relative-to=. "${BASH_REMATCH[1]}")
 
-    # If .py is in $PWD
+    # If command was `python baz.py` (i.e., without a dirname)
+    if [[ -n "$path" && "$path" == $(basename "$path") ]]; then
+        dir=$(_find -type f "$path")
+        echo -n "There isn't a file called \`$path\` in your current directory."
+        if [[ ! -z "$dir" ]]; then
+            echo " Did you mean to \`cd $dir\` first?"
+        else
+            echo
+        fi
+        exit
+    fi
+
+    # If command was `python bar/baz.py` (i.e., with a dirname)
     if [[ -n "$path" && "$path" == $(basename "$path") ]]; then
         dir=$(_find -type f "$path")
         echo -n "There isn't a file called \`$path\` in your current directory."
