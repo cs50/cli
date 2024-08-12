@@ -22,19 +22,34 @@ function _help50() {
     HISTFILE=$histfile history -a
     local argv=$(HISTFILE=$histfile history 1 | cut -c 8-) # Could technically contain multiple commands, separated by ; or &&
     rm --force $histfile
+    local argv0=$(echo "$argv" | awk '{print $1}') # Assume for simplicity it's just a single command
 
     # Remove any of these aliases
     for name in n no y yes; do
         unalias $name 2> /dev/null
     done
 
+    # If last command was ./*
+    # touch foo.c && make foo && touch foo.c && ./foo
+    if [[ "$argv" =~ ^\./(.*)$ ]]; then
+        local src="${BASH_REMATCH[1]}.c"
+        local dst="${BASH_REMATCH[1]}"
+        if [[ -f "$src" && $(file --brief --mime-type "$src") == "text/x-c" ]]; then
+            if [[ -x "$dst" && $(file --brief --mime-type "$dst") == "application/x-pie-executable" ]]; then
+                if [[ "$src" -nt "$dst" ]]; then
+                    _helpful "It looks like \`$src\` has changed. Did you mean to run \`make $dst\` again?"
+                fi
+            fi
+        fi
+    fi
+
     # If last command erred (and is not ctl-c or ctl-z)
     # https://tldp.org/LDP/abs/html/exitcodes.html
     if [[ $status -ne 0 && $status -ne 130 && $status -ne 148 ]]; then
 
         # Ignore ./* if executable file
-        local argv0=$(echo "$argv" | awk '{print $1}') # Assume for simplicity it's just a single command
         if [[ "$argv0" =~ ^\./ && -f "$argv0" && -x "$argv0" ]]; then
+            echo XXX
             return
         fi
 
@@ -72,6 +87,7 @@ function _help50() {
         # Try to get help
         for helper in $HELPERS/*; do
             if [[ -f $helper && -x $helper ]]; then
+                echo "[$helper]"
                 local help=$($helper $argv <<< "$typescript")
                 if [[ -n "$help" ]]; then
                     break
@@ -112,22 +128,3 @@ if ! type _helpless >/dev/null 2>&1; then
 fi
 
 export PROMPT_COMMAND=_help50
-
-function _trap() {
-
-    # touch foo.c && make foo && touch foo.c && ./foo
-    if [[ "$BASH_COMMAND" =~ ^\./(.*)$ ]]; then
-        local src="${BASH_REMATCH[1]}.c"
-        local dst="${BASH_REMATCH[1]}"
-        if [[ -f "$src" && $(file --brief --mime-type "$src") == "text/x-c" ]]; then
-            if [[ -x "$dst" && $(file --brief --mime-type "$dst") == "application/x-pie-executable" ]]; then
-                _helpful "It looks like \`$src\` has changed. Did you mean to run \`make $dst\` again?"
-            fi
-        fi
-    fi
-}
-
-# If the command run by the DEBUG trap returns a non-zero value, the next command is skipped and not executed
-shopt -s extdebug
-
-trap _trap DEBUG
