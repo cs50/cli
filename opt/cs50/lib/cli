@@ -16,7 +16,7 @@ function _ansi() {
     # Format backticks as bold
     local bold=$(printf '\033[1m')
     local normal=$(printf '\033[22m')
-    echo "$input" | sed "s/\`\\([^\`]*\\)\`/${bold}\\1${normal}/g"
+    echo "$input" | sed "s/\`\\([^\`]*\\)\`/${bold}\\1${normal}/g" | _fold
 }
 
 function _find() {
@@ -44,6 +44,22 @@ function _find() {
         # Resolve absolute path to relative path
         realpath --relative-to=. "$(dirname "$paths")"
     fi
+}
+
+function _fold() {
+
+    # If command-line arguments
+    if [[ -t 0 ]]; then
+        input="$*"
+
+    # If standard input
+    else
+        input=$(cat)
+    fi
+
+    # Wrap long lines
+    local cols=$(tput cols)
+    echo "$input" | fold --spaces --width=$cols
 }
 
 function _sure() {
