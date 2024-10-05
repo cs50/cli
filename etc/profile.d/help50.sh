@@ -92,13 +92,15 @@ function _help50() {
         elif [[ $status -ne 0 ]]; then # If helpless
             _helpless "$typescript"
         fi
+    else
+        _helped
     fi
 
     # Truncate typescript
     truncate -s 0 $HELP50
 }
 
-function _question() {
+function _rhetorical() {
     _alert "That was a rhetorical question. <3"
 }
 
@@ -108,13 +110,16 @@ if ! type _helpful >/dev/null 2>&1; then
 
         # Intercept accidental invocation of `yes` and `n`, which are actual programs
         for name in n no y yes; do
-            alias $name=_question
+            alias $name=_rhetocial
         done
 
         # Output help
         local output=$(_ansi "$1")
         _alert "$output"
     }
+fi
+if ! type _helped >/dev/null 2>&1; then
+    function _helped() { :; } # Silent
 fi
 if ! type _helpless >/dev/null 2>&1; then
     function _helpless() { :; } # Silent

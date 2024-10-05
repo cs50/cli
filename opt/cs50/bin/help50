@@ -56,6 +56,16 @@ function _start() {
     fi
 }
 
+function _status() {
+    if [[ -n "$HELP50" ]]; then
+        echo started
+        return 0
+    else
+        echo stopped
+        return 1
+    fi
+}
+
 function _stop() {
 
     # If not helping
@@ -84,11 +94,14 @@ case "$1" in
     start)
         _start
         ;;
+    status)
+        _status
+        ;;
     stop)
         _stop
         ;;
     *)
-        echo "Usage: $0 [disable|enable|is-enabled|start|stop]"
+        echo "Usage: $0 [disable|enable|is-enabled|start|status|stop]"
         exit 1
         ;;
 esac
