@@ -86,16 +86,16 @@ RUN apt update && \
     apt clean && \
     rm --force --recursive /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.4.tar.gz --output ruby-3.3.4.tar.gz && \
-    tar xzf ruby-3.3.4.tar.gz && \
-    rm --force ruby-3.3.4.tar.gz && \
-    cd ruby-3.3.4 && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.5.tar.gz --output ruby-3.3.5.tar.gz && \
+    tar xzf ruby-3.3.5.tar.gz && \
+    rm --force ruby-3.3.5.tar.gz && \
+    cd ruby-3.3.5 && \
     if [ "$BUILDARCH" = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
     ASFLAGS=${ASFLAGS} CFLAGS=-Os ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.3.4
+    rm --force --recursive ruby-3.3.5
 
 
 # Install Ruby packages
