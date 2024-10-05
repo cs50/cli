@@ -1,5 +1,8 @@
+# Ubuntu version
+ARG RELEASE=24.04
+
 # Build stage
-FROM ubuntu:24.04 AS builder
+FROM ubuntu:${RELEASE} as builder
 
 
 # Build-time variables
@@ -15,14 +18,14 @@ RUN apt update && \
         curl
 
 
-# Install Java 22.x
-# http://jdk.java.net/22/
+# Install Java 23.x
+# http://jdk.java.net/23/
 RUN cd /tmp && \
     if [ "$BUILDARCH" = "arm64" ]; then ARCH="aarch64"; else ARCH="x64"; fi && \
-    curl --remote-name https://download.java.net/java/GA/jdk22/830ec9fcccef480bb3e73fb7ecafe059/36/GPL/openjdk-22_linux-${ARCH}_bin.tar.gz && \
-    tar xzf openjdk-22_linux-${ARCH}_bin.tar.gz && \
-    rm --force openjdk-22_linux-${ARCH}_bin.tar.gz && \
-    mv jdk-22 /opt/jdk && \
+    curl --remote-name https://download.java.net/java/GA/jdk23/3c5b90190c68498b986a97f276efd28a/37/GPL/openjdk-23_linux-${ARCH}_bin.tar.gz && \
+    tar xzf openjdk-23_linux-${ARCH}_bin.tar.gz && \
+    rm --force openjdk-23_linux-${ARCH}_bin.tar.gz && \
+    mv jdk-23 /opt/jdk && \
     mkdir --parent /opt/bin && \
     ln --symbolic /opt/jdk/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
@@ -33,7 +36,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 22.6.0
+    n 22.9.0
 
 
 # Install Node.js packages
@@ -61,16 +64,16 @@ RUN apt update && \
 # Install Python 3.12.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl --remote-name https://www.python.org/ftp/python/3.12.5/Python-3.12.5.tgz && \
-    tar xzf Python-3.12.5.tgz && \
-    rm --force Python-3.12.5.tgz && \
-    cd Python-3.12.5 && \
+    curl --remote-name https://www.python.org/ftp/python/3.12.7/Python-3.12.7.tgz && \
+    tar xzf Python-3.12.7.tgz && \
+    rm --force Python-3.12.7.tgz && \
+    cd Python-3.12.7 && \
     CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.12.5 && \
+    rm --force --recursive Python-3.12.7 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade pip
@@ -86,16 +89,16 @@ RUN apt update && \
     apt clean && \
     rm --force --recursive /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.4.tar.gz --output ruby-3.3.4.tar.gz && \
-    tar xzf ruby-3.3.4.tar.gz && \
-    rm --force ruby-3.3.4.tar.gz && \
-    cd ruby-3.3.4 && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.5.tar.gz --output ruby-3.3.5.tar.gz && \
+    tar xzf ruby-3.3.5.tar.gz && \
+    rm --force ruby-3.3.5.tar.gz && \
+    cd ruby-3.3.5 && \
     if [ "$BUILDARCH" = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
     ASFLAGS=${ASFLAGS} CFLAGS=-Os ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.3.4
+    rm --force --recursive ruby-3.3.5
 
 
 # Install Ruby packages
@@ -126,7 +129,7 @@ RUN cd /tmp && \
 
 
 # Final stage
-FROM ubuntu:24.04
+FROM ubuntu:${RELEASE}
 LABEL maintainer="sysadmins@cs50.harvard.edu"
 ARG DEBIAN_FRONTEND=noninteractive
 
