@@ -1,5 +1,8 @@
+# Ubuntu version
+ARG RELEASE=24.04
+
 # Build stage
-FROM ubuntu:24.04 as builder
+FROM ubuntu:${RELEASE} as builder
 
 
 # Build-time variables
@@ -126,7 +129,7 @@ RUN cd /tmp && \
 
 
 # Final stage
-FROM ubuntu:24.04
+FROM ubuntu:${RELEASE}
 LABEL maintainer="sysadmins@cs50.harvard.edu"
 ARG DEBIAN_FRONTEND=noninteractive
 
