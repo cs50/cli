@@ -28,12 +28,12 @@ RUN cd /tmp && \
     chmod a+rx /opt/bin/*
 
 
-# Install Node.js 21.x
+# Install Node.js 22.x
 # https://nodejs.dev/en/download/
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 21.6.2
+    n 22.6.0
 
 
 # Install Node.js packages
@@ -61,16 +61,16 @@ RUN apt update && \
 # Install Python 3.12.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl --remote-name https://www.python.org/ftp/python/3.12.4/Python-3.12.4.tgz && \
-    tar xzf Python-3.12.4.tgz && \
-    rm --force Python-3.12.4.tgz && \
-    cd Python-3.12.4 && \
+    curl --remote-name https://www.python.org/ftp/python/3.12.5/Python-3.12.5.tgz && \
+    tar xzf Python-3.12.5.tgz && \
+    rm --force Python-3.12.5.tgz && \
+    cd Python-3.12.5 && \
     CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.12.4 && \
+    rm --force --recursive Python-3.12.5 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade pip
@@ -86,16 +86,16 @@ RUN apt update && \
     apt clean && \
     rm --force --recursive /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.0.tar.gz --output ruby-3.3.0.tar.gz && \
-    tar xzf ruby-3.3.0.tar.gz && \
-    rm --force ruby-3.3.0.tar.gz && \
-    cd ruby-3.3.0 && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.4.tar.gz --output ruby-3.3.4.tar.gz && \
+    tar xzf ruby-3.3.4.tar.gz && \
+    rm --force ruby-3.3.4.tar.gz && \
+    cd ruby-3.3.4 && \
     if [ "$BUILDARCH" = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
     ASFLAGS=${ASFLAGS} CFLAGS=-Os ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.3.0
+    rm --force --recursive ruby-3.3.4
 
 
 # Install Ruby packages
@@ -114,14 +114,14 @@ RUN echo "gem: --no-document" > /etc/gemrc && \
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl --remote-name https://www.sqlite.org/2024/sqlite-amalgamation-3450000.zip && \
-    unzip sqlite-amalgamation-3450000.zip && \
-    rm --force sqlite-amalgamation-3450000.zip && \
-    cd sqlite-amalgamation-3450000 && \
+    curl --remote-name https://www.sqlite.org/2024/sqlite-amalgamation-3460100.zip && \
+    unzip sqlite-amalgamation-3460100.zip && \
+    rm --force sqlite-amalgamation-3460100.zip && \
+    cd sqlite-amalgamation-3460100 && \
     patch shell.c < /tmp/shell.c.patch && \
     gcc -D HAVE_READLINE -D SQLITE_DEFAULT_FOREIGN_KEYS=1 -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3450000 && \
+    rm --force --recursive sqlite-amalgamation-3460100 && \
     rm --force /tmp/shell.c.patch
 
 
@@ -247,7 +247,6 @@ RUN apt update && \
 # Install Python packages
 RUN pip3 install --no-cache-dir \
         autopep8 \
-        black \
         cachelib \
         "check50<4" \
         cli50 \
@@ -258,7 +257,7 @@ RUN pip3 install --no-cache-dir \
         pytest \
         render50 \
         setuptools \
-        style50 \
+        "style50>2.10.0" \
         "submit50<4"
 
 
