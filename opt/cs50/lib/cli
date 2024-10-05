@@ -32,7 +32,7 @@ function _find() {
         return
     fi
 
-    # Find $path in descendants of $WORKDIR, excluding hidden directories
+    # Find $path in descendants of $WORKDIR, excluding hidden directories, most recently modified first
     paths=$(find "$WORKDIR" -not -path "*/.*" -name "$path" -printf "%T+ %p\n" $type | sort -nr | awk '{print $2}' 2> /dev/null)
 
     # Count paths

@@ -81,7 +81,6 @@ function _help50() {
         # Try to get help
         for helper in $HELPERS/*; do
             if [[ -f $helper && -x $helper ]]; then
-                echo "[$helper]"
                 local help=$($helper $argv <<< "$typescript")
                 if [[ -n "$help" ]]; then
                     break
@@ -100,7 +99,7 @@ function _help50() {
 }
 
 function _question() {
-    _alert "That was a rhetorical question. :)"
+    _alert "That was a rhetorical question. <3"
 }
 
 # Default helpers

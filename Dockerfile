@@ -186,6 +186,7 @@ RUN apt update && \
         expect `# For help50` \
         file `# For help50` \
         fonts-noto-color-emoji `# For render50` \
+        fzf `# For help50` \
         gdb \
         git \
         git-lfs \
