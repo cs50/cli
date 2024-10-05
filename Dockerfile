@@ -15,14 +15,14 @@ RUN apt update && \
         curl
 
 
-# Install Java 22.x
-# http://jdk.java.net/22/
+# Install Java 23.x
+# http://jdk.java.net/23/
 RUN cd /tmp && \
     if [ "$BUILDARCH" = "arm64" ]; then ARCH="aarch64"; else ARCH="x64"; fi && \
-    curl --remote-name https://download.java.net/java/GA/jdk22/830ec9fcccef480bb3e73fb7ecafe059/36/GPL/openjdk-22_linux-${ARCH}_bin.tar.gz && \
-    tar xzf openjdk-22_linux-${ARCH}_bin.tar.gz && \
-    rm --force openjdk-22_linux-${ARCH}_bin.tar.gz && \
-    mv jdk-22 /opt/jdk && \
+    curl --remote-name https://download.java.net/java/GA/jdk23/3c5b90190c68498b986a97f276efd28a/37/GPL/openjdk-23_linux-${ARCH}_bin.tar.gz && \
+    tar xzf openjdk-23_linux-${ARCH}_bin.tar.gz && \
+    rm --force openjdk-23_linux-${ARCH}_bin.tar.gz && \
+    mv jdk-23 /opt/jdk && \
     mkdir --parent /opt/bin && \
     ln --symbolic /opt/jdk/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
