@@ -61,16 +61,16 @@ RUN apt update && \
 # Install Python 3.12.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl --remote-name https://www.python.org/ftp/python/3.12.5/Python-3.12.5.tgz && \
-    tar xzf Python-3.12.5.tgz && \
-    rm --force Python-3.12.5.tgz && \
-    cd Python-3.12.5 && \
+    curl --remote-name https://www.python.org/ftp/python/3.12.7/Python-3.12.7.tgz && \
+    tar xzf Python-3.12.7.tgz && \
+    rm --force Python-3.12.7.tgz && \
+    cd Python-3.12.7 && \
     CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.12.5 && \
+    rm --force --recursive Python-3.12.7 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade pip
