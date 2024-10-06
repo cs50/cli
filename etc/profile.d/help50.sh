@@ -105,6 +105,9 @@ function _rhetorical() {
 }
 
 # Default helpers
+if ! type _helped >/dev/null 2>&1; then
+    function _helped() { :; } # Silent
+fi
 if ! type _helpful >/dev/null 2>&1; then
     function _helpful() {
 
@@ -117,9 +120,6 @@ if ! type _helpful >/dev/null 2>&1; then
         local output=$(_ansi "$1")
         _alert "$output"
     }
-fi
-if ! type _helped >/dev/null 2>&1; then
-    function _helped() { :; } # Silent
 fi
 if ! type _helpless >/dev/null 2>&1; then
     function _helpless() { :; } # Silent
