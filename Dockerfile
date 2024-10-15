@@ -250,7 +250,7 @@ RUN pip3 install --no-cache-dir \
         "check50<4" \
         cli50 \
         compare50 \
-        cs50 \
+        cs50==9.4.0 \
         Flask \
         Flask-Session \
         help50 \
