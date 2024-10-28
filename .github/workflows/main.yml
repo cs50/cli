@@ -42,26 +42,8 @@ jobs:
           docker push cs50/cli:canary-amd64
 
   build-arm64:
-    runs-on: ubuntu-latest-64-cores-arm
+    runs-on: ubuntu-2404-64-cores-arm
     steps:
-      - name: Install Docker (remove once Docker is pre-installed on arm64 runners)
-        run: |
-          export DEBIAN_FRONTEND=noninteractive
-          sudo apt update
-          sudo apt install -y ca-certificates curl
-          sudo install -m 0755 -d /etc/apt/keyrings
-          sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
-          sudo chmod a+r /etc/apt/keyrings/docker.asc
-          echo \
-          "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
-          $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
-          sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
-          sudo apt update
-          sudo apt install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin
-          sudo usermod -aG docker $USER
-          sudo apt install -y acl
-          sudo setfacl --modify user:$USER:rw /var/run/docker.sock
-
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
@@ -71,9 +53,10 @@ jobs:
           username: ${{ secrets.DOCKERHUB_USERNAME }}
           password: ${{ secrets.DOCKERHUB_TOKEN }}
 
-      - name: Install Python (replace with setup-python once available on arm64 runners)
-        run: |
-          sudo apt install -y python3
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
 
       - name: Build for linux/arm64
         uses: docker/build-push-action@v5
