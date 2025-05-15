@@ -117,14 +117,14 @@ RUN echo "gem: --no-document" > /etc/gemrc && \
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl --remote-name https://www.sqlite.org/2025/sqlite-amalgamation-3490100.zip && \
-    unzip sqlite-amalgamation-3490100.zip && \
-    rm --force sqlite-amalgamation-3490100.zip && \
-    cd sqlite-amalgamation-3490100 && \
+    curl --remote-name https://www.sqlite.org/2025/sqlite-amalgamation-3490200.zip && \
+    unzip sqlite-amalgamation-3490200.zip && \
+    rm --force sqlite-amalgamation-3490200.zip && \
+    cd sqlite-amalgamation-3490200 && \
     patch shell.c < /tmp/shell.c.patch && \
     gcc -D HAVE_READLINE -D SQLITE_DEFAULT_FOREIGN_KEYS=1 -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3490100 && \
+    rm --force --recursive sqlite-amalgamation-3490200 && \
     rm --force /tmp/shell.c.patch
 
 
