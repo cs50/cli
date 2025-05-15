@@ -36,7 +36,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 23.11.0
+    n 23.11.1
 
 
 # Install Node.js packages
@@ -89,16 +89,16 @@ RUN apt update && \
     apt clean && \
     rm --force --recursive /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.2.tar.gz --output ruby-3.4.2.tar.gz && \
-    tar xzf ruby-3.4.2.tar.gz && \
-    rm --force ruby-3.4.2.tar.gz && \
-    cd ruby-3.4.2 && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.4.tar.gz --output ruby-3.4.4.tar.gz && \
+    tar xzf ruby-3.4.4.tar.gz && \
+    rm --force ruby-3.4.4.tar.gz && \
+    cd ruby-3.4.4 && \
     if [ "$BUILDARCH" = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
     ASFLAGS=${ASFLAGS} CFLAGS=-Os ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.4.2
+    rm --force --recursive ruby-3.4.4
 
 
 # Install Ruby packages
