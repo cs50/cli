@@ -243,11 +243,6 @@ RUN apt update && \
     groupadd docker
 
 
-# Install Rust
-RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
-ENV PATH="/root/.cargo/bin:${PATH}"
-
-
 # Install Python packages
 RUN apt install --yes cargo `# For jellyfish, via lib50` && \
     pip3 install --no-cache-dir \
