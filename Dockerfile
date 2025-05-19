@@ -64,16 +64,16 @@ RUN apt update && \
 # Install Python 3.13.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl --remote-name https://www.python.org/ftp/python/3.13.1/Python-3.13.1.tgz && \
-    tar xzf Python-3.13.1.tgz && \
-    rm --force Python-3.13.1.tgz && \
-    cd Python-3.13.1 && \
+    curl --remote-name https://www.python.org/ftp/python/3.13.3/Python-3.13.3.tgz && \
+    tar xzf Python-3.13.3.tgz && \
+    rm --force Python-3.13.3.tgz && \
+    cd Python-3.13.3 && \
     CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.13.1 && \
+    rm --force --recursive Python-3.13.3 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade pip
@@ -246,12 +246,6 @@ RUN apt update && \
 # Install Rust
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y
 ENV PATH="/root/.cargo/bin:${PATH}"
-
-
-# Temporarily install msgspec from GitHub until it's officially compatible with Python 3.13
-# https://github.com/jcrist/msgspec/issues/698
-# https://github.com/jcrist/msgspec/issues/777
-RUN pip install git+https://github.com/jcrist/msgspec.git@main
 
 
 # Install Python packages
