@@ -31,12 +31,12 @@ RUN cd /tmp && \
     chmod a+rx /opt/bin/*
 
 
-# Install Node.js 23.x
+# Install Node.js 22.x
 # https://nodejs.dev/en/download/
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 23.11.1
+    n 22.16.0
 
 
 # Install Node.js packages
