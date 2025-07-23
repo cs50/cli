@@ -244,8 +244,7 @@ RUN apt update && \
 
 
 # Install Python packages
-RUN apt install --yes cargo `# For jellyfish, via lib50` && \
-    pip3 install --no-cache-dir \
+RUN pip3 install --no-cache-dir \
         autopep8 \
         cachelib \
         "check50<4" \
