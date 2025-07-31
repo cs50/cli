@@ -1,0 +1,107 @@
+#!/bin/bash
+
+# If root
+if [[ `id -u` -eq 0 ]]; then
+    exit 1
+fi
+
+function _disable() {
+    touch /tmp/help50.lock
+}
+
+function _is-enabled() {
+    if [[ -f /tmp/help50.lock ]]; then
+        echo disabled
+        return 1
+    else
+        echo enabled
+        return 0
+    fi
+}
+
+function _enable() {
+    rm --force /tmp/help50.lock
+}
+
+function _start() {
+
+    # If already helping
+    if [[ -n "$HELP50" ]]; then
+        return 0
+    fi
+
+    # Uniquely identify typescript using PID of parent shell to help
+    local HELP50=/tmp/help50.$PPID
+
+    # Start `script` in background, using ; instead of && for command,
+    # else if user logs out (as via ctl-d) after a non-0 command, bash exits with 127
+    set -o monitor
+    HELP50=$HELP50 script --append --command "bash --login ; exit 1" --flush --quiet --return $HELP50
+    local status=$?
+
+    # No longer helping
+    rm --force $HELP50
+
+    # If `script` was killed, in which case `exit 1` above won't execute
+    if [[ $status -ne 1 ]]; then
+
+        # Without this, prompt ends up below and to right of "Session terminated, killing shell... ...killed."
+        echo -e "\r"
+
+    # Else if `script` exited on its own, as via ctl-d or `logout`
+    else
+
+        # Kill parent shell, since user presumably wants to exit
+        kill -SIGHUP $PPID
+    fi
+}
+
+function _status() {
+    if [[ -n "$HELP50" ]]; then
+        echo started
+        return 0
+    else
+        echo stopped
+        return 1
+    fi
+}
+
+function _stop() {
+
+    # If not helping
+    if [[ -z "$HELP50" ]]; then
+        return 0
+    fi
+
+    # Kill grandparent process (i.e., `script` itself)
+    local ppid=$(ps -o ppid= -p $$) # bash --login
+    local gppid=$(ps -o ppid= -p $ppid) # sh -c
+    local ggppid=$(ps -o ppid= -p $gppid) # script
+    kill -SIGTERM $ggppid
+}
+
+# Parse argument
+case "$1" in
+    disable)
+        _disable
+        ;;
+    enable)
+        _enable
+        ;;
+    is-enabled)
+        _is-enabled
+        ;;
+    start)
+        _start
+        ;;
+    status)
+        _status
+        ;;
+    stop)
+        _stop
+        ;;
+    *)
+        echo "Usage: $0 [disable|enable|is-enabled|start|status|stop]"
+        exit 1
+        ;;
+esac
