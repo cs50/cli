@@ -243,22 +243,10 @@ RUN apt update && \
     groupadd docker
 
 
-# Install Python packages
-RUN pip3 install --no-cache-dir \
-        autopep8 \
-        cachelib \
-        "check50<4" \
-        cli50 \
-        compare50 \
-        cs50==9.4.0 \
-        Flask \
-        Flask-Session \
-        help50 \
-        pytest \
-        render50 \
-        setuptools \
-        "style50>2.10.0" \
-        "submit50<4"
+# Copy requirements file and install Python packages
+COPY requirements.txt /tmp/requirements.txt
+RUN pip3 install --no-cache-dir --requirement /tmp/requirements.txt && \
+    rm /tmp/requirements.txt
 
 
 # Copy files to image
