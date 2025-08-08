@@ -258,7 +258,8 @@ RUN pip3 install --no-cache-dir \
         render50 \
         setuptools \
         "style50>2.10.0" \
-        "submit50<4"
+        "submit50<4" \
+        lib50 
 
 
 # Copy files to image
