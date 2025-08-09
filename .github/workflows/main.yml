@@ -29,8 +29,6 @@ jobs:
           tags: |
             cs50/cli:amd64
             cs50/cli:canary-amd64
-          cache-from: type=registry,ref=cs50/cli:amd64-buildcache
-          cache-to: type=registry,ref=cs50/cli:amd64-buildcache,mode=max
 
       - name: Push linux/amd64 build to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
@@ -69,8 +67,6 @@ jobs:
           tags: |
             cs50/cli:arm64
             cs50/cli:canary-arm64
-          cache-from: type=registry,ref=cs50/cli:arm64-buildcache
-          cache-to: type=registry,ref=cs50/cli:arm64-buildcache,mode=max
 
       - name: Push linux/arm64 build to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
