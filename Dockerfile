@@ -22,10 +22,10 @@ RUN apt update && \
 # http://jdk.java.net/24/
 RUN cd /tmp && \
     if [ "$BUILDARCH" = "arm64" ]; then ARCH="aarch64"; else ARCH="x64"; fi && \
-    curl --remote-name https://download.java.net/java/GA/jdk24/1f9ff9062db4449d8ca828c504ffae90/36/GPL/openjdk-24_linux-${ARCH}_bin.tar.gz && \
-    tar xzf openjdk-24_linux-${ARCH}_bin.tar.gz && \
-    rm --force openjdk-24_linux-${ARCH}_bin.tar.gz && \
-    mv jdk-24 /opt/jdk && \
+    curl --remote-name https://download.java.net/java/GA/jdk24.0.2/fdc5d0102fe0414db21410ad5834341f/12/GPL/openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
+    tar xzf openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
+    rm --force openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
+    mv jdk-24.0.2 /opt/jdk && \
     mkdir --parent /opt/bin && \
     ln --symbolic /opt/jdk/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
@@ -64,16 +64,16 @@ RUN apt update && \
 # Install Python 3.13.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl --remote-name https://www.python.org/ftp/python/3.13.5/Python-3.13.5.tgz && \
-    tar xzf Python-3.13.5.tgz && \
-    rm --force Python-3.13.5.tgz && \
-    cd Python-3.13.5 && \
+    curl --remote-name https://www.python.org/ftp/python/3.13.7/Python-3.13.7.tgz && \
+    tar xzf Python-3.13.7.tgz && \
+    rm --force Python-3.13.7.tgz && \
+    cd Python-3.13.7 && \
     CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.13.5 && \
+    rm --force --recursive Python-3.13.7 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade pip
