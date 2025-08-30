@@ -1,4 +1,4 @@
-@@ -33502,10 +33502,6 @@
+@@ -33794,10 +33794,6 @@
        char *zHome;
        char *zHistory;
        int nHistory;

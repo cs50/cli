@@ -36,7 +36,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 22.16.0
+    n 22.19.0
 
 
 # Install Node.js packages
@@ -117,14 +117,14 @@ RUN echo "gem: --no-document" > /etc/gemrc && \
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl --remote-name https://www.sqlite.org/2025/sqlite-amalgamation-3490200.zip && \
-    unzip sqlite-amalgamation-3490200.zip && \
-    rm --force sqlite-amalgamation-3490200.zip && \
-    cd sqlite-amalgamation-3490200 && \
+    curl --remote-name https://www.sqlite.org/2025/sqlite-amalgamation-3500400.zip && \
+    unzip sqlite-amalgamation-3500400.zip && \
+    rm --force sqlite-amalgamation-3500400.zip && \
+    cd sqlite-amalgamation-3500400 && \
     patch shell.c < /tmp/shell.c.patch && \
     gcc -D HAVE_READLINE -D SQLITE_DEFAULT_FOREIGN_KEYS=1 -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3490200 && \
+    rm --force --recursive sqlite-amalgamation-3500400 && \
     rm --force /tmp/shell.c.patch
 
 
