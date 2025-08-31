@@ -22,10 +22,10 @@ RUN apt update && \
 # http://jdk.java.net/24/
 RUN cd /tmp && \
     if [ "$BUILDARCH" = "arm64" ]; then ARCH="aarch64"; else ARCH="x64"; fi && \
-    curl --remote-name https://download.java.net/java/GA/jdk24/1f9ff9062db4449d8ca828c504ffae90/36/GPL/openjdk-24_linux-${ARCH}_bin.tar.gz && \
-    tar xzf openjdk-24_linux-${ARCH}_bin.tar.gz && \
-    rm --force openjdk-24_linux-${ARCH}_bin.tar.gz && \
-    mv jdk-24 /opt/jdk && \
+    curl --remote-name https://download.java.net/java/GA/jdk24.0.2/fdc5d0102fe0414db21410ad5834341f/12/GPL/openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
+    tar xzf openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
+    rm --force openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
+    mv jdk-24.0.2 /opt/jdk && \
     mkdir --parent /opt/bin && \
     ln --symbolic /opt/jdk/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
@@ -36,7 +36,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 22.16.0
+    n 22.19.0
 
 
 # Install Node.js packages
@@ -64,16 +64,16 @@ RUN apt update && \
 # Install Python 3.13.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl --remote-name https://www.python.org/ftp/python/3.13.5/Python-3.13.5.tgz && \
-    tar xzf Python-3.13.5.tgz && \
-    rm --force Python-3.13.5.tgz && \
-    cd Python-3.13.5 && \
+    curl --remote-name https://www.python.org/ftp/python/3.13.7/Python-3.13.7.tgz && \
+    tar xzf Python-3.13.7.tgz && \
+    rm --force Python-3.13.7.tgz && \
+    cd Python-3.13.7 && \
     CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.13.5 && \
+    rm --force --recursive Python-3.13.7 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade pip
@@ -117,14 +117,14 @@ RUN echo "gem: --no-document" > /etc/gemrc && \
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl --remote-name https://www.sqlite.org/2025/sqlite-amalgamation-3490200.zip && \
-    unzip sqlite-amalgamation-3490200.zip && \
-    rm --force sqlite-amalgamation-3490200.zip && \
-    cd sqlite-amalgamation-3490200 && \
+    curl --remote-name https://www.sqlite.org/2025/sqlite-amalgamation-3500400.zip && \
+    unzip sqlite-amalgamation-3500400.zip && \
+    rm --force sqlite-amalgamation-3500400.zip && \
+    cd sqlite-amalgamation-3500400 && \
     patch shell.c < /tmp/shell.c.patch && \
     gcc -D HAVE_READLINE -D SQLITE_DEFAULT_FOREIGN_KEYS=1 -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3490200 && \
+    rm --force --recursive sqlite-amalgamation-3500400 && \
     rm --force /tmp/shell.c.patch
 
 
