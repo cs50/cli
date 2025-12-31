@@ -1,7 +1,7 @@
-@@ -33794,10 +33794,6 @@
+@@ -33659,10 +33659,6 @@
+     if( stdin_is_interactive ){
        char *zHome;
        char *zHistory;
-       int nHistory;
 -      sqlite3_fprintf(stdout,
 -            "SQLite version %s %.19s\n" /*extra-version-info*/
 -            "Enter \".help\" for usage hints.\n",
