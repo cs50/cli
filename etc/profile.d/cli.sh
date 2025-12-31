@@ -1,5 +1,5 @@
 # If not root
-if [ "$(whoami)" != "root" ]; then
+if [ `id -u` -ne 0 ]; then
 
     # $PATH
     export PATH="/opt/cs50/bin":"/opt/bin":"$PATH"
@@ -60,4 +60,9 @@ if [ "$(whoami)" != "root" ]; then
 
     # Valgrind
     export VALGRIND_OPTS="--memcheck:leak-check=full --memcheck:show-leak-kinds=all --memcheck:track-origins=yes"
+
+    # Start help50 if enabled
+    if help50 is-enabled > /dev/null; then
+        help50 start
+    fi
 fi
