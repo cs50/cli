@@ -243,6 +243,12 @@ RUN apt update && \
     groupadd docker
 
 
+# Install BFG
+# https://rtyley.github.io/bfg-repo-cleaner/
+RUN mkdir --parents /opt/share && \
+    curl --location https://repo1.maven.org/maven2/com/madgag/bfg/1.15.0/bfg-1.15.0.jar --output /opt/share/bfg.jar
+
+
 # Install Python packages
 RUN pip3 install --no-cache-dir \
         autopep8 \
@@ -260,7 +266,7 @@ RUN pip3 install --no-cache-dir \
         "style50>2.10.0" \
         "submit50<4" \
         lib50 
-
+    
 
 # Copy files to image
 COPY ./etc /etc
