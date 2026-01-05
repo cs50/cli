@@ -15,6 +15,7 @@ if [ `id -u` -ne 0 ]; then
     fi
 
     # Aliases
+    alias bfg="java -jar /opt/share/bfg.jar"
     alias cd="HOME=\"$WORKDIR\" cd"
     alias cowsay="/usr/games/cowsay"
     alias cp="cp -i"

@@ -2,7 +2,7 @@
 ARG RELEASE=24.04
 
 # Build stage
-FROM ubuntu:${RELEASE} as builder
+FROM ubuntu:${RELEASE} AS builder
 
 
 # Build-time variables
@@ -18,14 +18,14 @@ RUN apt update && \
         curl
 
 
-# Install Java 23.x
-# http://jdk.java.net/23/
+# Install Java 24.x
+# http://jdk.java.net/24/
 RUN cd /tmp && \
     if [ "$BUILDARCH" = "arm64" ]; then ARCH="aarch64"; else ARCH="x64"; fi && \
-    curl --remote-name https://download.java.net/java/GA/jdk23/3c5b90190c68498b986a97f276efd28a/37/GPL/openjdk-23_linux-${ARCH}_bin.tar.gz && \
-    tar xzf openjdk-23_linux-${ARCH}_bin.tar.gz && \
-    rm --force openjdk-23_linux-${ARCH}_bin.tar.gz && \
-    mv jdk-23 /opt/jdk && \
+    curl --remote-name https://download.java.net/java/GA/jdk24.0.2/fdc5d0102fe0414db21410ad5834341f/12/GPL/openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
+    tar xzf openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
+    rm --force openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
+    mv jdk-24.0.2 /opt/jdk && \
     mkdir --parent /opt/bin && \
     ln --symbolic /opt/jdk/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
@@ -36,12 +36,12 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 22.9.0
+    n 22.21.1
 
 
 # Install Node.js packages
 RUN npm install --global \
-    http-server
+    http-server@14.1.1
 
 
 # Patch index.js in http-server
@@ -61,25 +61,25 @@ RUN apt update && \
         make tk-dev unzip wget xz-utils zlib1g-dev
 
 
-# Install Python 3.12.x
+# Install Python 3.13.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl --remote-name https://www.python.org/ftp/python/3.12.7/Python-3.12.7.tgz && \
-    tar xzf Python-3.12.7.tgz && \
-    rm --force Python-3.12.7.tgz && \
-    cd Python-3.12.7 && \
+    curl --remote-name https://www.python.org/ftp/python/3.13.11/Python-3.13.11.tgz && \
+    tar xzf Python-3.13.11.tgz && \
+    rm --force Python-3.13.11.tgz && \
+    cd Python-3.13.11 && \
     CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.12.7 && \
+    rm --force --recursive Python-3.13.11 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade pip
 
 
-# Install Ruby 3.3.x
+# Install Ruby 3.4.x
 # https://www.ruby-lang.org/en/downloads/
 # https://bugs.ruby-lang.org/issues/20085#note-5
 RUN apt update && \
@@ -89,16 +89,16 @@ RUN apt update && \
     apt clean && \
     rm --force --recursive /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.3/ruby-3.3.5.tar.gz --output ruby-3.3.5.tar.gz && \
-    tar xzf ruby-3.3.5.tar.gz && \
-    rm --force ruby-3.3.5.tar.gz && \
-    cd ruby-3.3.5 && \
+    curl https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.8.tar.gz --output ruby-3.4.8.tar.gz && \
+    tar xzf ruby-3.4.8.tar.gz && \
+    rm --force ruby-3.4.8.tar.gz && \
+    cd ruby-3.4.8 && \
     if [ "$BUILDARCH" = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
     ASFLAGS=${ASFLAGS} CFLAGS=-Os ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.3.5
+    rm --force --recursive ruby-3.4.8
 
 
 # Install Ruby packages
@@ -117,14 +117,14 @@ RUN echo "gem: --no-document" > /etc/gemrc && \
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl --remote-name https://www.sqlite.org/2024/sqlite-amalgamation-3460100.zip && \
-    unzip sqlite-amalgamation-3460100.zip && \
-    rm --force sqlite-amalgamation-3460100.zip && \
-    cd sqlite-amalgamation-3460100 && \
+    curl --remote-name https://www.sqlite.org/2025/sqlite-amalgamation-3510100.zip && \
+    unzip sqlite-amalgamation-3510100.zip && \
+    rm --force sqlite-amalgamation-3510100.zip && \
+    cd sqlite-amalgamation-3510100 && \
     patch shell.c < /tmp/shell.c.patch && \
     gcc -D HAVE_READLINE -D SQLITE_DEFAULT_FOREIGN_KEYS=1 -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3460100 && \
+    rm --force --recursive sqlite-amalgamation-3510100 && \
     rm --force /tmp/shell.c.patch
 
 
@@ -176,7 +176,7 @@ RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
         astyle \
         bash-completion \
-        build-essential `# dpkg-dev, libc, gcc, g++, make, etc.`\
+        build-essential `# dpkg-dev, libc, gcc, g++, make, etc.` \
         ca-certificates \
         clang \
         clang-format \
@@ -247,6 +247,12 @@ RUN apt update && \
     groupadd docker
 
 
+# Install BFG
+# https://rtyley.github.io/bfg-repo-cleaner/
+RUN mkdir --parents /opt/share && \
+    curl --location https://repo1.maven.org/maven2/com/madgag/bfg/1.15.0/bfg-1.15.0.jar --output /opt/share/bfg.jar
+
+
 # Install Python packages
 RUN pip3 install --no-cache-dir \
         autopep8 \
@@ -254,15 +260,16 @@ RUN pip3 install --no-cache-dir \
         "check50<4" \
         cli50 \
         compare50 \
-        cs50 \
+        cs50==9.4.0 \
         Flask \
         Flask-Session \
         pytest \
         render50 \
         setuptools \
         "style50>2.10.0" \
-        "submit50<4"
-
+        "submit50<4" \
+        lib50 
+    
 
 # Copy files to image
 COPY ./etc /etc

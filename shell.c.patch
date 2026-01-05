@@ -1,4 +1,11 @@
-30886,30888d30885
-<       sputf(stdout, "SQLite version %s %.19s%s\n" /*extra-version-info*/
-<             "Enter \".help\" for usage hints.\n",
-<             sqlite3_libversion(), sqlite3_sourceid(), SHELL_CIO_CHAR_SET);
+@@ -33659,10 +33659,6 @@
+     if( stdin_is_interactive ){
+       char *zHome;
+       char *zHistory;
+-      sqlite3_fprintf(stdout,
+-            "SQLite version %s %.19s\n" /*extra-version-info*/
+-            "Enter \".help\" for usage hints.\n",
+-            sqlite3_libversion(), sqlite3_sourceid());
+       if( warnInmemoryDb ){
+         sputz(stdout, "Connected to a ");
+         printBold("transient in-memory database");
