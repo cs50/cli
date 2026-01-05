@@ -1,0 +1,27 @@
+#!/bin/bash
+
+. /opt/cs50/lib/cli
+
+output=$(cat)
+
+# mkdir -p foo/bar && cd bar
+regex="cd: (.*): No such file or directory"
+if [[ "$output" =~ $regex ]]; then
+
+    # Search recursively for directory
+    dir="${BASH_REMATCH[1]}"
+    parent=$(_find -type d "$dir")
+    echo -n "There isn't a directory called \`$dir\` in your current directory."
+    if [[ ! -z "$parent" ]]; then
+        echo " Did you mean to run \`cd $parent\` first?"
+    else
+        echo
+    fi
+fi
+
+# cd.. || cd.
+regex="bash: cd\.\.?: command not found"
+if [[ "$output" =~ $regex ]]; then
+    echo "Did you mean to run \`cd ..\` instead?"
+    exit
+fi
