@@ -1,0 +1,114 @@
+#!/bin/bash
+
+output=$(cat)
+
+# touch foo.py && foo.py
+regex="bash: (.*\.py): command not found"
+if [[ "$output" =~ $regex ]]; then
+
+    # If file exists
+    if [[ -f "${BASH_REMATCH[1]}" ]]; then
+        echo "Did you mean to run \`python ${BASH_REMATCH[1]}\`?"
+        exit
+    fi
+fi
+
+# mkdir foo && (foo || 1s || .\foo)
+regex="bash: (.*): command not found"
+if [[ "$output" =~ $regex ]]; then
+
+    # If directory exists
+    if [[ -d "${BASH_REMATCH[1]}" ]]; then
+        echo "Did you mean to run \`cd ${BASH_REMATCH[1]}\`?"
+        exit
+    fi
+
+    # If typo
+    if [[ "${BASH_REMATCH[1]}" == "1s" ]]; then
+        echo "Did you mean to run \`ls\` (which starts with a lowercase L)?"
+        exit
+    fi
+
+    # If uppercase
+    argv0="${BASH_REMATCH[1],,}" # Lowercase it
+    if command -v "$argv0" &> /dev/null; then
+        echo "Did you mean to run \`$argv0\`, in lowercase instead?"
+        exit
+    fi
+
+    # If CS50 command
+    if [[ "${BASH_REMATCH[1]}" =~ ^(check|style|submit)$ && "$2" == "50" ]]; then
+        echo "Did you mean to run \`${BASH_REMATCH[1]}50\`, without a space, instead?"
+        exit
+    fi
+
+    # If backslash instead of forward slash
+    if [[ "${BASH_REMATCH[1]}" =~ ^\.(.*) ]]; then
+        if [[ -f "./${BASH_REMATCH[1]}" ]]; then
+            echo "Did you mean to run \`./${BASH_REMATCH[1]}\`, with a forward slash instead?"
+            exit
+        fi
+    fi
+fi
+
+# mkdir foo && ./foo
+regex="bash: \./([^:]*): Is a directory"
+if [[ "$output" =~ $regex ]]; then
+    echo "Cannot execute a directory. Did you mean to run \`cd ${BASH_REMATCH[1]}\`?"
+    exit
+fi
+
+# touch foo && cd foo
+regex="bash: cd: (.*): Not a directory"
+if [[ "$output" =~ $regex ]]; then
+    file="${BASH_REMATCH[1]}"
+    echo "Looks like you're trying to change directories, but \`$file\` isn't a directory."
+    exit
+fi
+
+# touch foo.c && ./foo.c
+regex="bash: \./((.*)\.c): Permission denied"
+if [[ "$output" =~ $regex ]]; then
+
+    # If file exists
+    if [[ -f "${BASH_REMATCH[1]}" ]]; then
+        echo "Did you mean to run \`make ${BASH_REMATCH[2]}\` and then \`./${BASH_REMATCH[2]}\`?"
+        exit
+    fi
+fi
+
+# touch foo.py && ./foo.py
+regex="bash: \./(.*\.py): Permission denied"
+if [[ "$output" =~ $regex ]]; then
+
+    # If file exists
+    if [[ -f "${BASH_REMATCH[1]}" ]]; then
+        echo "Did you mean to run \`python ${BASH_REMATCH[1]}\`?"
+        exit
+    fi
+fi
+
+# echo "int main(void) {}" > foo && ./foo
+regex="bash: \./([^\.]*): Permission denied"
+if [[ "$output" =~ $regex ]]; then
+    if [[ $(file --brief --mime-type "${BASH_REMATCH[1]}") == "text/x-c" ]]; then
+        echo "Did you mean to give \`"${BASH_REMATCH[1]}"\` a name of \`"${BASH_REMATCH[1]}".c\` (and then compile it with \`make\`) instead?"
+        exit
+    fi
+fi
+
+# touch foo && /.foo
+regex="bash: /\.([^:]*): No such file or directory"
+if [[ "$output" =~ $regex ]]; then
+    if [[ -f "${BASH_REMATCH[1]}" ]]; then
+        echo "Did you mean to run \`./${BASH_REMATCH[1]}\`?"
+        exit
+    fi
+fi
+
+# int main(void) || do {
+regex="bash: syntax error near unexpected token \`.*'"
+if [[ "$output" =~ $regex ]]; then
+    echo "Did you mean to type that in a file instead of your terminal window?"
+    exit
+fi

@@ -1,0 +1,78 @@
+function _alert() {
+    echo -e "\033[33m${1}\033[39m" # Yellow
+}
+
+function _ansi() {
+
+    # If command-line arguments
+    if [[ -t 0 ]]; then
+        input="$*"
+
+    # If standard input
+    else
+        input=$(cat)
+    fi
+
+    # Format backticks as bold
+    local bold=$(printf '\033[1m')
+    local normal=$(printf '\033[22m')
+    echo "$input" | sed "s/\`\\([^\`]*\\)\`/${bold}\\1${normal}/g" | _fold
+}
+
+function _find() {
+
+    # Usage
+    if [[ $# -eq 1 ]]; then # Files AND directories
+        local path="$1"
+        local type=""
+    elif [[ $# -eq 3 && "$1" == "-type" && "$2" =~ ^[df]$ ]]; then # Files OR directories
+        local type="$1 $2"
+        local path="$3"
+    else
+        return
+    fi
+
+    # Find $path in descendants of $WORKDIR, excluding hidden directories, most recently modified first
+    paths=$(find "$WORKDIR" -not -path "*/.*" -name "$path" -printf "%T+ %p\n" $type | sort -nr | awk '{print $2}' 2> /dev/null)
+
+    # Count paths
+    local count=$(echo "$paths" | grep -c .)
+
+    # If just one
+    if [[ "$count" -eq 1 ]]; then
+
+        # Resolve absolute path to relative path
+        realpath --relative-to=. "$(dirname "$paths")"
+    fi
+}
+
+function _fold() {
+
+    # If command-line arguments
+    if [[ -t 0 ]]; then
+        input="$*"
+
+    # If standard input
+    else
+        input=$(cat)
+    fi
+
+    # Wrap long lines
+    local cols=$(tput cols)
+    echo "$input" | fold --spaces --width=$cols
+}
+
+function _sure() {
+    if [[ $# -ne 1 ]]; then
+        return 1
+    fi
+    local prompt=$(echo "$1" | _ansi)
+    while true; do
+        read -p "$prompt [y/N] " -r
+        if [[ "${REPLY,,}" =~ ^(y|yes)$ ]]; then
+            return 0
+        else
+            return 1
+        fi
+    done
+}
