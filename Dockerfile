@@ -22,7 +22,7 @@ RUN apt update && \
 # https://jdk.java.net/25/
 RUN cd /tmp && \
     if [ "$BUILDARCH" = "arm64" ]; then ARCH="aarch64"; else ARCH="x64"; fi && \
-    curl --remote-name https://download.java.net/java/GA/jdk25.0.2/b1e0dfa218384cb9959bdcb897162d4e/10/GPL/openjdk-25.0.2_linux-${ARCH}.tar.gz && \
+    curl --remote-name https://download.java.net/java/GA/jdk25.0.2/b1e0dfa218384cb9959bdcb897162d4e/10/GPL/openjdk-25.0.2_linux-${ARCH}_bin.tar.gz && \
     tar xzf openjdk-25.0.2_linux-${ARCH}_bin.tar.gz && \
     rm --force openjdk-25.0.2_linux-${ARCH}_bin.tar.gz && \
     mv jdk-25.0.2 /opt/jdk && \
@@ -117,7 +117,7 @@ RUN echo "gem: --no-document" > /etc/gemrc && \
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl --remote-name https://www.sqlite.org/2025/sqlite-amalgamation-3510200.zip && \
+    curl --remote-name https://www.sqlite.org/2026/sqlite-amalgamation-3510200.zip && \
     unzip sqlite-amalgamation-3510200.zip && \
     rm --force sqlite-amalgamation-3510200.zip && \
     cd sqlite-amalgamation-3510200 && \
