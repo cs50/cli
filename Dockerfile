@@ -18,14 +18,14 @@ RUN apt update && \
         curl
 
 
-# Install Java 24.x
-# http://jdk.java.net/24/
+# Install Java 25.x
+# https://jdk.java.net/25/
 RUN cd /tmp && \
     if [ "$BUILDARCH" = "arm64" ]; then ARCH="aarch64"; else ARCH="x64"; fi && \
-    curl --remote-name https://download.java.net/java/GA/jdk24.0.2/fdc5d0102fe0414db21410ad5834341f/12/GPL/openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
-    tar xzf openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
-    rm --force openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
-    mv jdk-24.0.2 /opt/jdk && \
+    curl --remote-name https://download.java.net/java/GA/jdk25.0.2/b1e0dfa218384cb9959bdcb897162d4e/10/GPL/openjdk-25.0.2_linux-${ARCH}.tar.gz && \
+    tar xzf openjdk-25.0.2_linux-${ARCH}_bin.tar.gz && \
+    rm --force openjdk-25.0.2_linux-${ARCH}_bin.tar.gz && \
+    mv jdk-25.0.2 /opt/jdk && \
     mkdir --parent /opt/bin && \
     ln --symbolic /opt/jdk/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
