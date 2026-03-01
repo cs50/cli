@@ -79,7 +79,7 @@ RUN cd /tmp && \
     pip3 install --no-cache-dir --upgrade pip
 
 
-# Install Ruby 3.4.x
+# Install Ruby 4.0.x
 # https://www.ruby-lang.org/en/downloads/
 # https://bugs.ruby-lang.org/issues/20085#note-5
 RUN apt update && \
@@ -89,23 +89,23 @@ RUN apt update && \
     apt clean && \
     rm --force --recursive /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.8.tar.gz --output ruby-3.4.8.tar.gz && \
-    tar xzf ruby-3.4.8.tar.gz && \
-    rm --force ruby-3.4.8.tar.gz && \
-    cd ruby-3.4.8 && \
+    curl https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.1.tar.gz --output ruby-4.0.1.tar.gz && \
+    tar xzf ruby-4.0.1.tar.gz && \
+    rm --force ruby-4.0.1.tar.gz && \
+    cd ruby-4.0.1 && \
     if [ "$BUILDARCH" = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
     ASFLAGS=${ASFLAGS} CFLAGS=-Os ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.4.8
+    rm --force --recursive ruby-4.0.1
 
 
 # Install Ruby packages
 RUN echo "gem: --no-document" > /etc/gemrc && \
-    gem install \
+    gem update --system 4.0.7 && \
+    gem install --force \
         jekyll \
-        minitest `# So that Bundler needn't install` \
         pygments.rb \
         specific_install && \
     gem specific_install https://github.com/cs50/jekyll-theme-cs50 develop && \
