@@ -263,7 +263,7 @@ RUN pip3 install --no-cache-dir \
         pytest \
         render50 \
         setuptools \
-        "style50>2.10.0" \
+        "style50>=3.0.0" \
         "submit50<4" \
         lib50 
     
