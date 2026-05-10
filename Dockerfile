@@ -18,6 +18,18 @@ RUN apt update && \
         curl
 
 
+# Install Go 1.26.x
+# https://go.dev/dl/
+RUN cd /tmp && \
+    curl --remote-name --location https://go.dev/dl/go1.26.3.linux-${BUILDARCH}.tar.gz && \
+    tar xzf go1.26.3.linux-${BUILDARCH}.tar.gz && \
+    rm --force go1.26.3.linux-${BUILDARCH}.tar.gz && \
+    mv go /opt/ && \
+    mkdir --parent /opt/bin && \
+    ln --symbolic /opt/go/bin/* /opt/bin/ && \
+    chmod a+rx /opt/bin/*
+
+
 # Install Java 25.x
 # https://jdk.java.net/25/
 RUN cd /tmp && \
@@ -225,30 +237,6 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         libcs50
 
 
-# Install Docker CLI
-# https://docs.docker.com/engine/install/ubuntu/
-# https://docs.docker.com/engine/install/linux-postinstall/
-RUN apt update && \
-    apt install --no-install-recommends --no-install-suggests --yes \
-        ca-certificates \
-        curl \
-        socat && \
-    install -d /etc/apt/keyrings -m 0755 && \
-    curl --fail --location --show-error --silent https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc && \
-    chmod a+r /etc/apt/keyrings/docker.asc && \
-    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
-    apt update && \
-    sudo apt install --no-install-recommends --no-install-suggests --yes \
-        docker-ce-cli && \
-    groupadd docker
-
-
-# Install BFG
-# https://rtyley.github.io/bfg-repo-cleaner/
-RUN mkdir --parents /opt/share && \
-    curl --location https://repo1.maven.org/maven2/com/madgag/bfg/1.15.0/bfg-1.15.0.jar --output /opt/share/bfg.jar
-
-
 # Install Python packages
 RUN pip3 install --no-cache-dir \
         autopep8 \
@@ -267,6 +255,40 @@ RUN pip3 install --no-cache-dir \
         "submit50<4" \
         lib50 
     
+
+# Install BFG
+# https://rtyley.github.io/bfg-repo-cleaner/
+RUN mkdir --parents /opt/share && \
+    curl --location https://repo1.maven.org/maven2/com/madgag/bfg/1.15.0/bfg-1.15.0.jar --output /opt/share/bfg.jar
+
+
+# Install Docker CLI
+# https://docs.docker.com/engine/install/ubuntu/
+# https://docs.docker.com/engine/install/linux-postinstall/
+RUN apt update && \
+    apt install --no-install-recommends --no-install-suggests --yes \
+        ca-certificates \
+        curl \
+        socat && \
+    install -d /etc/apt/keyrings -m 0755 && \
+    curl --fail --location --show-error --silent https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc && \
+    chmod a+r /etc/apt/keyrings/docker.asc && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null && \
+    apt update && \
+    sudo apt install --no-install-recommends --no-install-suggests --yes \
+        docker-ce-cli && \
+    groupadd docker
+
+
+# Install GitHub CLI
+# https://github.com/cli/cli/blob/trunk/docs/install_linux.md#debian
+RUN cd /tmp && \
+    curl --remote-name https://cli.github.com/packages/githubcli-archive-keyring.gpg && \
+    mv githubcli-archive-keyring.gpg /etc/apt/keyrings/ && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
+    apt update && \
+    apt install gh --no-install-recommends --no-install-suggests --yes
+
 
 # Copy files to image
 COPY ./etc /etc
