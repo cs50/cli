@@ -18,6 +18,18 @@ RUN apt update && \
         curl
 
 
+# Install Go 1.26.x
+# https://go.dev/dl/
+RUN cd /tmp && \
+    curl --remote-name --location https://go.dev/dl/go1.26.3.linux-${BUILDARCH}.tar.gz && \
+    tar xzf go1.26.3.linux-${BUILDARCH}.tar.gz && \
+    rm --force go1.26.3.linux-${BUILDARCH}.tar.gz && \
+    mv go /opt/ && \
+    mkdir --parent /opt/bin && \
+    ln --symbolic /opt/go/bin/* /opt/bin/ && \
+    chmod a+rx /opt/bin/*
+
+
 # Install Java 25.x
 # https://jdk.java.net/25/
 RUN cd /tmp && \
