@@ -282,14 +282,12 @@ RUN apt update && \
 
 # Install GitHub CLI
 # https://github.com/cli/cli/blob/trunk/docs/install_linux.md#debian
-RUN apt update && \
-    cd /tmp && \
+RUN cd /tmp && \
     curl --remote-name https://cli.github.com/packages/githubcli-archive-keyring.gpg && \
     mv githubcli-archive-keyring.gpg /etc/apt/keyrings/ && \
-	mkdir -p -m 755 /etc/apt/sources.list.d && \
-	echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
-	apt update && \
-	apt install gh --yes
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
+    apt update && \
+    apt install gh --no-install-recommends --no-install-suggests --yes
 
 
 # Copy files to image
