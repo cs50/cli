@@ -21,9 +21,9 @@ RUN apt update && \
 # Install Go 1.26.x
 # https://go.dev/dl/
 RUN cd /tmp && \
-    curl --remote-name --location https://go.dev/dl/go1.26.3.linux-${BUILDARCH}.tar.gz && \
-    tar xzf go1.26.3.linux-${BUILDARCH}.tar.gz && \
-    rm --force go1.26.3.linux-${BUILDARCH}.tar.gz && \
+    curl --remote-name --location https://go.dev/dl/go1.26.8.linux-${BUILDARCH}.tar.gz && \
+    tar xzf go1.26.8.linux-${BUILDARCH}.tar.gz && \
+    rm --force go1.26.8.linux-${BUILDARCH}.tar.gz && \
     mv go /opt/ && \
     mkdir --parent /opt/bin && \
     ln --symbolic /opt/go/bin/* /opt/bin/ && \
@@ -48,7 +48,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 24.14.0
+    n 24.20.0
 
 
 # Install Node.js packages
@@ -76,16 +76,16 @@ RUN apt update && \
 # Install Python 3.13.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl --remote-name https://www.python.org/ftp/python/3.13.12/Python-3.13.12.tgz && \
-    tar xzf Python-3.13.12.tgz && \
-    rm --force Python-3.13.12.tgz && \
-    cd Python-3.13.12 && \
+    curl --remote-name https://www.python.org/ftp/python/3.13.15/Python-3.13.15.tgz && \
+    tar xzf Python-3.13.15.tgz && \
+    rm --force Python-3.13.15.tgz && \
+    cd Python-3.13.15 && \
     CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.13.12 && \
+    rm --force --recursive Python-3.13.15 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade pip
@@ -101,21 +101,21 @@ RUN apt update && \
     apt clean && \
     rm --force --recursive /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.1.tar.gz --output ruby-4.0.1.tar.gz && \
-    tar xzf ruby-4.0.1.tar.gz && \
-    rm --force ruby-4.0.1.tar.gz && \
-    cd ruby-4.0.1 && \
+    curl https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.6.tar.gz --output ruby-4.0.6.tar.gz && \
+    tar xzf ruby-4.0.6.tar.gz && \
+    rm --force ruby-4.0.6.tar.gz && \
+    cd ruby-4.0.6 && \
     if [ "$BUILDARCH" = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
     ASFLAGS=${ASFLAGS} CFLAGS=-Os ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-4.0.1
+    rm --force --recursive ruby-4.0.6
 
 
 # Install Ruby packages
 RUN echo "gem: --no-document" > /etc/gemrc && \
-    gem update --system 4.0.7 && \
+    gem update --system 4.0.20 && \
     gem install --force \
         jekyll \
         pygments.rb \
@@ -124,19 +124,19 @@ RUN echo "gem: --no-document" > /etc/gemrc && \
     gem cleanup
 
 
-# Install SQLite 3.4x
+# Install SQLite 3.5x
 # https://www.sqlite.org/download.html
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl --remote-name https://www.sqlite.org/2026/sqlite-amalgamation-3510200.zip && \
-    unzip sqlite-amalgamation-3510200.zip && \
-    rm --force sqlite-amalgamation-3510200.zip && \
-    cd sqlite-amalgamation-3510200 && \
+    curl --remote-name https://www.sqlite.org/2026/sqlite-amalgamation-3530400.zip && \
+    unzip sqlite-amalgamation-3530400.zip && \
+    rm --force sqlite-amalgamation-3530400.zip && \
+    cd sqlite-amalgamation-3530400 && \
     patch shell.c < /tmp/shell.c.patch && \
     gcc -D HAVE_READLINE -D SQLITE_DEFAULT_FOREIGN_KEYS=1 -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3510200 && \
+    rm --force --recursive sqlite-amalgamation-3530400 && \
     rm --force /tmp/shell.c.patch
 
 
