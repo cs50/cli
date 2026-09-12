@@ -1,5 +1,5 @@
 # Ubuntu version
-ARG RELEASE=24.04
+ARG RELEASE=26.04
 
 # Build stage
 FROM ubuntu:${RELEASE} AS builder
@@ -203,7 +203,7 @@ RUN apt update && \
         git-lfs \
         jq \
         less \
-        libclang-rt-18-dev `# For clang` \
+        libclang-rt-21-dev `# For clang` \
         liblapack3 `# For R` \
         libmagic-dev `# For style50` \
         libncurses-dev \
