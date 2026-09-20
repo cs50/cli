@@ -1,8 +1,8 @@
-@@ -33659,10 +33659,6 @@
+@@ -37167,10 +37167,6 @@
      if( stdin_is_interactive ){
        char *zHome;
        char *zHistory;
--      sqlite3_fprintf(stdout,
+-      cli_printf(stdout,
 -            "SQLite version %s %.19s\n" /*extra-version-info*/
 -            "Enter \".help\" for usage hints.\n",
 -            sqlite3_libversion(), sqlite3_sourceid());

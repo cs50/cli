@@ -18,25 +18,37 @@ RUN apt update && \
         curl
 
 
-# Install Java 24.x
-# http://jdk.java.net/24/
+# Install Go 1.26.x
+# https://go.dev/dl/
+RUN cd /tmp && \
+    curl --remote-name --location https://go.dev/dl/go1.26.8.linux-${BUILDARCH}.tar.gz && \
+    tar xzf go1.26.8.linux-${BUILDARCH}.tar.gz && \
+    rm --force go1.26.8.linux-${BUILDARCH}.tar.gz && \
+    mv go /opt/ && \
+    mkdir --parent /opt/bin && \
+    ln --symbolic /opt/go/bin/* /opt/bin/ && \
+    chmod a+rx /opt/bin/*
+
+
+# Install Java 25.x
+# https://jdk.java.net/25/
 RUN cd /tmp && \
     if [ "$BUILDARCH" = "arm64" ]; then ARCH="aarch64"; else ARCH="x64"; fi && \
-    curl --remote-name https://download.java.net/java/GA/jdk24.0.2/fdc5d0102fe0414db21410ad5834341f/12/GPL/openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
-    tar xzf openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
-    rm --force openjdk-24.0.2_linux-${ARCH}_bin.tar.gz && \
-    mv jdk-24.0.2 /opt/jdk && \
+    curl --remote-name https://download.java.net/java/GA/jdk25.0.2/b1e0dfa218384cb9959bdcb897162d4e/10/GPL/openjdk-25.0.2_linux-${ARCH}_bin.tar.gz && \
+    tar xzf openjdk-25.0.2_linux-${ARCH}_bin.tar.gz && \
+    rm --force openjdk-25.0.2_linux-${ARCH}_bin.tar.gz && \
+    mv jdk-25.0.2 /opt/jdk && \
     mkdir --parent /opt/bin && \
     ln --symbolic /opt/jdk/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
 
 
-# Install Node.js 22.x
+# Install Node.js 24.x
 # https://nodejs.dev/en/download/
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 22.21.1
+    n 24.20.0
 
 
 # Install Node.js packages
@@ -64,22 +76,22 @@ RUN apt update && \
 # Install Python 3.13.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl --remote-name https://www.python.org/ftp/python/3.13.11/Python-3.13.11.tgz && \
-    tar xzf Python-3.13.11.tgz && \
-    rm --force Python-3.13.11.tgz && \
-    cd Python-3.13.11 && \
+    curl --remote-name https://www.python.org/ftp/python/3.13.15/Python-3.13.15.tgz && \
+    tar xzf Python-3.13.15.tgz && \
+    rm --force Python-3.13.15.tgz && \
+    cd Python-3.13.15 && \
     CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.13.11 && \
+    rm --force --recursive Python-3.13.15 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade pip
 
 
-# Install Ruby 3.4.x
+# Install Ruby 4.0.x
 # https://www.ruby-lang.org/en/downloads/
 # https://bugs.ruby-lang.org/issues/20085#note-5
 RUN apt update && \
@@ -89,42 +101,42 @@ RUN apt update && \
     apt clean && \
     rm --force --recursive /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/3.4/ruby-3.4.8.tar.gz --output ruby-3.4.8.tar.gz && \
-    tar xzf ruby-3.4.8.tar.gz && \
-    rm --force ruby-3.4.8.tar.gz && \
-    cd ruby-3.4.8 && \
+    curl https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.6.tar.gz --output ruby-4.0.6.tar.gz && \
+    tar xzf ruby-4.0.6.tar.gz && \
+    rm --force ruby-4.0.6.tar.gz && \
+    cd ruby-4.0.6 && \
     if [ "$BUILDARCH" = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
     ASFLAGS=${ASFLAGS} CFLAGS=-Os ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-3.4.8
+    rm --force --recursive ruby-4.0.6
 
 
 # Install Ruby packages
 RUN echo "gem: --no-document" > /etc/gemrc && \
-    gem install \
+    gem update --system 4.0.20 && \
+    gem install --force \
         jekyll \
-        minitest `# So that Bundler needn't install` \
         pygments.rb \
         specific_install && \
     gem specific_install https://github.com/cs50/jekyll-theme-cs50 develop && \
     gem cleanup
 
 
-# Install SQLite 3.4x
+# Install SQLite 3.5x
 # https://www.sqlite.org/download.html
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl --remote-name https://www.sqlite.org/2025/sqlite-amalgamation-3510100.zip && \
-    unzip sqlite-amalgamation-3510100.zip && \
-    rm --force sqlite-amalgamation-3510100.zip && \
-    cd sqlite-amalgamation-3510100 && \
+    curl --remote-name https://www.sqlite.org/2026/sqlite-amalgamation-3530400.zip && \
+    unzip sqlite-amalgamation-3530400.zip && \
+    rm --force sqlite-amalgamation-3530400.zip && \
+    cd sqlite-amalgamation-3530400 && \
     patch shell.c < /tmp/shell.c.patch && \
     gcc -D HAVE_READLINE -D SQLITE_DEFAULT_FOREIGN_KEYS=1 -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3510100 && \
+    rm --force --recursive sqlite-amalgamation-3530400 && \
     rm --force /tmp/shell.c.patch
 
 
@@ -229,6 +241,30 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
         libcs50
 
 
+# Install Python packages
+RUN pip3 install --no-cache-dir \
+        autopep8 \
+        cachelib \
+        "check50<4" \
+        cli50 \
+        compare50 \
+        cs50==9.5.0 \
+        Flask \
+        Flask-Session \
+        pytest \
+        render50 \
+        setuptools \
+        "style50>=3.0.0" \
+        "submit50<4" \
+        lib50 
+    
+
+# Install BFG
+# https://rtyley.github.io/bfg-repo-cleaner/
+RUN mkdir --parents /opt/share && \
+    curl --location https://repo1.maven.org/maven2/com/madgag/bfg/1.15.0/bfg-1.15.0.jar --output /opt/share/bfg.jar
+
+
 # Install Docker CLI
 # https://docs.docker.com/engine/install/ubuntu/
 # https://docs.docker.com/engine/install/linux-postinstall/
@@ -247,29 +283,15 @@ RUN apt update && \
     groupadd docker
 
 
-# Install BFG
-# https://rtyley.github.io/bfg-repo-cleaner/
-RUN mkdir --parents /opt/share && \
-    curl --location https://repo1.maven.org/maven2/com/madgag/bfg/1.15.0/bfg-1.15.0.jar --output /opt/share/bfg.jar
+# Install GitHub CLI
+# https://github.com/cli/cli/blob/trunk/docs/install_linux.md#debian
+RUN cd /tmp && \
+    curl --remote-name https://cli.github.com/packages/githubcli-archive-keyring.gpg && \
+    mv githubcli-archive-keyring.gpg /etc/apt/keyrings/ && \
+    echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/githubcli-archive-keyring.gpg] https://cli.github.com/packages stable main" | tee /etc/apt/sources.list.d/github-cli.list > /dev/null && \
+    apt update && \
+    apt install gh --no-install-recommends --no-install-suggests --yes
 
-
-# Install Python packages
-RUN pip3 install --no-cache-dir \
-        autopep8 \
-        cachelib \
-        "check50<4" \
-        cli50 \
-        compare50 \
-        cs50==9.4.0 \
-        Flask \
-        Flask-Session \
-        pytest \
-        render50 \
-        setuptools \
-        "style50>2.10.0" \
-        "submit50<4" \
-        lib50 
-    
 
 # Copy files to image
 COPY ./etc /etc
