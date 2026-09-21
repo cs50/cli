@@ -56,27 +56,44 @@ function _help50() {
         # Cap typescript at MIN(1K lines, 1M bytes), else `read` is slow
         typescript=$(echo "$typescript" | head -n 1024 | cut -b 1-1048576)
 
-        # Remove any line continuations from command line
-        local lines=""
-        while IFS= read -r line || [[ -n "$line" ]]; do
-            if [[ -z $done && $line =~ \\$ ]]; then
-                lines+="${line%\\}"
-            else
-                lines+="$line"$'\n'
-                local done=1
-            fi
-        done <<< "$typescript"
-        typescript="$lines"
-
-        # Remove command line from typescript
-        typescript=$(echo "$typescript" | sed '1d')
-
         # Remove ANSI characters
         typescript=$(echo "$typescript" | ansi2txt)
 
         # Remove control characters
         # https://superuser.com/a/237154
         typescript=$(echo "$typescript" | col -bp)
+
+        # Remove everything through the command line itself, as echoed by the terminal.
+        # It's usually the first line, but tab completion, history browsing, etc. echo
+        # more before it (e.g., a listing of completions, then a redrawn prompt), which
+        # would otherwise be mistaken for the command's output. So look for the first
+        # line that ends with the command (per history), joining any line continuations
+        # (and dropping their PS2 prompts) along the way; if not found, fall back to
+        # removing just the first (logical) line.
+        local command="${argv%"${argv##*[![:space:]]}"}" # Right-trimmed
+        local after_first="" after_command="" logical="" first="" found=""
+        while IFS= read -r line || [[ -n "$line" ]]; do
+            [[ -n "$found" ]] && after_command+="$line"$'\n'
+            [[ -n "$first" ]] && after_first+="$line"$'\n'
+            [[ -n "$found" ]] && continue
+            [[ -n "$logical" ]] && line="${line#"$PS2"}"
+            if [[ "$line" =~ \\$ ]]; then
+                logical+="${line%\\}"
+                continue
+            fi
+            logical+="$line"
+            first=1
+            local trimmed="${logical%"${logical##*[![:space:]]}"}"
+            if [[ -n "$command" && "$trimmed" == *"$command" ]]; then
+                found=1
+            fi
+            logical=""
+        done <<< "$typescript"
+        if [[ -n "$found" ]]; then
+            typescript="$after_command"
+        else
+            typescript="$after_first"
+        fi
 
         # Try to get help
         for helper in $HELPERS/*; do
