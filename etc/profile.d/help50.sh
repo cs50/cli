@@ -90,7 +90,9 @@ function _help50() {
         if [[ -n "$help" ]]; then # If helpful
             _helpful "$help"
         elif [[ $status -ne 0 ]]; then # If helpless
-            _helpless "$typescript"
+
+            # Cap what's relayed downstream (e.g., ddb50 rejects > 10,000 characters), keeping the end, where errors tend to be
+            _helpless "$(echo "$typescript" | tail -c 8192)"
         fi
     else
         _helped
@@ -113,7 +115,7 @@ if ! type _helpful >/dev/null 2>&1; then
 
         # Intercept accidental invocation of `yes` and `n`, which are actual programs
         for name in n no y yes; do
-            alias $name=_rhetocial
+            alias $name=_rhetorical
         done
 
         # Output help

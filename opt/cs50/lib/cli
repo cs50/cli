@@ -4,8 +4,8 @@ function _alert() {
 
 function _ansi() {
 
-    # If command-line arguments
-    if [[ -t 0 ]]; then
+    # If command-line arguments (don't test -t 0, else arguments are ignored whenever stdin is redirected)
+    if [[ $# -gt 0 ]]; then
         input="$*"
 
     # If standard input
@@ -48,8 +48,8 @@ function _find() {
 
 function _fold() {
 
-    # If command-line arguments
-    if [[ -t 0 ]]; then
+    # If command-line arguments (don't test -t 0, else arguments are ignored whenever stdin is redirected)
+    if [[ $# -gt 0 ]]; then
         input="$*"
 
     # If standard input
@@ -57,8 +57,9 @@ function _fold() {
         input=$(cat)
     fi
 
-    # Wrap long lines
-    local cols=$(tput cols)
+    # Wrap long lines (default to 80 columns if no terminal, e.g., when piped)
+    local cols=$(tput cols 2> /dev/null)
+    [[ "$cols" =~ ^[0-9]+$ ]] || cols=80
     echo "$input" | fold --spaces --width=$cols
 }
 
