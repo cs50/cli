@@ -188,6 +188,7 @@ RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
         astyle \
         bash-completion \
+        bsdextrautils `# For col, for help50` \
         build-essential `# dpkg-dev, libc, gcc, g++, make, etc.` \
         ca-certificates \
         clang \

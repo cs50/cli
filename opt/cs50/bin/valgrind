@@ -1,8 +1,10 @@
 #!/bin/bash
 
+. /opt/cs50/lib/cli
+
 # If run on Python program
 if [[ "$1" == "python" || "$1" == *.py ]]; then
-    echo "$(_help "Afraid \`valgrind\` does not support Python programs!")"
+    _alert "$(_ansi "Afraid \`valgrind\` does not support Python programs!")"
     exit 1
 fi
 

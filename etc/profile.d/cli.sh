@@ -62,8 +62,8 @@ if [ `id -u` -ne 0 ]; then
     # Valgrind
     export VALGRIND_OPTS="--memcheck:leak-check=full --memcheck:show-leak-kinds=all --memcheck:track-origins=yes"
 
-    # Start help50 if enabled
-    if help50 is-enabled > /dev/null; then
+    # Start help50 if enabled (only for interactive shells with a terminal, else `script` would hang, e.g., in `bash --login -c`)
+    if [[ $- == *i* && -t 0 ]] && help50 is-enabled > /dev/null; then
         help50 start
     fi
 fi
