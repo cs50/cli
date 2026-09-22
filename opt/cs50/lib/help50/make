@@ -1,0 +1,45 @@
+#!/bin/bash
+
+. /opt/cs50/lib/cli
+
+output=$(cat)
+
+regex="make: Nothing to be done for '(.*)'"
+if [[ "$output" =~ $regex ]]; then
+
+    # If target is a directory
+    if [[ -d "${BASH_REMATCH[1]}" ]]; then
+        echo "Cannot run \`make\` on a directory. Did you mean to run \`cd ${BASH_REMATCH[1]}\` instead?"
+        exit
+    fi
+
+    # If target ends with .c
+    if [[ "${BASH_REMATCH[1]}" == *?.c ]]; then
+        base="${BASH_REMATCH[1]%.c}"
+        if [[ -n "$base" && ! -d "$base" ]]; then
+            echo "Did you mean to run \`make ${base}\` instead?"
+            exit
+        fi
+    fi
+
+fi
+
+regex="make: \*\*\* No rule to make target '(.*)'"
+if [[ "$output" =~ $regex ]]; then
+
+    # If no .c file for target
+    file="${BASH_REMATCH[1]}"
+    [[ "$file" == *.c ]] || file="$file.c"
+    if [[ ! -f "$file" ]]; then
+
+        # Search recursively for .c file
+        dir=$(_find -type f "$file")
+        echo -n "There isn't a file called \`$file\` in your current directory."
+        if [[ ! -z "$dir" ]]; then
+            echo " Did you mean to run \`cd $dir\` first?"
+        else
+            echo
+        fi
+        exit
+    fi
+fi

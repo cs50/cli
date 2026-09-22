@@ -188,16 +188,21 @@ RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
         astyle \
         bash-completion \
+        bsdextrautils `# For col, for help50` \
         build-essential `# dpkg-dev, libc, gcc, g++, make, etc.` \
         ca-certificates \
         clang \
         clang-format \
+        colorized-logs `# For help50` \
         coreutils `# For fold` \
         cowsay \
         curl \
         dos2unix \
         dnsutils `# For nslookup` \
+        expect `# For help50` \
+        file `# For help50` \
         fonts-noto-color-emoji `# For render50` \
+        fzf `# For help50` \
         gdb \
         git \
         git-lfs \
@@ -247,7 +252,6 @@ RUN pip3 install --no-cache-dir \
         cs50==9.5.0 \
         Flask \
         Flask-Session \
-        help50 \
         pytest \
         render50 \
         setuptools \
