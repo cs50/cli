@@ -1,10 +1,5 @@
 #!/bin/bash
 
-# If root
-if [[ `id -u` -eq 0 ]]; then
-    exit 1
-fi
-
 function _disable() {
     touch /tmp/help50.lock
 }
@@ -80,28 +75,51 @@ function _stop() {
     kill -SIGTERM $ggppid
 }
 
+# Run a command as though typed directly. Students used to run `help50 make foo`; help now
+# arrives automatically after any failed command, so just run the command, with the same
+# exit status, and let the shell's prompt hook handle the rest. (Within a help50 session,
+# /etc/profile.d/help50.sh defines a `help50` function that runs the command in the shell
+# itself instead, so that aliases, functions, and `cd` behave as they would directly.)
+function _run() {
+    if [[ -n "$(type -P -- "$1")" ]]; then
+        exec "$@"
+    elif [[ "$1" == */* || -n "$(type -t -- "$1")" ]]; then # Path, builtin, or keyword, e.g., ./foo.c, cd
+
+        # Let bash itself report errors (e.g., Permission denied, Is a directory, No such
+        # file or directory), as it would have directly, so that helpers recognize them
+        bash -c "$(printf '%q ' "$@")" 2> >(sed 's/^bash: line [0-9]*: /bash: /' >&2)
+        local status=$?
+        wait $! 2> /dev/null # For sed to finish, lest its output arrive after the prompt
+        exit $status
+    else # Fail the way the shell would, so that helpers recognize it
+        echo "bash: $1: command not found" >&2
+        exit 127
+    fi
+}
+
+function _usage() {
+    echo "Usage: help50 COMMAND [ARGS...]"
+    echo
+    echo "Runs COMMAND. If it fails, help appears automatically, as it now does for any"
+    echo "command you run, so you can also just run COMMAND directly."
+    echo
+    echo "Other usage: help50 [disable|enable|is-enabled|start|status|stop]"
+}
+
 # Parse argument
 case "$1" in
-    disable)
-        _disable
+    disable|enable|is-enabled|start|status|stop)
+
+        # Not for root
+        if [[ `id -u` -eq 0 ]]; then
+            exit 1
+        fi
+        _${1}
         ;;
-    enable)
-        _enable
-        ;;
-    is-enabled)
-        _is-enabled
-        ;;
-    start)
-        _start
-        ;;
-    status)
-        _status
-        ;;
-    stop)
-        _stop
+    ""|-h|--help)
+        _usage
         ;;
     *)
-        echo "Usage: $0 [disable|enable|is-enabled|start|status|stop]"
-        exit 1
+        _run "$@"
         ;;
 esac

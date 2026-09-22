@@ -22,6 +22,14 @@ function _help50() {
     HISTFILE=$histfile history -a
     local argv=$(HISTFILE=$histfile history 1 | cut -c 8-) # Could technically contain multiple commands, separated by ; or &&
     rm --force $histfile
+
+    # If run via `help50 COMMAND`, it's COMMAND that ran, so that's what helpers should see
+    if [[ "$argv" =~ ^help50[[:space:]]+([^[:space:]].*)$ ]]; then
+        local wrapped="${BASH_REMATCH[1]}"
+        if ! [[ "$wrapped" =~ ^(disable|enable|is-enabled|start|status|stop|-h|--help)([[:space:]]|$) ]]; then
+            argv="$wrapped"
+        fi
+    fi
     local argv0=$(echo "$argv" | awk '{print $1}') # Assume for simplicity it's just a single command
 
     # Remove any of these aliases
@@ -130,6 +138,20 @@ function _help50() {
 
 function _rhetorical() {
     _alert "That was a rhetorical question. <3"
+}
+
+# Run `help50 COMMAND` in this very shell, as though COMMAND had been typed directly, so that
+# aliases (e.g., rm -i), functions, and builtins like cd behave exactly as they would have;
+# /opt/cs50/bin/help50 handles the rest (and COMMAND too, outside of a help50 session)
+function help50() {
+    case "$1" in
+        disable|enable|is-enabled|start|status|stop|""|-h|--help)
+            command help50 "$@"
+            ;;
+        *)
+            eval "$(printf '%q ' "$@")"
+            ;;
+    esac
 }
 
 # Default helpers, overridable (e.g., by cs50/codespace) by defining them before this file is sourced:
