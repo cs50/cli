@@ -25,4 +25,27 @@ run "$IMAGE" bash --login -c 'valgrind python x.py < /dev/null; test $? -eq 1' 2
 echo "- _fold wraps without a terminal"
 run "$IMAGE" bash --login -c '. /opt/cs50/lib/cli; TERM= _fold "$(printf "a %.0s" {1..100})"' | head -n 1 | grep -qE '^.{1,80}$'
 
+echo "- _helpless gets the end of a failed command's long output, plus its command line"
+run "$IMAGE" bash --login -c '
+    export HELP50=$(mktemp)
+    _helpless() { printf "%s" "$1" > /tmp/output; printf "%s" "$2" > /tmp/cmd; }
+    . /etc/profile.d/help50.sh
+
+    # A command that prints 3000 lines and then fails, as script(1) records it
+    { printf "$ ./slow\r\n"; seq 3000 | sed "s/$/\r/"; printf "Error: boom\r\n"; } > "$HELP50"
+    set -o history; history -s ./slow; set +o history
+    false; _help50
+    test "$(cat /tmp/cmd)" = ./slow &&
+    test "$(head -n 1 /tmp/output)" = 1 &&
+    grep -qx "\[... 1914 lines omitted ...\]" /tmp/output &&
+    ! grep -qx 1000 /tmp/output &&
+    test "$(tail -n 1 /tmp/output)" = "Error: boom" || exit 1
+
+    # A command that fails without output
+    : > "$HELP50"
+    set -o history; history -s ./slow; set +o history
+    false; _help50
+    test "$(cat /tmp/cmd)" = ./slow && test ! -s /tmp/output || exit 1
+'
+
 echo "OK"
