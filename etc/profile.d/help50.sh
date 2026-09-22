@@ -53,8 +53,15 @@ function _help50() {
         # Remove script's own output (if this is user's first command)
         typescript=$(echo "$typescript" | sed '1{/^Script started on .*/d}')
 
-        # Cap typescript at MIN(1K lines, 1M bytes), else `read` is slow
-        typescript=$(echo "$typescript" | head -n 1024 | cut -b 1-1048576)
+        # Cap typescript, else `read` below is slow. Keep the first few lines, where the
+        # command line itself is echoed (found below), plus the last 1K lines, where
+        # errors tend to be (tracebacks, `make: *** Error`, segfaults); a long-running
+        # program that prints a lot and then crashes would otherwise lose its error.
+        typescript=$(echo "$typescript" | cut -b 1-1048576)
+        local total=$(echo "$typescript" | wc -l)
+        if [[ $total -gt 1088 ]]; then
+            typescript=$(echo "$typescript" | head -n 64; echo "[... $((total - 1088)) lines omitted ...]"; echo "$typescript" | tail -n 1024)
+        fi
 
         # Remove ANSI characters
         typescript=$(echo "$typescript" | ansi2txt)
@@ -108,8 +115,10 @@ function _help50() {
             _helpful "$help"
         elif [[ $status -ne 0 ]]; then # If helpless
 
-            # Cap what's relayed downstream (e.g., ddb50 rejects > 10,000 characters), keeping the end, where errors tend to be
-            _helpless "$(echo "$typescript" | tail -c 8192)"
+            # Pass the output (capped, e.g., since ddb50 rejects > 10,000 characters, keeping the end,
+            # where errors tend to be) and the command line itself, so that whatever explains the
+            # output can see what was run
+            _helpless "$(echo "$typescript" | tail -c 8192)" "$argv"
         fi
     else
         _helped
@@ -123,7 +132,11 @@ function _rhetorical() {
     _alert "That was a rhetorical question. <3"
 }
 
-# Default helpers
+# Default helpers, overridable (e.g., by cs50/codespace) by defining them before this file is sourced:
+#   _helped              last command succeeded
+#   _helpful ADVICE      a helper had advice for the failed command
+#   _helpless OUTPUT CMD no helper had advice; OUTPUT is the failed command's (cleaned, capped)
+#                        output, possibly empty, and CMD its command line
 if ! type _helped >/dev/null 2>&1; then
     function _helped() { :; } # Silent
 fi
