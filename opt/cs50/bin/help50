@@ -5,7 +5,13 @@ function _disable() {
 }
 
 function _is-enabled() {
-    if [[ -f /tmp/help50.lock ]]; then
+
+    # Kill switch: set in the environment (e.g., an organization-wide Codespaces secret) to
+    # turn help50 off for everyone at their next login, without rebuilding an image
+    if [[ -n "$HELP50_DISABLED" ]]; then
+        echo "disabled (HELP50_DISABLED is set)"
+        return 1
+    elif [[ -f /tmp/help50.lock ]]; then
         echo disabled
         return 1
     else

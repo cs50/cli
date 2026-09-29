@@ -54,6 +54,43 @@ run "$IMAGE" bash --login -c '
     test "$(cat /tmp/cmd)" = ./slow || exit 1
 '
 
+echo "- the prompt hook stays fast after a failed command printed a huge amount of output"
+run "$IMAGE" bash --login -c '
+    export HELP50=$(mktemp)
+    _helpless() { printf "%s" "$1" > /tmp/output; }
+    . /etc/profile.d/help50.sh
+
+    # 35 MB (4 million lines) of output, then an error, as script(1) records it.
+    # Reading the whole file into a variable took ~2.4 s here and scaled linearly.
+    { printf "$ ./huge\r\n"; seq 1 4000000 | sed "s/$/\r/"; printf "Error: boom\r\n"; } > "$HELP50"
+    size=$(stat -c %s "$HELP50")
+    set -o history; history -s ./huge; set +o history
+    start=$(date +%s%N); false; _help50; elapsed=$(( ($(date +%s%N) - start) / 1000000 ))
+    echo "  hook took ${elapsed} ms for a ${size}-byte typescript"
+    test "$elapsed" -lt 1000 &&
+    test "$(tail -n 1 /tmp/output)" = "Error: boom" || exit 1
+'
+
+echo "- a helper that hangs cannot stall the prompt"
+run --user root "$IMAGE" bash --login -c '
+    printf "#!/bin/bash\ncat > /dev/null\nsleep 60\n" > /opt/cs50/lib/help50/zz_hang && chmod 755 /opt/cs50/lib/help50/zz_hang
+    su ubuntu -c "bash --login -c '"'"'
+        export HELP50=\$(mktemp); . /etc/profile.d/help50.sh
+        printf \"\$ ./x\\r\\nsome error\\r\\n\" > \"\$HELP50\"
+        set -o history; history -s ./x; set +o history
+        start=\$(date +%s); false; _help50; elapsed=\$(( \$(date +%s) - start ))
+        echo \"hook took \${elapsed} s with a hung helper\"; test \"\$elapsed\" -lt 15
+    '"'"'"
+'
+
+echo "- HELP50_DISABLED in the environment keeps help50 from starting, and says so"
+run "$IMAGE" bash --login -c 'help50 is-enabled | grep -qx enabled'
+run --env HELP50_DISABLED=1 "$IMAGE" bash --login -c '
+    out=$(help50 is-enabled); test $? -eq 1 && [[ "$out" == *HELP50_DISABLED* ]] || exit 1'
+# In an interactive shell on a pty (script provides one), help50 starts by default but not when disabled
+run "$IMAGE" bash -c 'echo "help50 status; exit" | script -qc "bash --login -i" /dev/null' | grep -q '^started'
+run --env HELP50_DISABLED=1 "$IMAGE" bash -c 'echo "help50 status; exit" | script -qc "bash --login -i" /dev/null' | grep -q '^stopped'
+
 echo "- help50 COMMAND runs COMMAND, with its exit status"
 run "$IMAGE" bash --login -c 'help50 true && ! help50 false && test "$(help50 echo x)" = x'
 run "$IMAGE" bash --login -c 'help50 valgrind python x.py < /dev/null; test $? -eq 1' 2>&1 | grep -q 'does not support Python'
