@@ -55,8 +55,15 @@ function _help50() {
     # https://tldp.org/LDP/abs/html/exitcodes.html
     if [[ $status -ne 0 && $status -ne 130 && $status -ne 148 ]]; then
 
-        # Read typescript from disk
-        local typescript=$(cat $HELP50)
+        # Read typescript from disk, bounded: at most the first 64K (where the command line is
+        # echoed) and the last 1M (where errors tend to be), so that a program that printed a
+        # great deal before failing doesn't stall the prompt while the whole file is read
+        local typescript
+        if [[ $(stat -c %s "$HELP50" 2> /dev/null || echo 0) -gt $((65536 + 1048576)) ]]; then
+            typescript=$(head -c 65536 "$HELP50"; echo; echo "[... output omitted ...]"; tail -c 1048576 "$HELP50")
+        else
+            typescript=$(cat "$HELP50")
+        fi
 
         # Remove script's own output (if this is user's first command)
         typescript=$(echo "$typescript" | sed '1{/^Script started on .*/d}')
@@ -110,10 +117,14 @@ function _help50() {
             typescript="$after_first"
         fi
 
-        # Try to get help
+        # Try to get help, giving each helper a few seconds at most, lest a slow or stuck helper stall
+        # the prompt. Note that timeout runs the helper in its own process group, so ctl-c at the
+        # terminal no longer reaches the helper (it did before); the timeout itself is the bound.
+        # Not --foreground, which would restore ctl-c but stop timeout from killing the helper's
+        # children, so an orphaned child holding stdout open could stall the prompt indefinitely.
         for helper in $HELPERS/*; do
             if [[ -f $helper && -x $helper ]]; then
-                local help=$($helper $argv <<< "$typescript")
+                local help=$(timeout -k 1 5 $helper $argv <<< "$typescript")
                 if [[ -n "$help" ]]; then
                     break
                 fi
