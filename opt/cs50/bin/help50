@@ -7,11 +7,17 @@ function _disable() {
 function _is-enabled() {
 
     # Kill switch: set in the environment (e.g., an organization-wide Codespaces secret) to
-    # turn help50 off for everyone at their next login, without rebuilding an image
-    if [[ -n "$HELP50_DISABLED" ]]; then
-        echo "disabled (HELP50_DISABLED is set)"
-        return 1
-    elif [[ -f /tmp/help50.lock ]]; then
+    # turn help50 off for everyone at their next login, without rebuilding an image. Values
+    # that read as false (0, false, no, off) count as unset, so that setting the secret to 0
+    # re-enables help50 just as deleting it would, rather than silently keeping it off
+    case "${HELP50_DISABLED,,}" in
+        ""|0|false|no|off) ;;
+        *)
+            echo "disabled (HELP50_DISABLED=$HELP50_DISABLED; unset it to re-enable)"
+            return 1
+            ;;
+    esac
+    if [[ -f /tmp/help50.lock ]]; then
         echo disabled
         return 1
     else

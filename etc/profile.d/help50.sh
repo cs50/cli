@@ -117,7 +117,11 @@ function _help50() {
             typescript="$after_first"
         fi
 
-        # Try to get help, giving each helper a few seconds at most, lest a slow or stuck helper stall the prompt
+        # Try to get help, giving each helper a few seconds at most, lest a slow or stuck helper stall
+        # the prompt. Note that timeout runs the helper in its own process group, so ctl-c at the
+        # terminal no longer reaches the helper (it did before); the timeout itself is the bound.
+        # Not --foreground, which would restore ctl-c but stop timeout from killing the helper's
+        # children, so an orphaned child holding stdout open could stall the prompt indefinitely.
         for helper in $HELPERS/*; do
             if [[ -f $helper && -x $helper ]]; then
                 local help=$(timeout -k 1 5 $helper $argv <<< "$typescript")

@@ -86,7 +86,13 @@ run --user root "$IMAGE" bash --login -c '
 echo "- HELP50_DISABLED in the environment keeps help50 from starting, and says so"
 run "$IMAGE" bash --login -c 'help50 is-enabled | grep -qx enabled'
 run --env HELP50_DISABLED=1 "$IMAGE" bash --login -c '
-    out=$(help50 is-enabled); test $? -eq 1 && [[ "$out" == *HELP50_DISABLED* ]] || exit 1'
+    out=$(help50 is-enabled); test $? -eq 1 && [[ "$out" == *HELP50_DISABLED=1* && "$out" == *unset* ]] || exit 1'
+# Values that read as false count as unset, so that setting the secret to 0 re-enables help50, as deleting it would
+for value in 0 false FALSE no off ""; do
+    run --env HELP50_DISABLED="$value" "$IMAGE" bash --login -c 'help50 is-enabled | grep -qx enabled'
+done
+# The lock file (help50 disable) is still honored when the environment doesn't disable
+run --env HELP50_DISABLED=0 "$IMAGE" bash --login -c 'help50 disable && ! help50 is-enabled && help50 enable && help50 is-enabled' > /dev/null
 # In an interactive shell on a pty (script provides one), help50 starts by default but not when disabled
 run "$IMAGE" bash -c 'echo "help50 status; exit" | script -qc "bash --login -i" /dev/null' | grep -q '^started'
 run --env HELP50_DISABLED=1 "$IMAGE" bash -c 'echo "help50 status; exit" | script -qc "bash --login -i" /dev/null' | grep -q '^stopped'
