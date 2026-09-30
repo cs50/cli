@@ -1,0 +1,14 @@
+#!/bin/bash
+
+output=$(cat)
+
+# touch helpers.c && make helpers
+regex="undefined reference to \`main'"
+if [[ "$output" =~ $regex ]]; then
+    regex="make: \*\*\* \[<builtin>: (.*)\] Error 1"
+    if [[ "$output" =~ $regex ]]; then
+        file="${BASH_REMATCH[1]}.c"
+        echo "Looks like \`$file\` does not have a \`main\` function. Did you mean to \`make\` something else?"
+        exit
+    fi
+fi

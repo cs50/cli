@@ -1,12 +1,10 @@
 #!/bin/bash
 
-# Formatting
-bold=$(tput bold)
-normal=$(tput sgr0)
+. /opt/cs50/lib/cli
 
 # If run on Python program
 if [[ "$1" == "python" || "$1" == *.py ]]; then
-    echo "Afraid ${bold}valgrind${normal} does not support Python programs!"
+    _alert "$(_ansi "Afraid \`valgrind\` does not support Python programs!")"
     exit 1
 fi
 

@@ -30,6 +30,13 @@ jobs:
             cs50/cli:amd64
             cs50/cli:canary-amd64
 
+      - name: Check out tests
+        uses: actions/checkout@v7
+
+      - name: Smoke-test linux/amd64 build
+        run: |
+          bash tests/smoke.sh cs50/cli:canary-amd64
+
       - name: Push linux/amd64 build to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
         run: |
@@ -67,6 +74,13 @@ jobs:
           tags: |
             cs50/cli:arm64
             cs50/cli:canary-arm64
+
+      - name: Check out tests
+        uses: actions/checkout@v7
+
+      - name: Smoke-test linux/arm64 build
+        run: |
+          bash tests/smoke.sh cs50/cli:canary-arm64
 
       - name: Push linux/arm64 build to Docker Hub
         if: ${{ github.ref == 'refs/heads/main' }}
