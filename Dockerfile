@@ -48,7 +48,7 @@ RUN cd /tmp && \
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 24.20.0
+    n 24.22.1
 
 
 # Install Node.js packages
@@ -88,7 +88,7 @@ RUN cd /tmp && \
     rm --force --recursive Python-3.13.15 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
-    pip3 install --no-cache-dir --upgrade pip
+    pip3 install --no-cache-dir --upgrade "pip>=26.2.2" `# GHSA-6q48-6c7w-9gw2`
 
 
 # Install Ruby 4.0.x
@@ -188,16 +188,21 @@ RUN apt update && \
     apt install --no-install-recommends --no-install-suggests --yes \
         astyle \
         bash-completion \
+        bsdextrautils `# For col, for help50` \
         build-essential `# dpkg-dev, libc, gcc, g++, make, etc.` \
         ca-certificates \
         clang \
         clang-format \
+        colorized-logs `# For help50` \
         coreutils `# For fold` \
         cowsay \
         curl \
         dos2unix \
         dnsutils `# For nslookup` \
+        expect `# For help50` \
+        file `# For help50` \
         fonts-noto-color-emoji `# For render50` \
+        fzf `# For help50` \
         gdb \
         git \
         git-lfs \
@@ -241,13 +246,13 @@ RUN curl https://packagecloud.io/install/repositories/cs50/repo/script.deb.sh | 
 RUN pip3 install --no-cache-dir \
         autopep8 \
         cachelib \
+        "certifi>=2026.10.19" `# GHSA-6q48-6c7w-9gw2` \
         "check50<4" \
         cli50 \
         compare50 \
         cs50==9.5.0 \
         Flask \
         Flask-Session \
-        help50 \
         pytest \
         render50 \
         setuptools \
