@@ -131,19 +131,10 @@ echo "- Python is 3.14 and the CS50 Python tools run"
 run "$IMAGE" bash --login -c '
     python --version | grep -q "^Python 3\.14\." || { echo "unexpected $(python --version)" >&2; exit 1; }
     test "$(type -P python)" = /usr/local/bin/python || exit 1
-    for c in check50 submit50 style50 cli50 render50 flask autopep8 pytest; do
+    for c in check50 submit50 compare50 style50 cli50 render50 flask autopep8 pytest; do
         "$c" --help > /dev/null 2>&1 || "$c" --version > /dev/null 2>&1 || { echo "$c failed" >&2; exit 1; }
     done
     python -c "import cs50, flask, flask_session, cachelib, numpy" || exit 1
 '
-
-# compare50 <= 1.2.13 relies on importlib.resources being implicitly imported, which Python 3.14 no longer does;
-# fixed upstream in https://github.com/cs50/compare50/pull/128 but not yet released. Warn rather than fail until then.
-echo "- compare50 runs (known broken on Python 3.14 until compare50 > 1.2.13 is released)"
-if run "$IMAGE" bash --login -c 'compare50 --help' > /dev/null 2>&1; then
-    echo "  compare50 OK: its check can be made fatal now"
-else
-    echo "  WARNING: compare50 is still broken on this image; upgrade compare50 once a release includes cs50/compare50#128"
-fi
 
 echo "OK"
