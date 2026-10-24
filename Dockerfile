@@ -249,7 +249,7 @@ RUN pip3 install --no-cache-dir \
         "certifi>=2026.10.19" `# GHSA-6q48-6c7w-9gw2` \
         "check50<4" \
         cli50 \
-        "compare50>=1.2.14" \
+        "compare50>=1.2.15" \
         cs50==9.5.0 \
         Flask \
         Flask-Session \
