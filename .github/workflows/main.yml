@@ -48,6 +48,12 @@ jobs:
         run: |
           docker push cs50/cli:canary-amd64
 
+      - name: Push linux/amd64 build to Docker Hub (ubuntu-26.04)
+        if: ${{ github.ref == 'refs/heads/ubuntu-26.04' }}
+        run: |
+          docker tag cs50/cli:amd64 cs50/cli:ubuntu-26.04-amd64
+          docker push cs50/cli:ubuntu-26.04-amd64
+
   build-arm64:
     runs-on: ubuntu-2404-64-cores-arm
     steps:
@@ -93,6 +99,12 @@ jobs:
         run: |
           docker push cs50/cli:canary-arm64
 
+      - name: Push linux/arm64 build to Docker Hub (ubuntu-26.04)
+        if: ${{ github.ref == 'refs/heads/ubuntu-26.04' }}
+        run: |
+          docker tag cs50/cli:arm64 cs50/cli:ubuntu-26.04-arm64
+          docker push cs50/cli:ubuntu-26.04-arm64
+
   finalize:
     needs: [build-amd64, build-arm64]
     runs-on: ubuntu-latest
@@ -118,8 +130,16 @@ jobs:
           --amend cs50/cli:canary-arm64
           docker manifest push cs50/cli:canary
 
+      - name: Create multi-arch manifest and push to Docker Hub (ubuntu-26.04)
+        if: ${{ github.ref == 'refs/heads/ubuntu-26.04' }}
+        run: |
+          docker manifest create cs50/cli:ubuntu-26.04 \
+          --amend cs50/cli:ubuntu-26.04-amd64 \
+          --amend cs50/cli:ubuntu-26.04-arm64
+          docker manifest push cs50/cli:ubuntu-26.04
+
       - name: Re-deploy depdendents
-        if: ${{ github.ref == 'refs/heads/main' }}
+        if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/ubuntu-26.04' }}
         uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.DEPLOY50_PAT }}
@@ -132,6 +152,6 @@ jobs:
                   owner: 'cs50',
                   repo: dependent,
                   workflow_id: 'main.yml',
-                  ref: 'main'
+                  ref: '${{ github.ref_name }}'
                 });
             }
