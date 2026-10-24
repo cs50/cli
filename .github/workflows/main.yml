@@ -45,8 +45,15 @@ jobs:
           docker push cs50/cli:amd64
 
       - name: Push linux/amd64 build to Docker Hub (canary)
+        if: ${{ github.ref != 'refs/heads/ubuntu-24.04' }}
         run: |
           docker push cs50/cli:canary-amd64
+
+      - name: Push linux/amd64 build to Docker Hub (ubuntu-24.04)
+        if: ${{ github.ref == 'refs/heads/ubuntu-24.04' }}
+        run: |
+          docker tag cs50/cli:amd64 cs50/cli:ubuntu-24.04-amd64
+          docker push cs50/cli:ubuntu-24.04-amd64
 
   build-arm64:
     runs-on: ubuntu-2604-64-cores-arm
@@ -90,8 +97,15 @@ jobs:
           docker push cs50/cli:arm64
 
       - name: Push linux/arm64 build to Docker Hub (canary)
+        if: ${{ github.ref != 'refs/heads/ubuntu-24.04' }}
         run: |
           docker push cs50/cli:canary-arm64
+
+      - name: Push linux/arm64 build to Docker Hub (ubuntu-24.04)
+        if: ${{ github.ref == 'refs/heads/ubuntu-24.04' }}
+        run: |
+          docker tag cs50/cli:arm64 cs50/cli:ubuntu-24.04-arm64
+          docker push cs50/cli:ubuntu-24.04-arm64
 
   finalize:
     needs: [build-amd64, build-arm64]
@@ -112,11 +126,20 @@ jobs:
           docker manifest push cs50/cli:latest
 
       - name: Create multi-arch manifest and push to Docker Hub (canary)
+        if: ${{ github.ref != 'refs/heads/ubuntu-24.04' }}
         run: |
           docker manifest create cs50/cli:canary \
           --amend cs50/cli:canary-amd64 \
           --amend cs50/cli:canary-arm64
           docker manifest push cs50/cli:canary
+
+      - name: Create multi-arch manifest and push to Docker Hub (ubuntu-24.04)
+        if: ${{ github.ref == 'refs/heads/ubuntu-24.04' }}
+        run: |
+          docker manifest create cs50/cli:ubuntu-24.04 \
+          --amend cs50/cli:ubuntu-24.04-amd64 \
+          --amend cs50/cli:ubuntu-24.04-arm64
+          docker manifest push cs50/cli:ubuntu-24.04
 
       - name: Re-deploy depdendents
         if: ${{ github.ref == 'refs/heads/main' }}
