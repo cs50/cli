@@ -2,9 +2,18 @@ on:
   - push
   - workflow_dispatch
 
+# Tags published per build:
+#   main:                      amd64, arm64, latest; canary*; ubuntu-<RELEASE>*
+#   a branch named ubuntu-<RELEASE> (RELEASE per the Dockerfile): ubuntu-<RELEASE>* only, so the image for an
+#                              Ubuntu release other than main's can be built and tested without touching canary
+#   any other branch:          canary*
+# where * means the -amd64 and -arm64 tags plus a multi-arch manifest.
+
 jobs:
   build-amd64:
     runs-on: ubuntu-2604-64-cores-amd
+    outputs:
+      release: ${{ steps.release.outputs.release }}
     steps:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v4
@@ -35,6 +44,11 @@ jobs:
       - name: Check out tests
         uses: actions/checkout@v7
 
+      - name: Determine Ubuntu release
+        id: release
+        run: |
+          echo "release=$(sed --quiet 's/^ARG RELEASE=//p' Dockerfile)" >> "$GITHUB_OUTPUT"
+
       - name: Smoke-test linux/amd64 build
         run: |
           bash tests/smoke.sh cs50/cli:canary-amd64
@@ -45,14 +59,15 @@ jobs:
           docker push cs50/cli:amd64
 
       - name: Push linux/amd64 build to Docker Hub (canary)
+        if: ${{ !startsWith(github.ref_name, 'ubuntu-') }}
         run: |
           docker push cs50/cli:canary-amd64
 
-      - name: Push linux/amd64 build to Docker Hub (ubuntu-26.04)
-        if: ${{ github.ref == 'refs/heads/ubuntu-26.04' }}
+      - name: Push linux/amd64 build to Docker Hub (ubuntu-${{ steps.release.outputs.release }})
+        if: ${{ github.ref == 'refs/heads/main' || github.ref_name == format('ubuntu-{0}', steps.release.outputs.release) }}
         run: |
-          docker tag cs50/cli:amd64 cs50/cli:ubuntu-26.04-amd64
-          docker push cs50/cli:ubuntu-26.04-amd64
+          docker tag cs50/cli:amd64 cs50/cli:ubuntu-${{ steps.release.outputs.release }}-amd64
+          docker push cs50/cli:ubuntu-${{ steps.release.outputs.release }}-amd64
 
   build-arm64:
     runs-on: ubuntu-2604-64-cores-arm
@@ -86,6 +101,11 @@ jobs:
       - name: Check out tests
         uses: actions/checkout@v7
 
+      - name: Determine Ubuntu release
+        id: release
+        run: |
+          echo "release=$(sed --quiet 's/^ARG RELEASE=//p' Dockerfile)" >> "$GITHUB_OUTPUT"
+
       - name: Smoke-test linux/arm64 build
         run: |
           bash tests/smoke.sh cs50/cli:canary-arm64
@@ -96,18 +116,21 @@ jobs:
           docker push cs50/cli:arm64
 
       - name: Push linux/arm64 build to Docker Hub (canary)
+        if: ${{ !startsWith(github.ref_name, 'ubuntu-') }}
         run: |
           docker push cs50/cli:canary-arm64
 
-      - name: Push linux/arm64 build to Docker Hub (ubuntu-26.04)
-        if: ${{ github.ref == 'refs/heads/ubuntu-26.04' }}
+      - name: Push linux/arm64 build to Docker Hub (ubuntu-${{ steps.release.outputs.release }})
+        if: ${{ github.ref == 'refs/heads/main' || github.ref_name == format('ubuntu-{0}', steps.release.outputs.release) }}
         run: |
-          docker tag cs50/cli:arm64 cs50/cli:ubuntu-26.04-arm64
-          docker push cs50/cli:ubuntu-26.04-arm64
+          docker tag cs50/cli:arm64 cs50/cli:ubuntu-${{ steps.release.outputs.release }}-arm64
+          docker push cs50/cli:ubuntu-${{ steps.release.outputs.release }}-arm64
 
   finalize:
     needs: [build-amd64, build-arm64]
     runs-on: ubuntu-latest
+    env:
+      RELEASE: ${{ needs.build-amd64.outputs.release }}
     steps:
       - name: Log into Docker Hub
         uses: docker/login-action@v4
@@ -124,22 +147,24 @@ jobs:
           docker manifest push cs50/cli:latest
 
       - name: Create multi-arch manifest and push to Docker Hub (canary)
+        if: ${{ !startsWith(github.ref_name, 'ubuntu-') }}
         run: |
           docker manifest create cs50/cli:canary \
           --amend cs50/cli:canary-amd64 \
           --amend cs50/cli:canary-arm64
           docker manifest push cs50/cli:canary
 
-      - name: Create multi-arch manifest and push to Docker Hub (ubuntu-26.04)
-        if: ${{ github.ref == 'refs/heads/ubuntu-26.04' }}
+      - name: Create multi-arch manifest and push to Docker Hub (ubuntu-${{ env.RELEASE }})
+        if: ${{ github.ref == 'refs/heads/main' || github.ref_name == format('ubuntu-{0}', needs.build-amd64.outputs.release) }}
         run: |
-          docker manifest create cs50/cli:ubuntu-26.04 \
-          --amend cs50/cli:ubuntu-26.04-amd64 \
-          --amend cs50/cli:ubuntu-26.04-arm64
-          docker manifest push cs50/cli:ubuntu-26.04
+          docker manifest create cs50/cli:ubuntu-$RELEASE \
+          --amend cs50/cli:ubuntu-$RELEASE-amd64 \
+          --amend cs50/cli:ubuntu-$RELEASE-arm64
+          docker manifest push cs50/cli:ubuntu-$RELEASE
 
-      - name: Re-deploy depdendents
-        if: ${{ github.ref == 'refs/heads/main' || github.ref == 'refs/heads/ubuntu-26.04' }}
+      # Rebuild dependents on the branch of the same name, if they have one
+      - name: Re-deploy dependents
+        if: ${{ github.ref == 'refs/heads/main' || github.ref_name == format('ubuntu-{0}', needs.build-amd64.outputs.release) }}
         uses: actions/github-script@v9
         with:
           github-token: ${{ secrets.DEPLOY50_PAT }}
@@ -148,10 +173,19 @@ jobs:
                 'server'
             ];
             for (let dependent of dependents) {
+                try {
+                  await github.rest.repos.getBranch({ owner: 'cs50', repo: dependent, branch: context.ref.replace('refs/heads/', '') });
+                } catch (e) {
+                  if (e.status === 404) {
+                    core.info(`cs50/${dependent} has no ${context.ref.replace('refs/heads/', '')} branch; not dispatching`);
+                    continue;
+                  }
+                  throw e;
+                }
                 await github.rest.actions.createWorkflowDispatch({
                   owner: 'cs50',
                   repo: dependent,
                   workflow_id: 'main.yml',
-                  ref: '${{ github.ref_name }}'
+                  ref: context.ref.replace('refs/heads/', '')
                 });
             }
