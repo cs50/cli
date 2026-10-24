@@ -137,4 +137,20 @@ run "$IMAGE" bash --login -c '
     python -c "import cs50, flask, flask_session, cachelib, numpy" || exit 1
 '
 
+echo "- language toolchains are on PATH and run"
+run "$IMAGE" bash --login -c '
+    go version | grep -q "^go version go" || { echo "go failed" >&2; exit 1; }
+    java -version 2>&1 | grep -q "openjdk version" || { echo "java failed" >&2; exit 1; }
+    javac -version 2>&1 | grep -q "^javac " || { echo "javac failed" >&2; exit 1; }
+    node --version | grep -q "^v" || { echo "node failed" >&2; exit 1; }
+    npm --version > /dev/null || { echo "npm failed" >&2; exit 1; }
+    ruby --version | grep -q "^ruby " || { echo "ruby failed" >&2; exit 1; }
+    gem --version > /dev/null || { echo "gem failed" >&2; exit 1; }
+    bundle --version > /dev/null || { echo "bundle failed" >&2; exit 1; }
+    sqlite3 --version | grep -q "^3\." || { echo "sqlite3 failed" >&2; exit 1; }
+    echo "SELECT 1;" | sqlite3 -list | grep -qx 1 || { echo "sqlite3 query failed" >&2; exit 1; }
+    clang --version > /dev/null && gcc --version > /dev/null || { echo "compilers failed" >&2; exit 1; }
+    test "$(type -P sqlite3)" = /opt/cs50/bin/sqlite3 || exit 1
+'
+
 echo "OK"
