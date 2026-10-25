@@ -1,5 +1,5 @@
 # Ubuntu version
-ARG RELEASE=24.04
+ARG RELEASE=26.04
 
 # Build stage
 FROM ubuntu:${RELEASE} AS builder
@@ -18,37 +18,37 @@ RUN apt update && \
         curl
 
 
-# Install Go 1.26.x
+# Install Go 1.27.x
 # https://go.dev/dl/
 RUN cd /tmp && \
-    curl --remote-name --location https://go.dev/dl/go1.26.8.linux-${BUILDARCH}.tar.gz && \
-    tar xzf go1.26.8.linux-${BUILDARCH}.tar.gz && \
-    rm --force go1.26.8.linux-${BUILDARCH}.tar.gz && \
+    curl --remote-name --location https://go.dev/dl/go1.27.3.linux-${BUILDARCH}.tar.gz && \
+    tar xzf go1.27.3.linux-${BUILDARCH}.tar.gz && \
+    rm --force go1.27.3.linux-${BUILDARCH}.tar.gz && \
     mv go /opt/ && \
     mkdir --parent /opt/bin && \
     ln --symbolic /opt/go/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
 
 
-# Install Java 25.x
-# https://jdk.java.net/25/
+# Install Java 27.x
+# https://jdk.java.net/27/
 RUN cd /tmp && \
     if [ "$BUILDARCH" = "arm64" ]; then ARCH="aarch64"; else ARCH="x64"; fi && \
-    curl --remote-name https://download.java.net/java/GA/jdk25.0.2/b1e0dfa218384cb9959bdcb897162d4e/10/GPL/openjdk-25.0.2_linux-${ARCH}_bin.tar.gz && \
-    tar xzf openjdk-25.0.2_linux-${ARCH}_bin.tar.gz && \
-    rm --force openjdk-25.0.2_linux-${ARCH}_bin.tar.gz && \
-    mv jdk-25.0.2 /opt/jdk && \
+    curl --remote-name https://download.java.net/java/GA/jdk27.0.1.0.3/b14170c9b2de463d9b89442c6db3e384/1/GPL/openjdk-27.0.1.0.3_linux-${ARCH}_bin.tar.gz && \
+    tar xzf openjdk-27.0.1.0.3_linux-${ARCH}_bin.tar.gz && \
+    rm --force openjdk-27.0.1.0.3_linux-${ARCH}_bin.tar.gz && \
+    mv jdk-27.0.1.0.3 /opt/jdk && \
     mkdir --parent /opt/bin && \
     ln --symbolic /opt/jdk/bin/* /opt/bin/ && \
     chmod a+rx /opt/bin/*
 
 
-# Install Node.js 24.x
+# Install Node.js 26.x
 # https://nodejs.dev/en/download/
 # https://github.com/tj/n#installation
 RUN curl --location https://raw.githubusercontent.com/tj/n/master/bin/n --output /usr/local/bin/n && \
     chmod a+x /usr/local/bin/n && \
-    n 24.22.1
+    n 26.12.1
 
 
 # Install Node.js packages
@@ -73,19 +73,19 @@ RUN apt update && \
         make tk-dev unzip wget xz-utils zlib1g-dev
 
 
-# Install Python 3.13.x
+# Install Python 3.14.x
 # https://www.python.org/downloads/
 RUN cd /tmp && \
-    curl --remote-name https://www.python.org/ftp/python/3.13.15/Python-3.13.15.tgz && \
-    tar xzf Python-3.13.15.tgz && \
-    rm --force Python-3.13.15.tgz && \
-    cd Python-3.13.15 && \
+    curl --remote-name https://www.python.org/ftp/python/3.14.9/Python-3.14.9.tgz && \
+    tar xzf Python-3.14.9.tgz && \
+    rm --force Python-3.14.9.tgz && \
+    cd Python-3.14.9 && \
     CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
     ./configure && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive Python-3.13.15 && \
+    rm --force --recursive Python-3.14.9 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade "pip>=26.2.2" `# GHSA-6q48-6c7w-9gw2`
@@ -101,21 +101,21 @@ RUN apt update && \
     apt clean && \
     rm --force --recursive /var/lib/apt/lists/* && \
     cd /tmp && \
-    curl https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.6.tar.gz --output ruby-4.0.6.tar.gz && \
-    tar xzf ruby-4.0.6.tar.gz && \
-    rm --force ruby-4.0.6.tar.gz && \
-    cd ruby-4.0.6 && \
+    curl https://cache.ruby-lang.org/pub/ruby/4.0/ruby-4.0.9.tar.gz --output ruby-4.0.9.tar.gz && \
+    tar xzf ruby-4.0.9.tar.gz && \
+    rm --force ruby-4.0.9.tar.gz && \
+    cd ruby-4.0.9 && \
     if [ "$BUILDARCH" = "arm64" ]; then ASFLAGS=-mbranch-protection=pac-ret; else ASFLAGS=; fi && \
     ASFLAGS=${ASFLAGS} CFLAGS=-Os ./configure --disable-install-doc --enable-load-relative && \
     make && \
     make install && \
     cd .. && \
-    rm --force --recursive ruby-4.0.6
+    rm --force --recursive ruby-4.0.9
 
 
 # Install Ruby packages
 RUN echo "gem: --no-document" > /etc/gemrc && \
-    gem update --system 4.0.20 && \
+    gem update --system 4.0.23 && \
     gem install --force \
         jekyll \
         pygments.rb \
@@ -129,14 +129,14 @@ RUN echo "gem: --no-document" > /etc/gemrc && \
 # https://www.sqlite.org/howtocompile.html#compiling_the_command_line_interface
 COPY shell.c.patch /tmp
 RUN cd /tmp && \
-    curl --remote-name https://www.sqlite.org/2026/sqlite-amalgamation-3530400.zip && \
-    unzip sqlite-amalgamation-3530400.zip && \
-    rm --force sqlite-amalgamation-3530400.zip && \
-    cd sqlite-amalgamation-3530400 && \
+    curl --remote-name https://www.sqlite.org/2026/sqlite-amalgamation-3540100.zip && \
+    unzip sqlite-amalgamation-3540100.zip && \
+    rm --force sqlite-amalgamation-3540100.zip && \
+    cd sqlite-amalgamation-3540100 && \
     patch shell.c < /tmp/shell.c.patch && \
     gcc -D HAVE_READLINE -D SQLITE_DEFAULT_FOREIGN_KEYS=1 -D SQLITE_OMIT_DYNAPROMPT=1 shell.c sqlite3.c -lpthread -ldl -lm -lreadline -lncurses -o /usr/local/bin/sqlite3 && \
     cd .. && \
-    rm --force --recursive sqlite-amalgamation-3530400 && \
+    rm --force --recursive sqlite-amalgamation-3540100 && \
     rm --force /tmp/shell.c.patch
 
 
@@ -208,7 +208,7 @@ RUN apt update && \
         git-lfs \
         jq \
         less \
-        libclang-rt-18-dev `# For clang` \
+        libclang-rt-21-dev `# For clang` \
         liblapack3 `# For R` \
         libmagic-dev `# For style50` \
         libncurses-dev \
@@ -249,7 +249,7 @@ RUN pip3 install --no-cache-dir \
         "certifi>=2026.10.19" `# GHSA-6q48-6c7w-9gw2` \
         "check50<4" \
         cli50 \
-        compare50 \
+        "compare50>=1.2.15" \
         cs50==9.5.0 \
         Flask \
         Flask-Session \

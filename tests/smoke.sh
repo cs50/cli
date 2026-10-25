@@ -127,4 +127,80 @@ run "$IMAGE" bash --login -c '
     help50 is-enabled > /dev/null && test "$(help50 status)" = started || exit 1
 '
 
+echo "- Python is 3.14 and the CS50 Python tools run"
+run "$IMAGE" bash --login -c '
+    python --version | grep -q "^Python 3\.14\." || { echo "unexpected $(python --version)" >&2; exit 1; }
+    test "$(type -P python)" = /usr/local/bin/python || exit 1
+
+    # Every entry point imports and parses its arguments; print its output on failure
+    for c in check50 submit50 compare50 style50 cli50 render50 flask autopep8 pytest; do
+        out=$("$c" --help 2>&1) || { printf "%s --help failed:\n%s\n" "$c" "$out" >&2; exit 1; }
+    done
+
+    # Extension modules CPython was built against in the builder stage resolve in the final stage
+    python -c "import cs50, flask, flask_session, cachelib, numpy" || exit 1
+    python -c "import bz2, ctypes, curses, lzma, readline, sqlite3, ssl, zlib" || exit 1
+
+    # Security floors pinned in the Dockerfile are what the image carries
+    pip install --quiet --no-index --dry-run "pip>=26.2.2" "certifi>=2026.10.19" || { echo "pip/certifi below pinned floor" >&2; exit 1; }
+
+    # compare50 and style50 do real work, not just --help (the code paths that broke on 3.14 run only during a comparison)
+    cd "$(mktemp -d)"
+    printf "def total(xs):\n    s = 0\n    for x in xs:\n        s += x\n    return s\n\nprint(total([1, 2, 3]))\n" > a.py
+    printf "def total(nums):\n    s = 0\n    for n in nums:\n        s += n\n    return s\n\nprint(total([4, 5, 6]))\n" > b.py
+    out=$(compare50 a.py b.py --output results 2>&1) && test -f results/match_1.html || { printf "compare50 failed:\n%s\n" "$out" >&2; exit 1; }
+    out=$(style50 a.py 2>&1) || { printf "style50 failed:\n%s\n" "$out" >&2; exit 1; }
+'
+
+echo "- language toolchains are on PATH and compile, link, and run"
+run "$IMAGE" bash --login -c '
+    cd "$(mktemp -d)"
+
+    # C, as a student compiles it: make through the CS50 wrapper with the exported CC/CFLAGS/LDLIBS,
+    # a sanitizer build (requires the libclang-rt matching the installed clang), and gcc against libcs50.
+    # The program reads its input through libcs50 so that linking genuinely needs LDLIBS.
+    test "$CC" = clang && test -n "$CFLAGS" && test -n "$LDLIBS" && test "$(type -P make)" = /opt/cs50/bin/make || { echo "CS50 make environment not exported" >&2; exit 1; }
+    cat > hello.c <<"EOF"
+#include <cs50.h>
+#include <stdio.h>
+
+int main(void)
+{
+    string s = get_string("%s", "");
+    printf("%s\n", s == NULL ? "EOF" : s);
+}
+EOF
+    make hello && out=$(echo hi | ./hello) && test "$out" = hi || { echo "make hello failed" >&2; exit 1; }
+    clang $CFLAGS -fsanitize=address,undefined hello.c -o hello_san $LDLIBS && out=$(echo hi | ./hello_san) && test "$out" = hi || { echo "sanitizer build failed (libclang-rt does not match clang $(clang -dumpversion)?)" >&2; exit 1; }
+    gcc -std=c23 hello.c -o hello_gcc -lcs50 && out=$(echo hi | ./hello_gcc) && test "$out" = hi || { echo "gcc build failed" >&2; exit 1; }
+
+    printf "package main\nimport \"fmt\"\nfunc main() { fmt.Println(\"hi\") }\n" > hello.go
+    test "$(go run hello.go)" = hi || { echo "go failed" >&2; exit 1; }
+
+    printf "class Hello { public static void main(String[] a) { System.out.println(\"hi\"); } }\n" > Hello.java
+    javac Hello.java && test "$(java Hello)" = hi || { echo "java failed" >&2; exit 1; }
+
+    node --version | grep -q "^v" || { echo "node failed" >&2; exit 1; }
+    npm --version > /dev/null || { echo "npm failed" >&2; exit 1; }
+
+    ruby --version | grep -q "^ruby " || { echo "ruby failed" >&2; exit 1; }
+    gem --version > /dev/null || { echo "gem failed" >&2; exit 1; }
+    bundle --version > /dev/null || { echo "bundle failed" >&2; exit 1; }
+    jekyll --version | grep -q "^jekyll " || { echo "jekyll failed" >&2; exit 1; }
+    gem list --installed --exact jekyll-theme-cs50 > /dev/null || { echo "jekyll-theme-cs50 missing" >&2; exit 1; }
+
+    sqlite3 --version | grep -q "^3\." || { echo "sqlite3 failed" >&2; exit 1; }
+    echo "SELECT 1;" | sqlite3 -list | grep -qx 1 || { echo "sqlite3 query failed" >&2; exit 1; }
+    test "$(type -P sqlite3)" = /opt/cs50/bin/sqlite3 || exit 1
+'
+
+echo "- http-server serves a directory listing through the patched index.js"
+run "$IMAGE" bash --login -c '
+    cd "$(mktemp -d)" && touch hello.txt
+    http-server > /tmp/http-server.log 2>&1 &
+    for i in $(seq 1 20); do curl -fs http://127.0.0.1:8080/ > index.html 2> /dev/null && break; sleep 0.5; done
+    grep -q hello.txt index.html || { echo "http-server failed:" >&2; cat /tmp/http-server.log >&2; exit 1; }
+    kill %1
+'
+
 echo "OK"
