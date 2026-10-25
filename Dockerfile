@@ -208,6 +208,7 @@ RUN apt update && \
         git-lfs \
         jq \
         less \
+        libc6-dbg `# For gdb to show libc source (cs50/codespace installs the sources)` \
         libclang-rt-21-dev `# For clang` \
         liblapack3 `# For R` \
         libmagic-dev `# For style50` \
