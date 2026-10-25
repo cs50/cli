@@ -148,8 +148,8 @@ run "$IMAGE" bash --login -c '
     cd "$(mktemp -d)"
     printf "def total(xs):\n    s = 0\n    for x in xs:\n        s += x\n    return s\n\nprint(total([1, 2, 3]))\n" > a.py
     printf "def total(nums):\n    s = 0\n    for n in nums:\n        s += n\n    return s\n\nprint(total([4, 5, 6]))\n" > b.py
-    compare50 a.py b.py --output results > /dev/null 2>&1 && test -f results/match_1.html || { echo "compare50 failed" >&2; exit 1; }
-    style50 a.py > /dev/null 2>&1 || { echo "style50 failed" >&2; exit 1; }
+    out=$(compare50 a.py b.py --output results 2>&1) && test -f results/match_1.html || { printf "compare50 failed:\n%s\n" "$out" >&2; exit 1; }
+    out=$(style50 a.py 2>&1) || { printf "style50 failed:\n%s\n" "$out" >&2; exit 1; }
 '
 
 echo "- language toolchains are on PATH and compile, link, and run"
@@ -157,20 +157,22 @@ run "$IMAGE" bash --login -c '
     cd "$(mktemp -d)"
 
     # C, as a student compiles it: make through the CS50 wrapper with the exported CC/CFLAGS/LDLIBS,
-    # a sanitizer build (requires the libclang-rt matching the installed clang), and gcc against libcs50
+    # a sanitizer build (requires the libclang-rt matching the installed clang), and gcc against libcs50.
+    # The program reads its input through libcs50 so that linking genuinely needs LDLIBS.
+    test "$CC" = clang && test -n "$CFLAGS" && test -n "$LDLIBS" && test "$(type -P make)" = /opt/cs50/bin/make || { echo "CS50 make environment not exported" >&2; exit 1; }
     cat > hello.c <<"EOF"
 #include <cs50.h>
 #include <stdio.h>
 
 int main(void)
 {
-    string s = "hi";
-    printf("%s\n", s);
+    string s = get_string("%s", "");
+    printf("%s\n", s == NULL ? "EOF" : s);
 }
 EOF
-    make hello && test "$(./hello)" = hi || { echo "make hello failed" >&2; exit 1; }
-    clang $CFLAGS -fsanitize=address,undefined hello.c -o hello_san $LDLIBS && test "$(./hello_san)" = hi || { echo "sanitizer build failed (libclang-rt does not match clang $(clang -dumpversion)?)" >&2; exit 1; }
-    gcc -std=c23 hello.c -o hello_gcc -lcs50 && test "$(./hello_gcc)" = hi || { echo "gcc build failed" >&2; exit 1; }
+    make hello && out=$(echo hi | ./hello) && test "$out" = hi || { echo "make hello failed" >&2; exit 1; }
+    clang $CFLAGS -fsanitize=address,undefined hello.c -o hello_san $LDLIBS && out=$(echo hi | ./hello_san) && test "$out" = hi || { echo "sanitizer build failed (libclang-rt does not match clang $(clang -dumpversion)?)" >&2; exit 1; }
+    gcc -std=c23 hello.c -o hello_gcc -lcs50 && out=$(echo hi | ./hello_gcc) && test "$out" = hi || { echo "gcc build failed" >&2; exit 1; }
 
     printf "package main\nimport \"fmt\"\nfunc main() { fmt.Println(\"hi\") }\n" > hello.go
     test "$(go run hello.go)" = hi || { echo "go failed" >&2; exit 1; }
