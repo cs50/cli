@@ -258,7 +258,7 @@ RUN pip3 install --no-cache-dir \
         render50 \
         setuptools \
         "style50>=3.0.0" \
-        "submit50<4" \
+        submit50==3.2.3 \
         lib50 
     
 
