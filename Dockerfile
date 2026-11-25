@@ -70,22 +70,25 @@ RUN apt update && \
         build-essential ca-certificates curl git \
         libssl-dev libbz2-dev libreadline-dev libsqlite3-dev \
         llvm libncursesw5-dev libxml2-dev libxmlsec1-dev libffi-dev liblzma-dev \
+        libmpdec-dev `# For _decimal; 3.15 no longer falls back to the bundled copy` \
         make tk-dev unzip wget xz-utils zlib1g-dev
 
 
-# Install Python 3.14.x
+# Install Python 3.15.x
 # https://www.python.org/downloads/
+# A single ./configure: a second bare one used to regenerate the Makefile with default
+# flags, silently dropping --enable-optimizations, --enable-shared, and --with-lto.
 RUN cd /tmp && \
-    curl --remote-name https://www.python.org/ftp/python/3.14.10/Python-3.14.10.tgz && \
-    tar xzf Python-3.14.10.tgz && \
-    rm --force Python-3.14.10.tgz && \
-    cd Python-3.14.10 && \
+    curl --remote-name https://www.python.org/ftp/python/3.15.2/Python-3.15.2.tgz && \
+    tar xzf Python-3.15.2.tgz && \
+    rm --force Python-3.15.2.tgz && \
+    cd Python-3.15.2 && \
     CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
-    ./configure && \
     make && \
     make install && \
+    ldconfig `# libpython is now a shared library in /usr/local/lib` && \
     cd .. && \
-    rm --force --recursive Python-3.14.10 && \
+    rm --force --recursive Python-3.15.2 && \
     ln --relative --symbolic /usr/local/bin/pip3 /usr/local/bin/pip && \
     ln --relative --symbolic /usr/local/bin/python3 /usr/local/bin/python && \
     pip3 install --no-cache-dir --upgrade "pip>=26.2.2" `# GHSA-6q48-6c7w-9gw2`
@@ -154,6 +157,7 @@ RUN userdel --force --remove ubuntu && \
 # Copy files from builder
 COPY --from=builder /opt /opt
 COPY --from=builder /usr/local /usr/local
+RUN ldconfig `# For libpython3.x.so in /usr/local/lib`
 
 
 # Avoid "delaying package configuration, since apt-utils is not installed"
@@ -212,6 +216,7 @@ RUN apt update && \
         libclang-rt-21-dev `# For clang` \
         liblapack3 `# For R` \
         libmagic-dev `# For style50` \
+        libmpdec4 `# Runtime package for Python's _decimal` \
         libncurses-dev \
         libpango-1.0-0 libharfbuzz0b libpangoft2-1.0-0 `# For render50` \
         libpangocairo-1.0-0 `# For R` \

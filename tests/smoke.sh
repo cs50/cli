@@ -127,10 +127,16 @@ run "$IMAGE" bash --login -c '
     help50 is-enabled > /dev/null && test "$(help50 status)" = started || exit 1
 '
 
-echo "- Python is 3.14 and the CS50 Python tools run"
+echo "- Python is 3.15, built with the configure flags the Dockerfile asks for, and the CS50 Python tools run"
 run "$IMAGE" bash --login -c '
-    python --version | grep -q "^Python 3\.14\." || { echo "unexpected $(python --version)" >&2; exit 1; }
+    python --version | grep -q "^Python 3\.15\." || { echo "unexpected $(python --version)" >&2; exit 1; }
     test "$(type -P python)" = /usr/local/bin/python || exit 1
+
+    # The optimization flags survived configure (a second bare ./configure used to discard them, leaving
+    # a default static build), and the shared libpython the final stage copies in is what python links to
+    python -c "import sysconfig, sys; a = sysconfig.get_config_var(\"CONFIG_ARGS\"); missing = [f for f in (\"--enable-optimizations\", \"--enable-shared\", \"--with-lto\") if f not in a]; sys.exit(f\"CONFIG_ARGS lacks {missing}: {a}\" if missing else 0)" || exit 1
+    python -c "import sysconfig, sys; sys.exit(0 if sysconfig.get_config_var(\"Py_ENABLE_SHARED\") == 1 else \"Py_ENABLE_SHARED is not 1\")" || exit 1
+    ldd /usr/local/bin/python3 | grep -q "libpython3.15.so.1.0 => /usr/local/lib/" || { echo "python3 does not resolve libpython from /usr/local/lib:"; ldd /usr/local/bin/python3; exit 1; } >&2
 
     # Every entry point imports and parses its arguments; print its output on failure
     for c in check50 submit50 compare50 style50 cli50 render50 flask autopep8 pytest; do
@@ -138,8 +144,10 @@ run "$IMAGE" bash --login -c '
     done
 
     # Extension modules CPython was built against in the builder stage resolve in the final stage
+    # (decimal: 3.15 builds _decimal only against a system libmpdec, which the builder installs)
     python -c "import cs50, flask, flask_session, cachelib, numpy" || exit 1
-    python -c "import bz2, ctypes, curses, lzma, readline, sqlite3, ssl, zlib" || exit 1
+    python -c "import bz2, ctypes, curses, decimal, lzma, readline, sqlite3, ssl, zlib" || exit 1
+    python -c "import decimal, sys; sys.exit(0 if decimal.__name__ and \"_decimal\" in sys.modules else \"decimal is the pure-Python fallback, _decimal did not build\")" || exit 1
 
     # Security floors pinned in the Dockerfile are what the image carries
     pip install --quiet --no-index --dry-run "pip>=26.2.2" "certifi>=2026.10.19" || { echo "pip/certifi below pinned floor" >&2; exit 1; }
