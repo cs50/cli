@@ -78,12 +78,15 @@ RUN apt update && \
 # https://www.python.org/downloads/
 # A single ./configure: a second bare one used to regenerate the Makefile with default
 # flags, silently dropping --enable-optimizations, --enable-shared, and --with-lto.
+# --disable-test-modules is the real flag for leaving out Lib/test and the _test*
+# extension modules; --without-tests and --disable-static were never CPython options
+# (configure warned "unrecognized options" and shipped the 176 MB test suite).
 RUN cd /tmp && \
     curl --remote-name https://www.python.org/ftp/python/3.15.2/Python-3.15.2.tgz && \
     tar xzf Python-3.15.2.tgz && \
     rm --force Python-3.15.2.tgz && \
     cd Python-3.15.2 && \
-    CFLAGS="-Os" ./configure --disable-static --enable-optimizations --enable-shared --with-lto --without-tests && \
+    CFLAGS="-Os" ./configure --disable-test-modules --enable-optimizations --enable-shared --with-lto && \
     make && \
     make install && \
     ldconfig `# libpython is now a shared library in /usr/local/lib` && \

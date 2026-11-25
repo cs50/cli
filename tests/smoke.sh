@@ -138,6 +138,10 @@ run "$IMAGE" bash --login -c '
     python -c "import sysconfig, sys; sys.exit(0 if sysconfig.get_config_var(\"Py_ENABLE_SHARED\") == 1 else \"Py_ENABLE_SHARED is not 1\")" || exit 1
     ldd /usr/local/bin/python3 | grep -q "libpython3.15.so.1.0 => /usr/local/lib/" || { echo "python3 does not resolve libpython from /usr/local/lib:"; ldd /usr/local/bin/python3; exit 1; } >&2
 
+    # --disable-test-modules took effect (the old --without-tests was not a CPython option and shipped 176 MB of tests)
+    test ! -d /usr/local/lib/python3.15/test || { echo "Lib/test is installed; --disable-test-modules did not take effect" >&2; exit 1; }
+    python -c "import _testcapi" 2> /dev/null && { echo "_testcapi is installed; --disable-test-modules did not take effect" >&2; exit 1; }
+
     # Every entry point imports and parses its arguments; print its output on failure
     for c in check50 submit50 compare50 style50 cli50 render50 flask autopep8 pytest; do
         out=$("$c" --help 2>&1) || { printf "%s --help failed:\n%s\n" "$c" "$out" >&2; exit 1; }
