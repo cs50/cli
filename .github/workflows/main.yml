@@ -9,8 +9,9 @@ on:
 #   any other branch named ubuntu-*: the build fails fast, since it would otherwise publish nothing
 #   any other branch:          canary*; <branch>* (with / replaced by -), so a dependent can pin to one branch's
 #                              image, e.g. cs50/cli:python-3.15, without canary moving under it. The build fails
-#                              fast if that name is not a valid Docker tag, or is one main publishes (latest,
-#                              amd64, arm64, canary*, ubuntu-*), which a branch build must never overwrite
+#                              fast if that name is not a valid Docker tag, is one main publishes (latest,
+#                              amd64, arm64, canary*, ubuntu-*), which a branch build must never overwrite, or
+#                              ends in -amd64 or -arm64, which is another branch's per-architecture tag
 # where * means the -amd64 and -arm64 tags plus a multi-arch manifest.
 
 jobs:
@@ -67,6 +68,7 @@ jobs:
               tag="${GITHUB_REF_NAME//\//-}"
               [[ "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,121}$ ]] || { echo "::error::$GITHUB_REF_NAME cannot be published as Docker tag cs50/cli:$tag"; exit 1; }
               [[ "$tag" =~ ^(latest|amd64|arm64|main|canary(-.*)?|ubuntu-.*)$ ]] && { echo "::error::$GITHUB_REF_NAME would publish cs50/cli:$tag, a tag reserved for the main build"; exit 1; }
+              [[ "$tag" =~ -(amd64|arm64)$ ]] && { echo "::error::$GITHUB_REF_NAME would publish cs50/cli:$tag, which is the per-architecture tag of a branch named ${tag%-*}"; exit 1; }
               echo "tag=$tag" >> "$GITHUB_OUTPUT"
           fi
 
@@ -148,6 +150,7 @@ jobs:
               tag="${GITHUB_REF_NAME//\//-}"
               [[ "$tag" =~ ^[A-Za-z0-9_][A-Za-z0-9_.-]{0,121}$ ]] || { echo "::error::$GITHUB_REF_NAME cannot be published as Docker tag cs50/cli:$tag"; exit 1; }
               [[ "$tag" =~ ^(latest|amd64|arm64|main|canary(-.*)?|ubuntu-.*)$ ]] && { echo "::error::$GITHUB_REF_NAME would publish cs50/cli:$tag, a tag reserved for the main build"; exit 1; }
+              [[ "$tag" =~ -(amd64|arm64)$ ]] && { echo "::error::$GITHUB_REF_NAME would publish cs50/cli:$tag, which is the per-architecture tag of a branch named ${tag%-*}"; exit 1; }
               echo "tag=$tag" >> "$GITHUB_OUTPUT"
           fi
 
