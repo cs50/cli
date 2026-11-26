@@ -7,7 +7,8 @@ on:
 #   a branch named ubuntu-<RELEASE> (RELEASE per the Dockerfile): ubuntu-<RELEASE>* only, so the image for an
 #                              Ubuntu release other than main's can be built and tested without touching canary
 #   any other branch named ubuntu-*: the build fails fast, since it would otherwise publish nothing
-#   any other branch:          canary*
+#   any other branch:          canary*; <branch>* (with / replaced by -), so a dependent can pin to one branch's
+#                              image, e.g. cs50/cli:python-3.15, without canary moving under it
 # where * means the -amd64 and -arm64 tags plus a multi-arch manifest.
 
 jobs:
@@ -69,6 +70,15 @@ jobs:
         if: ${{ !startsWith(github.ref, 'refs/heads/ubuntu-') }}
         run: |
           docker push cs50/cli:canary-amd64
+
+      - name: Push linux/amd64 build to Docker Hub (${{ github.ref_name }})
+        if: ${{ github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/heads/ubuntu-') }}
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          tag="${BRANCH//\//-}"
+          docker tag cs50/cli:canary-amd64 cs50/cli:"$tag"-amd64
+          docker push cs50/cli:"$tag"-amd64
 
       - name: Push linux/amd64 build to Docker Hub (ubuntu-${{ steps.release.outputs.release }})
         if: ${{ github.ref == 'refs/heads/main' || github.ref == format('refs/heads/ubuntu-{0}', steps.release.outputs.release) }}
@@ -135,6 +145,15 @@ jobs:
         run: |
           docker push cs50/cli:canary-arm64
 
+      - name: Push linux/arm64 build to Docker Hub (${{ github.ref_name }})
+        if: ${{ github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/heads/ubuntu-') }}
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          tag="${BRANCH//\//-}"
+          docker tag cs50/cli:canary-arm64 cs50/cli:"$tag"-arm64
+          docker push cs50/cli:"$tag"-arm64
+
       - name: Push linux/arm64 build to Docker Hub (ubuntu-${{ steps.release.outputs.release }})
         if: ${{ github.ref == 'refs/heads/main' || github.ref == format('refs/heads/ubuntu-{0}', steps.release.outputs.release) }}
         env:
@@ -170,6 +189,17 @@ jobs:
           --amend cs50/cli:canary-amd64 \
           --amend cs50/cli:canary-arm64
           docker manifest push cs50/cli:canary
+
+      - name: Create multi-arch manifest and push to Docker Hub (${{ github.ref_name }})
+        if: ${{ github.ref != 'refs/heads/main' && !startsWith(github.ref, 'refs/heads/ubuntu-') }}
+        env:
+          BRANCH: ${{ github.ref_name }}
+        run: |
+          tag="${BRANCH//\//-}"
+          docker manifest create cs50/cli:"$tag" \
+          --amend cs50/cli:"$tag"-amd64 \
+          --amend cs50/cli:"$tag"-arm64
+          docker manifest push cs50/cli:"$tag"
 
       - name: Create multi-arch manifest and push to Docker Hub (ubuntu-${{ env.RELEASE }})
         if: ${{ github.ref == 'refs/heads/main' || github.ref == format('refs/heads/ubuntu-{0}', needs.build-amd64.outputs.release) }}
