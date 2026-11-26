@@ -87,7 +87,7 @@ RUN cd /tmp && \
     rm --force Python-3.15.2.tgz && \
     cd Python-3.15.2 && \
     CFLAGS="-Os" ./configure --disable-test-modules --enable-optimizations --enable-shared --with-lto && \
-    make && \
+    make -j "$(nproc)" `# PGO's two compiles and the LTO link now really run; serial, they take most of the build` && \
     make install && \
     ldconfig `# libpython is now a shared library in /usr/local/lib` && \
     cd .. && \
